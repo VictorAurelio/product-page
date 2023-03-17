@@ -2,6 +2,7 @@
 
 namespace App\Core\Database\DAO;
 
+use App\Core\Database\DAO\DAOInterface;
 use InvalidArgumentException;
 use App\DTO\DTOInterface;
 use App\DTO\UserDTO;
