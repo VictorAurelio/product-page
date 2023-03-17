@@ -17,7 +17,7 @@ class RegisterUserController extends UserController
 
         $this->validator->validate($data, [
             'name' => ['required'],
-            'email' => ['required', 'unique'],
+            'email' => ['required', 'unique', 'email'],
             'password' => ['required', 'min:8'],
             'password_confirmation' => ['required', 'match:password']
         ]);
@@ -25,26 +25,27 @@ class RegisterUserController extends UserController
         unset($data['password_confirmation']);
 
         $password_hash = password_hash($data['password'], PASSWORD_DEFAULT);
+        $plain_password = $data['password'];
         $data['password'] = $password_hash;
 
         if (!$password_hash) {
             throw new \Exception('Error hashing password');
         }
 
-        $user = $this->dao->create($data);
+        $userDTO = $this->createUserDTO($data);
+        $user = $this->userDAO->create($userDTO);
 
-        if (!$user) {
-            return ['message' => 'Error creating user', 'status' => 500];
-        }
-
-        $userId = $this->userModel->checkCredentials($data['email'], $data['password']);
-
-        if (!$userId) {
-            return ['message' => 'Invalid email or password', 'status' => 401];
-        }
-
-        $jwt = $this->userModel->createJwt($userId);
-
-        return ['message' => 'User created successfully', 'jwt' => $jwt, 'status' => 201];
+        $userId = $this->userModel->checkCredentials($data['email'], $plain_password);
+        
+        $result = match (true) {
+        !$user => ['message' => 'Error creating user', 'status' => 500],
+        !$userId => ['message' => 'Invalid email or password', 'status' => 401],
+        default => [
+            'message' => 'User created successfully',
+            'jwt' => $this->userModel->createJwt($userId),
+            'status' => 201
+            ],
+        };
+        return $result;
     }
 }

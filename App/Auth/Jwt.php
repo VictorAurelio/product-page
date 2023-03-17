@@ -10,7 +10,7 @@
  * @link      https://github.com/VictorAurelio/starter-mvc
  */
 
-namespace App\Models;
+namespace App\Auth;
 
 class Jwt
 {

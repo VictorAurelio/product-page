@@ -10,7 +10,6 @@ class LoginUserController extends UserController
     {
         parent::__construct();
     }
-
     public function login(array $data): array
     {
         $data = $this->sanitizer->clean($data);
@@ -20,14 +19,15 @@ class LoginUserController extends UserController
             'password' => ['required']
         ]);
 
-        $user = $this->userModel->checkCredentials($data['email'], $data['password']);
-        if (!$user) {
+        $userId = $this->userModel->checkCredentials($data['email'], $data['password']);
+        if (!$userId) {
             return ['message' => 'Invalid email or password', 'status' => 401];
         }
-        $jwt = $this->userModel->createJwt($user->id);
+        var_dump($userId);
+        $jwt = $this->userModel->createJwt($userId);
         return [
             'message' => 'User logged in successfully',
-            'userId' => $user->id,
+            'userId' => $userId,
             'jwt' => $jwt,
             'status' => 200
         ];

@@ -12,94 +12,21 @@
 
 namespace App\Core\Database\DAO;
 
+use App\DTO\DTOInterface;
+
 /**
  * ConnectionInterface defines the contract for DAO class.
  */
 interface DAOInterface
 {
-    /**
-     * Summary of getSchema
-     *
-     * @return string
-     */
-    public function getSchema(): string;
-
-    /**
-     * Summary of getSchemaID
-     *
-     * @return string
-     */
-    public function getSchemaID(): string;
-
-    /**
-     * Summary of lastID
-     *
-     * @return int
-     */
-    public function lastID(): int;
-
-    /**
-     * Summary of create
-     *
-     * @param array $fields
-     * 
-     * @return bool
-     */
-    public function create(array $fields = []): bool;
-
-    /**
-     * Summary of read
-     *
-     * @param array $selectors
-     * @param array $conditions
-     * @param array $parameters
-     * @param array $optional
-     * 
-     * @return array
-     */
+    public function create(DTOInterface $data): bool;
     public function read(
         array $selectors = [],
         array $conditions = [],
         array $parameters = [],
         array $optional = []
     ): array;
-
-    /**
-     * Summary of update
-     *
-     * @param array  $fields
-     * @param string $primaryKey
-     * 
-     * @return bool
-     */
-    public function update(array $fields = [], string $primaryKey): bool;
-
-    /**
-     * Summary of delete
-     *
-     * @param array $conditions
-     * 
-     * @return bool
-     */
-    public function delete(array $conditions = []): bool;
-
-    /**
-     * Summary of search
-     *
-     * @param array $selectors
-     * @param array $conditions
-     * 
-     * @return array
-     */
-    public function search(array $selectors = [], array $conditions = []): array;
-
-    /**
-     * Summary of rawQuery
-     *
-     * @param string $rawQuery
-     * @param array  $conditions
-     * 
-     * @return mixed 
-     */
-    public function rawQuery(string $rawQuery, array $conditions = []);
+    public function update(DTOInterface $data, string $primaryKey): bool;
+    public function delete(DTOInterface $conditions): bool;
+    public function rawQuery(string $rawQuery, DTOInterface $conditions);
 }

@@ -6,6 +6,8 @@ use App\Core\Database\DatabaseService\DatabaseService;
 use App\Core\Validation\Exception\ValidationException;
 use App\Core\Database\QueryBuilder\MysqlQueryBuilder;
 use App\Core\Database\Connection\ConnectionInterface;
+use App\Core\Validation\Rule\EmailRule;
+use App\DTO\UserDTO;
 use App\Http\Controllers\User\LogoutUserController;
 use App\Core\Validation\Rule\Data\DataSanitizer;
 use App\Core\Validation\Rule\RequiredRule;
@@ -15,10 +17,10 @@ use App\Core\Database\DatabaseFactory;
 use App\Core\Validation\Rule\MinRule;
 use App\Core\Validation\Validator;
 use App\Core\Database\DAO\DAO;
-use App\Core\Authentication;
-use App\Models\UserModel;
+use App\Auth\Authentication;
+use App\Models\User\UserModel;
 use App\Core\Controller;
-
+use App\Core\Database\DAO\UserDAO;
 
 class UserController extends Controller
 {
@@ -27,6 +29,7 @@ class UserController extends Controller
     protected DataSanitizer $sanitizer;
     protected Validator $validator;
     protected UserModel $userModel;
+    protected UserDAO $userDAO;
     protected DAO $dao;
     public function __construct()
     {
@@ -38,9 +41,11 @@ class UserController extends Controller
             $this->userModel->getTableSchema(),
             $this->userModel->getTableSchemaId()
         );
+        $this->userDAO = new UserDAO($this->dao);
         $this->validator = new Validator();
         $this->validator
             ->addRule('unique', new UniqueRule($this->connection, 'users', 'email'))
+            ->addRule('email', new EmailRule())
             ->addRule('required', new RequiredRule())
             ->addRule('match', new MatchRule())
             ->addRule('min', new MinRule());
@@ -50,9 +55,9 @@ class UserController extends Controller
     }
     public function index()
     {
-        // $users = $this->dao->read(['name', 'email']);
-        // var_dump($users);
-        $this->redirect('/home');
+        $users = $this->userDAO->read(['name', 'email']);
+        var_dump($users);
+        // $this->redirect('/home');
     }
     // public function view($id)
     // {
@@ -93,7 +98,22 @@ class UserController extends Controller
             $this->json($e->getErrors(), 400);
         }
     }
+        /**
+     * Create a UserDTO object from sanitized data
+     *
+     * @param array $data
+     *
+     * @return UserDTO
+     */
+    public function createUserDTO(array $data): UserDTO
+    {
+        $userDTO = new UserDTO();
+        $userDTO->setName($data['name']);
+        $userDTO->setEmail($data['email']);
+        $userDTO->setPassword($data['password']);
 
+        return $userDTO;
+    }
     public function signIn()
     {
         if ($this->getMethod() !== 'POST') {
@@ -117,7 +137,6 @@ class UserController extends Controller
             $this->json($e->getErrors(), 400);
         }
     }
-
     public function logoutValidate()
     {
         if($this->getMethod() !== 'POST') {
@@ -153,6 +172,7 @@ class UserController extends Controller
     
         // Create a new JWT and return it
         $newJwt = $this->userModel->createJwt($userIdFromJwt);
+        
         $this->json(['jwt' => $newJwt], 200);
     }
 }

@@ -12,8 +12,8 @@
 
 namespace App\Core\Database\DAO;
 
-use App\Core\Database\QueryBuilder\QueryBuilder;
 use App\Core\Database\DatabaseService\DatabaseService;
+use App\Core\Database\QueryBuilder\QueryBuilder;
 use Throwable;
 
 /**
@@ -27,7 +27,7 @@ class DAO
     protected QueryBuilder $queryBuilder;
 
     /**
-     * @var DataMapper 
+     * @var DatabaseService
      */
     protected DatabaseService $dataMapper;
 
@@ -79,6 +79,26 @@ class DAO
     public function getSchema(): string
     {
         return (string)$this->tableSchema;
+    }
+
+    /**
+     * Get the QueryBuilder instance.
+     *
+     * @return QueryBuilder
+     */
+    public function getQueryBuilder(): QueryBuilder
+    {
+        return $this->queryBuilder;
+    }
+
+    /**
+     * Get the DataMapper instance.
+     *
+     * @return DatabaseService
+     */
+    public function getDataMapper(): DatabaseService
+    {
+        return $this->dataMapper;
     }
 
     /**
@@ -216,7 +236,7 @@ class DAO
                 return $this->dataMapper->results();
             }
         } catch (Throwable $e) {
-            return $e->getMessage();
+            return [$e->getMessage()];
         }
     }
 
