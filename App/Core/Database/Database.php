@@ -4,10 +4,10 @@
  * This file is part of my Product Page project.
  *
  * @category  Database
- * @package   App\Core
+ * @package   App\Core\Database
  * @author    Victor Aurélio Rodrigues Ribeiro <victoraurelio_198@hotmail.com>
  * @copyright (c) 2023 Victor Aurelio
- * @link      https://github.com/VictorAurelio/starter-mvc
+ * @link      https://github.com/VictorAurelio/product-page
  */
 
 namespace App\Core;

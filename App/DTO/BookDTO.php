@@ -10,9 +10,15 @@ class BookDTO extends ProductDTO
     {
         return $this->_weight;
     }
-
     public function setWeight(float $weight): void
     {
         $this->_weight = $weight;
+    }
+    public function toArray(): array
+    {
+        $parentArray = parent::toArray();
+        return array_merge($parentArray, [
+            'weight' => $this->_weight,
+        ]);
     }
 }

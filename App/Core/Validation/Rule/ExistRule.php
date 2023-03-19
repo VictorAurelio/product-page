@@ -1,36 +1,25 @@
 <?php
 
-/**
- * This file is part of my Product Page project.
- *
- * @category  Validation rules
- * @package   App\Core\Validation\Rule
- * @author    Victor Aurélio Rodrigues Ribeiro <victoraurelio_198@hotmail.com>
- * @copyright (c) 2023 Victor Aurelio
- * @link      https://github.com/VictorAurelio/product-page
- */
-
 namespace App\Core\Validation\Rule;
 
 use App\Core\Database\Connection\ConnectionInterface;
-use App\Core\Validation\Rule\Rule;
 
-class UniqueRule implements Rule
+class ExistRule implements Rule
 {
     protected ConnectionInterface $connection;
     protected string $table;
     protected string $column;
 
-    public function __construct(ConnectionInterface $connection, string $table, string $column)
+    public function __construct(ConnectionInterface $connection)
     {
         $this->connection = $connection;
-        $this->table = $table;
-        $this->column = $column;
     }
 
     public function validate(array $data, string $field, array $params)
     {
         $value = $data[$field] ?? null;
+        $this->table = $params[0] ?? '';
+        $this->column = $params[1] ?? '';
 
         if (!$value) {
             return true;
@@ -46,6 +35,8 @@ class UniqueRule implements Rule
 
     public function getMessage(array $data, string $field, array $params)
     {
-        return "{$field} already exists in the database";
+        $this->table = $params[0] ?? '';
+        $this->column = $params[1] ?? '';
+        return "{$field} already exists in the {$this->table} table and {$this->column} column";
     }
 }

@@ -3,11 +3,11 @@
 /**
  * This file is part of my Product Page project.
  *
- * @category  Exceptions
+ * @category  Exception
  * @package   App\Core\Database\DAO\Exception
  * @author    Victor Aurélio Rodrigues Ribeiro <victoraurelio_198@hotmail.com>
  * @copyright (c) 2023 Victor Aurelio
- * @link      https://github.com/VictorAurelio/starter-mvc
+ * @link      hhttps://github.com/VictorAurelio/product-page
  */
 
 namespace App\Core\Database\DAO\Exception;

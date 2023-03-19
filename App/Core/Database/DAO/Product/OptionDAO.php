@@ -1,19 +1,26 @@
 <?php
 
+/**
+ * This file is part of my Product Page project.
+ *
+ * @category  DAO
+ * @package   App\Core\Database\DAO
+ * @author    Victor Aurélio Rodrigues Ribeiro <victoraurelio_198@hotmail.com>
+ * @copyright (c) 2023 Victor Aurelio
+ * @link      https://github.com/VictorAurelio/product-page
+ */
+
 namespace App\Core\Database\DAO;
 
 use App\Core\Database\DAO\DAOInterface;
 use App\DTO\DTOInterface;
 
 /**
- * Summary of CategoryDAO
+ * Summary of UserDAO
  */
-// App/Core/Database/DAO/CategoryDAO.php
-class CategoryDAO implements DAOInterface
+// App/Core/Database/DAO/UserDAO.php
+class OptionDAO implements DAOInterface
 {
-
-
-
     public function create(DTOInterface $data): bool
     {
         return false;

@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * This file is part of my Product Page project.
+ *
+ * @category  Route
+ * @package   App\Core\Routing
+ * @author    Victor Aurélio Rodrigues Ribeiro <victoraurelio_198@hotmail.com>
+ * @copyright (c) 2023 Victor Aurelio
+ * @link      https://github.com/VictorAurelio/product-page
+ */
+
 namespace App\Core\Routing;
 
 use App\Core\Core;

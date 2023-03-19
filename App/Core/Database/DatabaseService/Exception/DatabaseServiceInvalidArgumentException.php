@@ -7,7 +7,7 @@
  * @package   App\Core\Database\DatabaseService\Exception
  * @author    Victor Aurélio Rodrigues Ribeiro <victoraurelio_198@hotmail.com>
  * @copyright (c) 2023 Victor Aurelio
- * @link      https://github.com/VictorAurelio/starter-mvc
+ * @link      https://github.com/VictorAurelio/product-page
  */
 
 namespace App\Core\Database\DatabaseService\Exception;

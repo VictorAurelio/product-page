@@ -4,10 +4,10 @@
  * This file is part of my Product Page project.
  *
  * @category  Database
- * @package   App\Core\Database\DatabaseService
+ * @package   App\Core\Database
  * @author    Victor Aurélio Rodrigues Ribeiro <victoraurelio_198@hotmail.com>
  * @copyright (c) 2023 Victor Aurelio
- * @link      https://github.com/VictorAurelio/starter-mvc
+ * @link      https://github.com/VictorAurelio/product-page
  */
 
 namespace App\Core\Database\DatabaseService;
@@ -25,7 +25,7 @@ use PDO;
 class DatabaseService implements DatabaseServiceInterface
 {
     protected Connection $connection;
-    private PDOStatement $statement;
+    private PDOStatement $_statement;
     /**
      * Summary of __construct
      * @param Connection $connection
@@ -66,7 +66,7 @@ class DatabaseService implements DatabaseServiceInterface
      */
     public function prepare(string $sqlQuery): self
     {
-        $this->statement = $this->connection->pdo()->prepare($sqlQuery);
+        $this->_statement = $this->connection->pdo()->prepare($sqlQuery);
         return $this;
     }
     /**
@@ -121,9 +121,9 @@ class DatabaseService implements DatabaseServiceInterface
     {
         $this->isArray($fields); // don't need
         foreach ($fields as $key => $value) {
-            $this->statement->bindValue(':' . $key, $value, $this->bind($value));
+            $this->_statement->bindValue(':' . $key, $value, $this->bind($value));
         }
-        return $this->statement;
+        return $this->_statement;
     }
     /**
      * 
@@ -135,9 +135,9 @@ class DatabaseService implements DatabaseServiceInterface
     {
         $this->isArray($fields); // don't need
         foreach ($fields as $key => $value) {
-            $this->statement->bindValue(':' . $key,  '%' . $value . '%', $this->bind($value));
+            $this->_statement->bindValue(':' . $key,  '%' . $value . '%', $this->bind($value));
         }
-        return $this->statement;
+        return $this->_statement;
     }
     /**
      * Summary of execute
@@ -145,8 +145,8 @@ class DatabaseService implements DatabaseServiceInterface
      */
     public function execute()
     {
-        if ($this->statement)
-            return $this->statement->execute();
+        if ($this->_statement)
+            return $this->_statement->execute();
     }
     /**
      * Summary of numRows
@@ -154,8 +154,8 @@ class DatabaseService implements DatabaseServiceInterface
      */
     public function numRows(): int
     {
-        if ($this->statement)
-            return $this->statement->rowCount();
+        if ($this->_statement)
+            return $this->_statement->rowCount();
     }
 
     /**
@@ -164,8 +164,8 @@ class DatabaseService implements DatabaseServiceInterface
      */
     public function result(): ?Object
     {
-        if ($this->statement) {
-            $result = $this->statement->fetch(PDO::FETCH_OBJ);
+        if ($this->_statement) {
+            $result = $this->_statement->fetch(PDO::FETCH_OBJ);
             return $result === false ? null : $result;
         }
     }
@@ -176,8 +176,8 @@ class DatabaseService implements DatabaseServiceInterface
      */
     public function results(): array
     {
-        if ($this->statement)
-            return $this->statement->fetchAll();
+        if ($this->_statement)
+            return $this->_statement->fetchAll();
     }
 
     /**

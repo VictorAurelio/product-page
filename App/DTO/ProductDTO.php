@@ -7,7 +7,7 @@ use App\DTO\DTOInterface;
 /**
  * Summary of ProductDTO
  */
-class ProductDTO implements DTOInterface
+abstract class ProductDTO implements DTOInterface
 {
     private $_id;
     private $_sku;
@@ -57,6 +57,12 @@ class ProductDTO implements DTOInterface
     }
     public function toArray(): array
     {
-        return [];
+        return [
+            'id' => $this->_id,
+            'sku' => $this->_sku,
+            'name' => $this->_name,
+            'price' => $this->_price,
+            'categoryId' => $this->_categoryId,
+        ];
     }
 }

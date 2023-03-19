@@ -8,9 +8,6 @@ class ProductOptionDTO implements DTOInterface
     private $_productId;
     private $_optionId;
     private $_optionValue;
-
-    // Getters and Setters
-
     public function getId() {
         return $this->_id;
     }

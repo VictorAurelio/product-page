@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * This file is part of my Product Page project.
+ *
+ * @category  Core
+ * @package   App\Core
+ * @author    Victor Aurélio Rodrigues Ribeiro <victoraurelio_198@hotmail.com>
+ * @copyright (c) 2023 Victor Aurelio
+ * @link      https://github.com/VictorAurelio/product-page
+ */
+
 namespace App\Core;
 
 use App\Http\Controllers\Error\ErrorHandlerController;
@@ -9,32 +19,32 @@ use App\Core\Config;
 
 class Core
 {
-    private ErrorHandlerController $errorController;
-    private HomeController $homeController;
-    private Config $config;
-    private Router $router;
+    private ErrorHandlerController $_errorController;
+    private HomeController $_homeController;
+    private Config $_config;
+    private Router $_router;
     public function __construct(Config $config, Router $router)
     {
-        $this->router = $router;
-        $this->config = $config;
-        $this->config->constants();
-        $this->config->environmentType();
+        $this->_router = $router;
+        $this->_config = $config;
+        $this->_config->constants();
+        $this->_config->environmentType();
     }
 
     public function start()
     {
-        $this->config->configureCors();
-        $this->errorController = new ErrorHandlerController();
-        $this->homeController = new HomeController();
+        $this->_config->configureCors();
+        $this->_errorController = new ErrorHandlerController();
+        $this->_homeController = new HomeController();
         $parameters = [];
         $url = '/';
 
         if (isset($_GET['url'])) {
             $url .= $_GET['url'];
         }
-        
-        $this->router->loadRoutes('routes.php');
-        $url = $this->router->checkRoutes($url);
+
+        $this->_router->loadRoutes('routes.php');
+        $url = $this->_router->checkRoutes($url);
 
         // var_dump($url);
         if (!empty($url) && $url != '/') {
@@ -53,9 +63,8 @@ class Core
             if (count($url) > 0) {
                 $parameters = $url;
             }
-
         } else {
-            $currentController = $this->homeController;
+            $currentController = $this->_homeController;
             $currentAction = DEFAULT_ACTION;
             $controller = new $currentController();
             call_user_func(array($controller, $currentAction), $parameters);
@@ -67,10 +76,10 @@ class Core
             if (method_exists($controller, $currentAction)) {
                 call_user_func_array(array($controller, $currentAction), $parameters);
             } else {
-                $this->errorController->invalidParameters();
+                $this->_errorController->invalidParameters();
             }
         } else {
-            $this->errorController->pageNotFound();
+            $this->_errorController->pageNotFound();
         }
     }
 }

@@ -1,66 +1,57 @@
 <?php
 
+/**
+ * This file is part of my Product Page project.
+ *
+ * @category  Controller
+ * @package   App\Http\Controllers\Product
+ * @author    Victor Aurélio Rodrigues Ribeiro <victoraurelio_198@hotmail.com>
+ * @copyright (c) 2023 Victor Aurelio
+ * @link      https://github.com/VictorAurelio/product-page
+ */
+
 namespace App\Http\Controllers\Product;
 
-use App\Controllers\Product\ProductController;
 use App\Controllers\Product\ProductSpecificControllerInterface;
-use App\Core\Validation\Exception\ValidationException;
-use App\Database\DAO\ProductDAO;
-use App\DTO\BookDTO;
+use App\Controllers\Product\ProductController;
+use App\Database\DAO\Product\BookDAO;
 use App\Models\Product\Book;
+use App\DTO\BookDTO;
+use App\DTO\DTOInterface;
 
 class BookController implements ProductSpecificControllerInterface
 {
-    protected Book $productModel;
     protected ProductController $productController;
-    protected ProductDAO $productDAO;
-    public function __construct(ProductController $productController)
+    protected Book $productModel;
+    protected BookDAO $bookDAO;
+    public function __construct(ProductController $productController, Book $bookModel)
     {
         $this->productController = $productController;
         $this->productModel = new Book($this->productController->getConnection());
-        $this->productDAO = new ProductDAO($this->productModel);
+        $this->bookDAO = new BookDAO($bookModel);
     }
     public function insertProduct(array $data): array
-    {
-        $this->productController->getValidator()->validate($data, [
-            'name' => ['required'],
-            'sku' => ['required', 'unique'],
-            'price' => ['required'],
-            'category_id' => ['required'],
-            'weight' => ['required'] // Add weight validation for Book
-        ]);
-    
-        $bookDTO = $this->createBookDTO($data);
-        $book = $this->productController->getProductDAO()->create($bookDTO);
-    
-        $result = match (true) {
-            !$book => ['message' => 'Error creating book', 'status' => 500],
-            default => ['message' => 'Book created successfully', 'status' => 201],
-        };
-        return $result;
-    }
-    public function insertBook(array $data): array
     {
         $data = $this->productController->getSanitizer()->clean($data);
 
         $this->productController->getValidator()->validate($data, [
             'name' => ['required'],
-            'sku' => ['required'],
+            'sku' => ['required', 'unique'],
             'price' => ['required'],
             'category_id' => ['required'],
-            'weight' => ['required'] // Add weight validation for Book
+            'weight' => ['required']
         ]);
-
-        $bookDTO = $this->createBookDTO($data);
-        $book = $this->productController->getProductDAO()->create($bookDTO);
-
+    
+        $bookDTO = $this->createDTO($data);
+        $book = $this->bookDAO->create($bookDTO);
+    
         $result = match (true) {
             !$book => ['message' => 'Error creating book', 'status' => 500],
             default => ['message' => 'Book created successfully', 'status' => 201],
         };
         return $result;
     }
-    public function createBookDTO(array $data): BookDTO
+    public function createDTO(array $data): DTOInterface
     {
         $bookDTO = new BookDTO();
         $bookDTO->setId($data['id'] ?? null);

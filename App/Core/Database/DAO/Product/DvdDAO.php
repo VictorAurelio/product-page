@@ -2,29 +2,28 @@
 
 namespace App\Database\DAO;
 
-use App\Core\Database\DAO\DAO;
-use App\Core\Database\DAO\DAOInterface;
+use App\Database\DAO\Product\ProductDAO;
 use App\DTO\DTOInterface;
-use App\DTO\ProductDTO;
-use App\Models\Product\Product;
+use App\DTO\BookDTO;
+use App\Models\Product\Book;
+use App\Models\Product\Dvd;
 use InvalidArgumentException;
 use Throwable;
 
-class ProductDAO implements DAOInterface
+class DvdDAO extends ProductDAO
 {
-    protected DAO $dao;
-    public function __construct(Product $productModel)
+    public function __construct(Dvd $dvdModel)
     {
-        $this->dao = $productModel->getDao();
+        parent::__construct($dvdModel);
     }
 
     public function create(DTOInterface $data): bool
     {
-        if (!$data instanceof ProductDTO) {
-            throw new InvalidArgumentException('Expected ProductDTO instance.');
+        if (!$data instanceof BookDTO) {
+            throw new InvalidArgumentException('Expected BookDTO instance.');
         }
         try {
-            // Convert ProductDTO to array
+            // Convert BookDTO to array
             $fields = $data->toArray();
 
             $args = [
@@ -46,4 +45,6 @@ class ProductDAO implements DAOInterface
         }
         return false;
     }
+
+    // Implement other methods like update, delete, and find as necessary, similar to the create method
 }

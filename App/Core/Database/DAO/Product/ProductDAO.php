@@ -10,47 +10,43 @@
  * @link      https://github.com/VictorAurelio/product-page
  */
 
-namespace App\Core\Database\DAO;
+namespace App\Database\DAO\Product;
 
+use App\Core\Database\DAO\DAO;
 use App\Core\Database\DAO\DAOInterface;
-use InvalidArgumentException;
 use App\DTO\DTOInterface;
-use App\DTO\UserDTO;
+use App\DTO\ProductDTO;
+use App\Models\Product\Product;
+use InvalidArgumentException;
 use Throwable;
 
 /**
- * Summary of UserDAO
+ * Summary of ProductDAO
  */
-// App/Core/Database/DAO/UserDAO.php
-class UserDAO implements DAOInterface
+class ProductDAO implements DAOInterface
 {
     protected DAO $dao;
+    public function __construct(Product $productModel)
+    {
+        $this->dao = $productModel->getDao();
+    }
 
     /**
-     * Summary of __construct
-     * 
-     * @param DAO $dao
-     */
-    public function __construct(DAO $dao)
-    {
-        $this->dao = $dao;
-    }
-    /**
-     * Summary of create
+     * This method receives a DTO with the data to be created and
+     * returns true if the creation was successful or false otherwise.
      * 
      * @param DTOInterface $data
-     * 
      * @throws InvalidArgumentException
      * 
      * @return bool
      */
     public function create(DTOInterface $data): bool
     {
-        if (!$data instanceof UserDTO) {
-            throw new InvalidArgumentException('Expected UserDTO instance.');
+        if (!$data instanceof ProductDTO) {
+            throw new InvalidArgumentException('Expected ProductDTO instance.');
         }
         try {
-            // Convert UserDTO to array
+            // Convert ProductDTO to array
             $fields = $data->toArray();
 
             $args = [
@@ -72,12 +68,18 @@ class UserDAO implements DAOInterface
         }
         return false;
     }
+    
     /**
-     * Summary of read
+     * This method receives an array of selectors, an array of conditions,
+     * an array of parameters, and an array of optional parameters.
+     * It returns an array with the results of the search. If there's no data,
+     * it returns an array with the message "no data".
+     * 
      * @param array $selectors
      * @param array $conditions
      * @param array $parameters
      * @param array $optional
+     * 
      * @return array
      */
     public function read(
@@ -108,10 +110,22 @@ class UserDAO implements DAOInterface
         }
         return ['no data'];
     }
+    /**
+     * This method receives a DTO with the data to be updated and the primary key
+     * of the record to be updated. It returns true if the update was successful
+     * or false otherwise.
+     * 
+     * @param DTOInterface $data
+     * @param string $primaryKey
+     * 
+     * @throws InvalidArgumentException
+     * 
+     * @return bool
+     */
     public function update(DTOInterface $data, string $primaryKey): bool
     {
-        if (!$data instanceof UserDTO) {
-            throw new InvalidArgumentException('Expected UserDTO instance.');
+        if (!$data instanceof ProductDTO) {
+            throw new InvalidArgumentException('Expected ProductDTO instance.');
         }
 
         $fields = $data->toArray();
@@ -137,10 +151,19 @@ class UserDAO implements DAOInterface
 
         return false;
     }
+    /**
+     * This method receives a DTO with the conditions to be used to delete a record.
+     * It returns true if the deletion was successful or false otherwise.
+     * 
+     * @param DTOInterface $conditions
+     * @throws InvalidArgumentException
+     * 
+     * @return bool
+     */
     public function delete(DTOInterface $conditions): bool
     {
-        if (!$conditions instanceof UserDTO) {
-            throw new InvalidArgumentException('Expected UserDTO instance.');
+        if (!$conditions instanceof ProductDTO) {
+            throw new InvalidArgumentException('Expected ProductDTO instance.');
         }
 
         $conditionArray = $conditions->toArray();
@@ -165,42 +188,44 @@ class UserDAO implements DAOInterface
 
         return false;
     }
-    public function findByEmail(UserDTO $fields): ?UserDTO
+    /**
+     * This method receives an personalized sql query as a string and a ProductDTO
+     * with the conditions and return the results. If there's no results it'll
+     * return an array with the message "no data".
+     * Usage example:
+     * $rawQuery = "SELECT * FROM products WHERE 
+     *      category_id = :category_id AND price < :max_price;";
+     * $results = $bookDAO->rawQuery($rawQuery, $productDTO)...
+     * 
+     * @param string $rawQuery
+     * @param DTOInterface $conditions
+     * 
+     * @throws InvalidArgumentException
+     * 
+     * @return array
+     */
+    public function rawQuery(string $rawQuery, DTOInterface $conditions): array
     {
-        if (!$fields instanceof UserDTO) {
-            throw new InvalidArgumentException('Expected UserDTO instance.');
+        if (!$conditions instanceof ProductDTO) {
+            throw new InvalidArgumentException('Expected ProductDTO instance.');
         }
-    
-        $fieldsArray = $fields->toArray();
-    
-        $sqlQuery = $this->dao->getQueryBuilder()->buildQuery(
-            [
-                'type' => 'search',
-                'selectors' => ['email' => $fieldsArray['email']],
-                'table' => $this->dao->getSchema()
-            ]
-        )->exactSearchQuery();
-    
-        $this->dao->getDataMapper()->persist(
-            $sqlQuery,
-            $this->dao->getDataMapper()->buildQueryParameters([], ['email' => $fieldsArray['email']]),
-            false
-        );
-        $result = $this->dao->getDataMapper()->result();
-    
-        if ($result === null) {
-            return null;
+
+        $conditionArray = $conditions->toArray();
+
+        try {
+            $this->dao->getDataMapper()->persist(
+                $rawQuery,
+                $this->dao->getDataMapper()->buildQueryParameters($conditionArray)
+            );
+            
+            if ($this->dao->getDataMapper()->numRows() > 0) {
+                return $this->dao->getDataMapper()->results();
+            }
+        } catch (Throwable $throwable) {
+            throw $throwable;
         }
-    
-        $userDTO = new UserDTO();
-        $userDTO->setId($result->id);
-        $userDTO->setName($result->name);
-        $userDTO->setEmail($result->email);
-        $userDTO->setPassword($result->password);
-    
-        return $userDTO;
+
+        return ['no data'];
     }
-    public function rawQuery(string $rawQuery, DTOInterface $conditions)
-    {
-    }
+
 }

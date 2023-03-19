@@ -7,7 +7,7 @@
  * @package   App\Core\Database\Connection
  * @author    Victor Aurélio Rodrigues Ribeiro <victoraurelio_198@hotmail.com>
  * @copyright Copyright (c) 2023 Victor Aurelio
- * @link      https://github.com/VictorAurelio/starter-mvc
+ * @link      https://github.com/VictorAurelio/product-page
  */
 
 namespace App\Core\Database\Connection;
