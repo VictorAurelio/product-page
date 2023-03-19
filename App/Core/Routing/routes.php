@@ -24,4 +24,6 @@ return [
 
     '/user/refresh/' => '/user/refreshToken',
 
+    '/add-product' => '/product/insertProduct'
+
 ];

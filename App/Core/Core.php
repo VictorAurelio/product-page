@@ -63,6 +63,8 @@ class Core
             if (count($url) > 0) {
                 $parameters = $url;
             }
+
+            var_dump($currentController);
         } else {
             $currentController = $this->_homeController;
             $currentAction = DEFAULT_ACTION;
@@ -76,10 +78,10 @@ class Core
             if (method_exists($controller, $currentAction)) {
                 call_user_func_array(array($controller, $currentAction), $parameters);
             } else {
-                $this->_errorController->invalidParameters();
+                // $this->_errorController->invalidParameters();
             }
         } else {
-            $this->_errorController->pageNotFound();
+            // $this->_errorController->pageNotFound();
         }
     }
 }

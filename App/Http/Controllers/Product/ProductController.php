@@ -10,9 +10,8 @@
  * @link      https://github.com/VictorAurelio/product-page
  */
 
-namespace App\Controllers\Product;
+namespace App\Http\Controllers\Product;
 
-use App\Core\Database\DAO\Product\ProductCategoryDAO;
 use App\Core\Database\DatabaseService\DatabaseService;
 use App\Core\Model\ProductCategory;
 use App\Core\Validation\Exception\ValidationException;
@@ -33,7 +32,6 @@ use App\Models\Product\Furniture;
 use App\Models\Product\Product;
 use App\Core\Database\DAO\DAO;
 use App\Core\Controller;
-use App\Core\Model\ProductCategoryModel;
 use App\Core\Validation\Rule\ExistRule;
 use App\Core\Validation\Rule\UniqueRule;
 use App\Models\ProductOption\ProductOption;
@@ -76,11 +74,11 @@ class ProductController extends Controller
         // Read the request data
         $payload = $this->getRequestData();
         $data = $this->sanitizer->clean($payload);
-
+        // var_dump($payload);
         try {
             // Validate the 'type' field!
             $this->validator->validate($data, [
-                'type' => ['required', 'in:book,dvd,furniture'],
+                'product_type' => ['required', 'in:Book,Dvd,Furniture'],
                 'category_id' => ['required', 'exist:categories,id'],
                 'option_id' => ['required', 'exist:options,id'],
                 'option_value' => ['required'],

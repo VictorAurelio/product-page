@@ -12,8 +12,8 @@
 
 namespace App\Http\Controllers\Product;
 
-use App\Controllers\Product\ProductSpecificControllerInterface;
-use App\Controllers\Product\ProductController;
+use App\Http\Controllers\Product\ProductSpecificControllerInterface;
+use App\Http\Controllers\Product\ProductController;
 use App\Database\DAO\Product\BookDAO;
 use App\Models\Product\Book;
 use App\DTO\BookDTO;

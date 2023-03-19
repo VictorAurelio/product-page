@@ -10,7 +10,7 @@
  * @link      https://github.com/VictorAurelio/product-page
  */
 
-namespace App\Controllers\Product;
+namespace App\Http\Controllers\Product;
 
 use App\DTO\DTOInterface;
 
