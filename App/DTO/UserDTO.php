@@ -13,25 +13,25 @@ class UserDTO implements DTOInterface
      * Summary of email
      * @var
      */
-    private $email;
+    private $_email;
     /**
      * Summary of password
      * @var
      */
-    private $password;
+    private $_password;
     /**
      * Summary of name
      * @var
      */
-    private $name;
-    private $id;
+    private $_name;
+    private $_id;
     public function getId()
     {
-        return $this->id;
+        return $this->_id;
     }
     public function setId($id)
     {
-        $this->id = $id;
+        $this->_id = $id;
     }
     /**
      * Summary of getEmail
@@ -39,7 +39,7 @@ class UserDTO implements DTOInterface
      */
     public function getEmail()
     {
-        return $this->email;
+        return $this->_email;
     }
     /**
      * Summary of setEmail
@@ -48,7 +48,7 @@ class UserDTO implements DTOInterface
      */
     public function setEmail($email)
     {
-        $this->email = $email;
+        $this->_email = $email;
     }
     /**
      * Summary of getPassword
@@ -56,7 +56,7 @@ class UserDTO implements DTOInterface
      */
     public function getPassword()
     {
-        return $this->password;
+        return $this->_password;
     }
     /**
      * Summary of setPassword
@@ -65,7 +65,7 @@ class UserDTO implements DTOInterface
      */
     public function setPassword($password)
     {
-        $this->password = $password;
+        $this->_password = $password;
     }
     /**
      * Summary of getName
@@ -73,7 +73,7 @@ class UserDTO implements DTOInterface
      */
     public function getName()
     {
-        return $this->name;
+        return $this->_name;
     }
     /**
      * Summary of setName
@@ -82,7 +82,7 @@ class UserDTO implements DTOInterface
      */
     public function setName($name)
     {
-        $this->name = $name;
+        $this->_name = $name;
     }
     /**
      * Summary of toArray
@@ -91,9 +91,9 @@ class UserDTO implements DTOInterface
     public function toArray(): array
     {
         return [
-            'email' => $this->email,
-            'password' => $this->password,
-            'name' => $this->name,
+            'email' => $this->_email,
+            'password' => $this->_password,
+            'name' => $this->_name,
         ];
     }
 }

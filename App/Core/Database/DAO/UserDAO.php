@@ -61,6 +61,7 @@ class UserDAO implements DAOInterface
         } catch (Throwable $throwable) {
             throw $throwable;
         }
+        return false;
     }
     /**
      * Summary of read
