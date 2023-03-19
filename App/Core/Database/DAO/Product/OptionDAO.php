@@ -12,8 +12,14 @@
 
 namespace App\Core\Database\DAO;
 
+use App\Core\Database\Connection\ConnectionInterface;
 use App\Core\Database\DAO\DAOInterface;
+use App\Core\Database\DatabaseService\DatabaseService;
+use App\Core\Database\QueryBuilder\MysqlQueryBuilder;
 use App\DTO\DTOInterface;
+use App\DTO\OptionDTO;
+use App\Models\Option\Option;
+use Throwable;
 
 /**
  * Summary of UserDAO
@@ -21,8 +27,40 @@ use App\DTO\DTOInterface;
 // App/Core/Database/DAO/UserDAO.php
 class OptionDAO implements DAOInterface
 {
+    protected DAO $dao;
+    
+    public function __construct(Option $optionModel)
+    {
+        $this->dao = $optionModel->getDao();
+    }
     public function create(DTOInterface $data): bool
     {
+        if (!$data instanceof OptionDTO) {
+            throw new \InvalidArgumentException('Expected OptionDTO instance.');
+        }
+
+        try {
+            // Convert OptionDTO to array
+            $fields = $data->toArray();
+
+            $args = [
+                'table' => $this->dao->getSchema(),
+                'type' => 'insert',
+                'fields' => $fields
+            ];
+            $query = $this->dao->getQueryBuilder()->buildQuery($args)->insertQuery();
+            $this->dao->getDataMapper()->persist(
+                $query,
+                $this->dao->getDataMapper()->buildQueryParameters($fields)
+            );
+
+            if ($this->dao->getDataMapper()->numRows() == 1) {
+                return true;
+            }
+        } catch (Throwable $throwable) {
+            throw $throwable;
+        }
+
         return false;
     }
     public function read(

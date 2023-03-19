@@ -25,6 +25,7 @@ use App\Core\Validation\Rule\RequiredRule;
 use App\Core\Validation\Validator;
 use App\Database\DAO\Product\ProductDAO;
 use App\DTO\CategoryDTO;
+use App\DTO\ProductOptionDTO;
 use App\Models\Category\Category;
 use App\Models\Product\Book;
 use App\Models\Product\Dvd;
@@ -35,6 +36,7 @@ use App\Core\Controller;
 use App\Core\Model\ProductCategoryModel;
 use App\Core\Validation\Rule\ExistRule;
 use App\Core\Validation\Rule\UniqueRule;
+use App\Models\ProductOption\ProductOption;
 
 class ProductController extends Controller
 {
@@ -81,6 +83,7 @@ class ProductController extends Controller
                 'type' => ['required', 'in:book,dvd,furniture'],
                 'category_id' => ['required', 'exist:categories,id'],
                 'option_id' => ['required', 'exist:options,id'],
+                'option_value' => ['required'],
             ]);
 
              // Store or update the category
@@ -98,6 +101,15 @@ class ProductController extends Controller
 
             $productCategoryDAO = new ProductCategory($this->getConnection());
             $productCategoryDAO->createProductCategory($productId, $categoryId);
+
+            // Save the selected option for this product
+            $productOptionDTO = new ProductOptionDTO();
+            $productOptionDTO->setProductId($productId);
+            $productOptionDTO->setOptionId($data['option_id']);
+            $productOptionDTO->setOptionValue($data['option_value']);
+
+            $productOption = new ProductOption($this->getConnection());
+            $productOption->createOption($productOptionDTO);
 
             $this->json($result['message'], $result['status']);
         } catch (ValidationException $e) {
