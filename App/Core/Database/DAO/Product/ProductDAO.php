@@ -4,18 +4,18 @@
  * This file is part of my Product Page project.
  *
  * @category  DAO
- * @package   App\Core\Database\DAO
+ * @package   App\Core\Database\DAO\Product
  * @author    Victor Aurélio Rodrigues Ribeiro <victoraurelio_198@hotmail.com>
  * @copyright (c) 2023 Victor Aurelio
  * @link      https://github.com/VictorAurelio/product-page
  */
 
-namespace App\Database\DAO\Product;
+namespace App\Core\Database\DAO\Product;
 
 use App\Core\Database\DAO\DAO;
 use App\Core\Database\DAO\DAOInterface;
 use App\DTO\DTOInterface;
-use App\DTO\ProductDTO;
+use App\DTO\Product\ProductDTO;
 use App\Models\Product\Product;
 use InvalidArgumentException;
 use Throwable;
@@ -23,24 +23,45 @@ use Throwable;
 /**
  * Summary of ProductDAO
  */
-class ProductDAO implements DAOInterface
+class ProductDAO extends DAO implements DAOInterface
 {
+    /**
+     * Summary of dao
+     *
+     * @var DAO
+     */
     protected DAO $dao;
+    /**
+     * Summary of __construct
+     * 
+     * @param Product $productModel
+     */
     public function __construct(Product $productModel)
     {
         $this->dao = $productModel->getDao();
+        parent::__construct(
+            $this->dao->getDataMapper(),
+            $this->dao->getQueryBuilder(),
+            $this->dao->getSchema(),
+            $this->dao->getSchemaID(),
+            $this->dao->options
+        );
     }
-
+    public function lastId(): int
+    {
+        return parent::lastID();
+    }
     /**
      * This method receives a DTO with the data to be created and
      * returns true if the creation was successful or false otherwise.
      * 
      * @param DTOInterface $data
+     * 
      * @throws InvalidArgumentException
      * 
-     * @return bool
+     * @return ?int
      */
-    public function create(DTOInterface $data): bool
+    public function create(DTOInterface $data): ?int
     {
         if (!$data instanceof ProductDTO) {
             throw new InvalidArgumentException('Expected ProductDTO instance.');
@@ -61,12 +82,13 @@ class ProductDAO implements DAOInterface
             );
 
             if ($this->dao->getDataMapper()->numRows() == 1) {
-                return true;
+                // Get the last inserted ID and return it
+                return $this->dao->lastID();
             }
         } catch (Throwable $throwable) {
             throw $throwable;
         }
-        return false;
+        return 0; // Return 0 if the insert fails
     }
     
     /**
@@ -100,7 +122,9 @@ class ProductDAO implements DAOInterface
             $query = $this->dao->getQueryBuilder()->buildQuery($args)->selectQuery();
             $this->dao->getDataMapper()->persist(
                 $query,
-                $this->dao->getDataMapper()->buildQueryParameters($conditions, $parameters)
+                $this->dao
+                    ->getDataMapper()
+                    ->buildQueryParameters($conditions, $parameters)
             );
             if ($this->dao->getDataMapper()->numRows() > 0) {
                 return $this->dao->getDataMapper()->results();
@@ -116,7 +140,7 @@ class ProductDAO implements DAOInterface
      * or false otherwise.
      * 
      * @param DTOInterface $data
-     * @param string $primaryKey
+     * @param string       $primaryKey
      * 
      * @throws InvalidArgumentException
      * 
@@ -156,6 +180,7 @@ class ProductDAO implements DAOInterface
      * It returns true if the deletion was successful or false otherwise.
      * 
      * @param DTOInterface $conditions
+     * 
      * @throws InvalidArgumentException
      * 
      * @return bool
@@ -197,7 +222,7 @@ class ProductDAO implements DAOInterface
      *      category_id = :category_id AND price < :max_price;";
      * $results = $bookDAO->rawQuery($rawQuery, $productDTO)...
      * 
-     * @param string $rawQuery
+     * @param string       $rawQuery
      * @param DTOInterface $conditions
      * 
      * @throws InvalidArgumentException

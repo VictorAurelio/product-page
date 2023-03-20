@@ -1,6 +1,18 @@
 <?php
 
-namespace App\DTO;
+/**
+ * This file is part of my Product Page project.
+ *
+ * @category  DTO
+ * @package   App\DTO\Product
+ * @author    Victor Aurélio Rodrigues Ribeiro <victoraurelio_198@hotmail.com>
+ * @copyright (c) 2023 Victor Aurelio
+ * @link      https://github.com/VictorAurelio/product-page
+ */
+
+namespace App\DTO\Product;
+
+use App\DTO\DTOInterface;
 
 class ProductOptionDTO implements DTOInterface
 {
@@ -17,8 +29,8 @@ class ProductOptionDTO implements DTOInterface
     public function getProductId() {
         return $this->_productId;
     }
-    public function setProductId(ProductDTO $productDTO) {
-        $this->_productId = $productDTO->getId();
+    public function setProductId($id) {
+        $this->_productId = $id;
     }
     public function getOptionId() {
         return $this->_optionId;
@@ -35,9 +47,9 @@ class ProductOptionDTO implements DTOInterface
     public function toArray(): array
     {
         return [
-            'productId' => $this->_productId,
-            'optionId' => $this->_optionId,
-            'optionValue' => $this->_optionValue,
+            'product_id' => $this->_productId,
+            'option_id' => $this->_optionId,
+            'option_value' => $this->_optionValue,
         ];
     }
 }

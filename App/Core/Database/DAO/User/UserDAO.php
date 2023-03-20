@@ -4,15 +4,16 @@
  * This file is part of my Product Page project.
  *
  * @category  DAO
- * @package   App\Core\Database\DAO
+ * @package   App\Core\Database\DAO\User
  * @author    Victor Aurélio Rodrigues Ribeiro <victoraurelio_198@hotmail.com>
  * @copyright (c) 2023 Victor Aurelio
  * @link      https://github.com/VictorAurelio/product-page
  */
 
-namespace App\Core\Database\DAO;
+namespace App\Core\Database\DAO\User;
 
 use App\Core\Database\DAO\DAOInterface;
+use App\Core\Database\DAO\DAO;
 use InvalidArgumentException;
 use App\DTO\DTOInterface;
 use App\DTO\UserDTO;
@@ -21,9 +22,13 @@ use Throwable;
 /**
  * Summary of UserDAO
  */
-// App/Core/Database/DAO/UserDAO.php
 class UserDAO implements DAOInterface
 {
+    /**
+     * Summary of dao
+     *
+     * @var DAO
+     */
     protected DAO $dao;
 
     /**
@@ -74,10 +79,11 @@ class UserDAO implements DAOInterface
     }
     /**
      * Summary of read
-     * @param array $selectors
-     * @param array $conditions
-     * @param array $parameters
-     * @param array $optional
+     *
+     * @param  array $selectors
+     * @param  array $conditions
+     * @param  array $parameters
+     * @param  array $optional
      * @return array
      */
     public function read(
@@ -96,10 +102,14 @@ class UserDAO implements DAOInterface
                 'extras' => $optional
             ];
             $query = $this->dao->getQueryBuilder()->buildQuery($args)->selectQuery();
-            $this->dao->getDataMapper()->persist(
-                $query,
-                $this->dao->getDataMapper()->buildQueryParameters($conditions, $parameters)
-            );
+            $this->dao
+                ->getDataMapper()
+                ->persist(
+                    $query,
+                    $this->dao
+                        ->getDataMapper()
+                        ->buildQueryParameters($conditions, $parameters)
+                );
             if ($this->dao->getDataMapper()->numRows() > 0) {
                 return $this->dao->getDataMapper()->results();
             }
@@ -108,6 +118,16 @@ class UserDAO implements DAOInterface
         }
         return ['no data'];
     }
+    /**
+     * Summary of update
+     * 
+     * @param DTOInterface $data
+     * @param string       $primaryKey
+     * 
+     * @throws InvalidArgumentException
+     * 
+     * @return bool
+     */
     public function update(DTOInterface $data, string $primaryKey): bool
     {
         if (!$data instanceof UserDTO) {
@@ -137,6 +157,15 @@ class UserDAO implements DAOInterface
 
         return false;
     }
+    /**
+     * Summary of delete
+     * 
+     * @param DTOInterface $conditions
+     * 
+     * @throws InvalidArgumentException
+     * 
+     * @return bool
+     */
     public function delete(DTOInterface $conditions): bool
     {
         if (!$conditions instanceof UserDTO) {
@@ -165,6 +194,15 @@ class UserDAO implements DAOInterface
 
         return false;
     }
+    /**
+     * Summary of findByEmail
+     * 
+     * @param UserDTO $fields
+     * 
+     * @throws InvalidArgumentException
+     * 
+     * @return UserDTO|null
+     */
     public function findByEmail(UserDTO $fields): ?UserDTO
     {
         if (!$fields instanceof UserDTO) {
@@ -183,7 +221,9 @@ class UserDAO implements DAOInterface
     
         $this->dao->getDataMapper()->persist(
             $sqlQuery,
-            $this->dao->getDataMapper()->buildQueryParameters([], ['email' => $fieldsArray['email']]),
+            $this->dao
+                ->getDataMapper()
+                ->buildQueryParameters([], ['email' => $fieldsArray['email']]),
             false
         );
         $result = $this->dao->getDataMapper()->result();
@@ -200,7 +240,15 @@ class UserDAO implements DAOInterface
     
         return $userDTO;
     }
-    public function rawQuery(string $rawQuery, DTOInterface $conditions)
+    /**
+     * Summary of rawQuery
+     * 
+     * @param string       $rawQuery
+     * @param DTOInterface $conditions
+     * 
+     * @return mixed
+     */
+    public function rawQuery(string $rawQuery, DTOInterface $conditions):mixed
     {
     }
 }

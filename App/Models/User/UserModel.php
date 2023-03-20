@@ -13,7 +13,7 @@
 namespace App\Models\User;
 
 use App\Core\Database\Connection\ConnectionInterface;
-use App\Core\Database\DAO\UserDAO;
+use App\Core\Database\DAO\User\UserDAO;
 use App\DTO\UserDTO;
 use App\Auth\Jwt;
 use App\Core\Model;

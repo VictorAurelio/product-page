@@ -30,7 +30,7 @@ use App\Core\Database\DAO\DAO;
 use App\Auth\Authentication;
 use App\Models\User\UserModel;
 use App\Core\Controller;
-use App\Core\Database\DAO\UserDAO;
+use App\Core\Database\DAO\User\UserDAO;
 
 class UserController extends Controller
 {

@@ -7,8 +7,8 @@ use App\Core\Database\DAO\DAO;
 use App\Core\Database\DatabaseService\DatabaseService;
 use App\Core\Database\QueryBuilder\MysqlQueryBuilder;
 use App\Core\Model;
-use App\DAO\ProductOptionDAO;
-use App\DTO\ProductOptionDTO;
+use App\Core\Database\DAO\Product\ProductOptionDAO;
+use App\DTO\Product\ProductOptionDTO;
 
 class ProductOption extends Model
 {

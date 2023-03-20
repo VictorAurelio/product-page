@@ -1,11 +1,21 @@
 <?php
 
-namespace App\DAO;
+/**
+ * This file is part of my Product Page project.
+ *
+ * @category  DAO
+ * @package   App\Core\Database\DAO\Product
+ * @author    Victor Aurélio Rodrigues Ribeiro <victoraurelio_198@hotmail.com>
+ * @copyright (c) 2023 Victor Aurelio
+ * @link      https://github.com/VictorAurelio/product-page
+ */
+
+namespace App\Core\Database\DAO\Product;
 
 use App\Models\ProductOption\ProductOption;
 use App\Core\Database\DAO\DAOInterface;
 use App\Core\Database\DAO\DAO;
-use App\DTO\ProductOptionDTO;
+use App\DTO\Product\ProductOptionDTO;
 use App\DTO\DTOInterface;
 use Throwable;
 
@@ -21,12 +31,19 @@ class ProductOptionDAO implements DAOInterface
         $this->_dao = $productOptionModel->getDao();
     }
 
-    public function create(DTOInterface $data): bool
+    /**
+     * Summary of create
+     * @param DTOInterface $data
+     * @throws \InvalidArgumentException
+     * @return int|null
+     */
+    public function create(DTOInterface $data): ?int
     {
         if (!$data instanceof ProductOptionDTO) {
-            throw new \InvalidArgumentException('Expected ProductOptionDTO instance.');
+            throw new \InvalidArgumentException(
+                'Expected ProductOptionDTO instance.'
+            );
         }
-
         try {
             // Convert ProductOptionDTO to array
             $fields = $data->toArray();
@@ -36,20 +53,28 @@ class ProductOptionDAO implements DAOInterface
                 'type' => 'insert',
                 'fields' => $fields
             ];
-            $query = $this->_dao->getQueryBuilder()->buildQuery($args)->insertQuery();
-            $this->_dao->getDataMapper()->persist(
-                $query,
-                $this->_dao->getDataMapper()->buildQueryParameters($fields)
-            );
+            $query = $this->_dao
+                ->getQueryBuilder()
+                ->buildQuery($args)
+                ->insertQuery();
+                echo '<br><br>';
+                var_dump($query);
+                echo '<br><br>';
+            $this->_dao
+                ->getDataMapper()
+                ->persist(
+                    $query,
+                    $this->_dao->getDataMapper()->buildQueryParameters($fields)
+                );
 
             if ($this->_dao->getDataMapper()->numRows() == 1) {
-                return true;
+                return $this->_dao->lastID();
             }
         } catch (Throwable $throwable) {
             throw $throwable;
         }
 
-        return false;
+        return 0;
     }
     public function read(
         array $selectors = [],
@@ -73,7 +98,15 @@ class ProductOptionDAO implements DAOInterface
         return false;
     }
 
-    public function rawQuery(string $rawQuery, DTOInterface $conditions)
+    /**
+     * Summary of rawQuery
+     * 
+     * @param string $rawQuery
+     * @param DTOInterface $conditions
+     * 
+     * @return mixed
+     */
+    public function rawQuery(string $rawQuery, DTOInterface $conditions): mixed
     {
         // Implementar rawQuery() para ProductCategory
     }

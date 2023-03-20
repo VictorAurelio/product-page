@@ -19,14 +19,54 @@ use App\DTO\DTOInterface;
  */
 interface DAOInterface
 {
-    public function create(DTOInterface $data): bool;
+    /**
+     * Summary of create
+     * 
+     * @param DTOInterface $data
+     * 
+     * @return ?int
+     */
+    public function create(DTOInterface $data): ?int;
+    /**
+     * Summary of read
+     * 
+     * @param array $selectors
+     * @param array $conditions
+     * @param array $parameters
+     * @param array $optional
+     * 
+     * @return array
+     */
     public function read(
         array $selectors = [],
         array $conditions = [],
         array $parameters = [],
         array $optional = []
     ): array;
+    /**
+     * Summary of update
+     * 
+     * @param DTOInterface $data
+     * @param string       $primaryKey
+     * 
+     * @return bool
+     */
     public function update(DTOInterface $data, string $primaryKey): bool;
+    /**
+     * Summary of delete
+     * 
+     * @param DTOInterface $conditions
+     * 
+     * @return bool
+     */
     public function delete(DTOInterface $conditions): bool;
-    public function rawQuery(string $rawQuery, DTOInterface $conditions);
+    /**
+     * Summary of rawQuery
+     *
+     * @param string       $rawQuery
+     * @param DTOInterface $conditions
+     * 
+     * @return mixed
+     */
+    public function rawQuery(string $rawQuery, DTOInterface $conditions): mixed;
 }

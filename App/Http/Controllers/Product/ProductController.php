@@ -13,32 +13,28 @@
 namespace App\Http\Controllers\Product;
 
 use App\Core\Database\DatabaseService\DatabaseService;
-use App\Core\Model\ProductCategory;
 use App\Core\Validation\Exception\ValidationException;
 use App\Core\Database\Connection\ConnectionInterface;
 use App\Core\Database\QueryBuilder\MysqlQueryBuilder;
 use App\Core\Validation\Rule\Data\DataSanitizer;
-use App\Core\Database\DatabaseFactory;
-use App\Core\Validation\Rule\InRule;
+use App\Core\Database\DAO\Product\ProductDAO;
+use App\Core\Validation\Rule\RequiredIfRule;
+use App\Models\ProductOption\ProductOption;
 use App\Core\Validation\Rule\RequiredRule;
+use App\Core\Validation\Rule\UniqueRule;
+use App\Core\Validation\Rule\ExistRule;
+use App\Core\Database\DatabaseFactory;
+use App\DTO\Product\ProductOptionDTO;
+use App\Core\Validation\Rule\InRule;
 use App\Core\Validation\Validator;
-use App\Database\DAO\Product\ProductDAO;
-use App\DTO\CategoryDTO;
-use App\DTO\OptionDTO;
-use App\DTO\ProductOptionDTO;
 use App\Models\Category\Category;
-use App\Models\Option\Option;
-use App\Models\Product\Book;
-use App\Models\Product\Dvd;
 use App\Models\Product\Furniture;
 use App\Models\Product\Product;
 use App\Core\Database\DAO\DAO;
-use App\Core\Controller;
-use App\Core\Validation\Rule\ExistRule;
-use App\Core\Validation\Rule\RequiredIfRule;
-use App\Core\Validation\Rule\UniqueRule;
-use App\Models\ProductOption\ProductOption;
 use InvalidArgumentException;
+use App\Models\Product\Book;
+use App\Models\Product\Dvd;
+use App\Core\Controller;
 
 class ProductController extends Controller
 {
@@ -79,47 +75,54 @@ class ProductController extends Controller
         // Read the request data
         $payload = $this->getRequestData();
         $data = $this->sanitizer->clean($payload);
-        // var_dump($payload);
         try {
             // Validate the necessary data
             $this->validator->validate($data, [
                 'product_type' => ['required', 'in:Book,Dvd,Furniture'],
-                'category_id' => ['required', 'exist:categories,id'],
                 'weight' => ['required_if:product_type,Book'],
                 'size_in_mb' => ['required_if:product_type,Dvd'],
                 'dimensions' => ['required_if:product_type,Furniture'],
             ]);
-
-            // Store or update the category
-            $categoryModel = new Category($this->getConnection());
-            $categoryDTO = new CategoryDTO();
-            $categoryDTO->setId($data['category_id']);
-            $categoryModel->store($categoryDTO);
-
             // Insert the product
             $productController = $this->getControllerInstance($data['product_type']);
+            
+            if($data['product_type'] === 'Book') {
+                $data['category_id'] = 1;
+            }
             $result = $productController->insertProduct($data);
 
-            $productId = $result['id'];
-            $categoryId = $data['category_id'];
-
-            // Get the ID of the corresponding option for the product type
-            $optionId = $this->getOptionIdByType($data['product_type']);
-
-            // Save the selected option for this product
-            $productOptionDTO = new ProductOptionDTO();
-            $productOptionDTO->setProductId($productId);
-            $productOptionDTO->setOptionId($optionId);
-            $productOptionDTO->setOptionValue($data['option_value']);
-
-            $productOption = new ProductOption($this->getConnection());
-            $productOption->createOption($productOptionDTO);
-
-            $this->json($result['message'], $result['status']);
+            if (is_array($result) && isset($result['id'])) {
+                $productId = $result['id'];
+        
+                // Get the ID of the corresponding option for the product type
+                $optionId = $this->getOptionIdByType($data['product_type']);
+        
+                // Get the option value based on the product type
+                $optionValueKey = match ($data['product_type']) {
+                    'Book' => 'weight',
+                    'Dvd' => 'size_in_mb',
+                    'Furniture' => 'dimensions',
+                    default => throw new InvalidArgumentException('Invalid product type'),
+                };
+        
+                // Save the selected option for this product
+                $productOptionDTO = new ProductOptionDTO();
+                $productOptionDTO->setProductId($productId);
+                $productOptionDTO->setOptionId($optionId);
+                $productOptionDTO->setOptionValue($data[$optionValueKey]);
+        
+                $productOption = new ProductOption($this->getConnection());
+                $productOption->createOption($productOptionDTO);
+        
+                // $this->json($result['message'], $result['status']);
+            } else {
+                // Handle error when result is not an array or doesn't contain the 'id' key
+                // $this->json(['message' => 'Error creating product and retrieving ID'], 500);
+            }
         } catch (ValidationException $e) {
             $this->json($e->getErrors(), 400);
-        } catch (\InvalidArgumentException $e) {
-            $this->json(['message' => $e->getMessage()], 400);
+        } catch (InvalidArgumentException $e) {
+            // $this->json(['message' => $e->getMessage()], 400);
         }
     }
     private function getControllerInstance(string $type): ProductSpecificControllerInterface
@@ -128,7 +131,6 @@ class ProductController extends Controller
             'Book' => new Book($this->getConnection()),
             'Dvd' => new Dvd($this->getConnection()),
             'Furniture' => new Furniture($this->getConnection()),
-            'category' => new Category($this->getConnection()),
             default => throw new InvalidArgumentException("Invalid product type"),
         };
 
@@ -136,48 +138,18 @@ class ProductController extends Controller
             'Book' => BookController::class,
             'Dvd' => DvdController::class,
             'Furniture' => FurnitureController::class,
-            'category' => CategoryController::class,
             default => throw new InvalidArgumentException("Invalid product type"),
         };
         return new $class($this, $productModel);
     }
     public function getOptionIdByType(string $type): int
     {
-        switch ($type) {
-            case 'Book':
-                return 1; // ID da opção de peso (kg) para book
-            case 'Dvd':
-                return 2; // ID da opção de tamanho (MB) para DVDs
-            case 'Furniture':
-                return 3; // ID da opção de dimensões (HxWxL) para furniture
-            default:
-                throw new InvalidArgumentException('Invalid product type.');
-        }
-    }
-    public function insertOption(array $data): int
-    {
-        $data = $this->sanitizer->clean($data);
-
-        $this->validator->validate($data, [
-            'option_name' => ['required'],
-            'option_value' => ['required'],
-        ]);
-
-        $optionModel = new Option($this->getConnection());
-        $optionDTO = new OptionDTO($data['option_id'], $data['option_name']);
-        $optionDTO->setName($data['option_name']);
-
-        $optionId = $optionModel->store($optionDTO);
-
-        $productOptionDTO = new ProductOptionDTO();
-        $productOptionDTO->setProductId($data['product_id']);
-        $productOptionDTO->setOptionId($optionId);
-        $productOptionDTO->setOptionValue($data['option_value']);
-
-        $productOption = new ProductOption($this->getConnection());
-        $productOption->createOption($productOptionDTO);
-
-        return $optionId;
+        return match ($type) {
+            'Book' => 1, // Weight in (kg) ID for book
+            'Dvd' => 2, // Size in (MB) ID for DVDs
+            'Furniture' => 3, // Dimensions in (HxWxL) ID for furniture
+            default => throw new InvalidArgumentException('Invalid product type.'),
+        };
     }
     public function getConnection(): ConnectionInterface
     {

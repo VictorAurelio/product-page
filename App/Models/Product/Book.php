@@ -13,7 +13,7 @@
 namespace App\Models\Product;
 
 use App\DTO\DTOInterface;
-use App\DTO\BookDTO;
+use App\DTO\Product\BookDTO;
 
 class Book extends Product
 {
