@@ -13,11 +13,15 @@
 namespace App\Models\Product;
 
 use App\DTO\DTOInterface;
+use App\DTO\Product\DvdDTO;
 
 class Dvd extends Product
 {
     public function specificAttributes(DTOInterface $productDTO): array
     {
-        return [];
+        /** @var DvdDTO $productDTO */
+        return [
+            'size' => $productDTO->getSize(),
+        ];
     }
 }

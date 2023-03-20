@@ -80,15 +80,18 @@ class ProductController extends Controller
             $this->validator->validate($data, [
                 'product_type' => ['required', 'in:Book,Dvd,Furniture'],
                 'weight' => ['required_if:product_type,Book'],
-                'size_in_mb' => ['required_if:product_type,Dvd'],
+                'size' => ['required_if:product_type,Dvd'],
                 'dimensions' => ['required_if:product_type,Furniture'],
             ]);
             // Insert the product
             $productController = $this->getControllerInstance($data['product_type']);
             
-            if($data['product_type'] === 'Book') {
-                $data['category_id'] = 1;
-            }
+            $data['category_id'] = match ($data['product_type']) {
+                'Book' => 1,
+                'Dvd' => 2,
+                'Furniture' => 3,
+                default => throw new InvalidArgumentException("Invalid product type"),
+            };
             $result = $productController->insertProduct($data);
 
             if (is_array($result) && isset($result['id'])) {
@@ -115,14 +118,12 @@ class ProductController extends Controller
                 $productOption->createOption($productOptionDTO);
         
                 // $this->json($result['message'], $result['status']);
-            } else {
-                // Handle error when result is not an array or doesn't contain the 'id' key
-                // $this->json(['message' => 'Error creating product and retrieving ID'], 500);
             }
+            $this->json(['message' => $result['message']], $result['status']);
         } catch (ValidationException $e) {
             $this->json($e->getErrors(), 400);
         } catch (InvalidArgumentException $e) {
-            // $this->json(['message' => $e->getMessage()], 400);
+            $this->json(['message' => $e->getMessage()], 400);
         }
     }
     private function getControllerInstance(string $type): ProductSpecificControllerInterface

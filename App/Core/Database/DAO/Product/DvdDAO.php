@@ -13,38 +13,38 @@
 namespace App\Core\Database\DAO\Product;
 
 use App\DTO\DTOInterface;
-use App\DTO\Product\BookDTO;
-use App\Models\Product\Book;
+use App\DTO\Product\DvdDTO;
+use App\Models\Product\Dvd;
 use InvalidArgumentException;
 use Throwable;
 
 /**
- * Summary of BookDAO
+ * Summary of DvdDAO
  */
-class BookDAO extends ProductDAO
+class DvdDAO extends ProductDAO
 {
     /**
-     * Summary of bookModel
+     * Summary of dvdModel
      *
-     * @var Book
+     * @var Dvd
      */
-    protected Book $bookModel;
+    protected Dvd $dvdModel;
     /**
      * Summary of __construct
      *
-     * @param Book $bookModel
+     * @param Dvd $dvdModel
      */
-    public function __construct(Book $bookModel)
+    public function __construct(Dvd $dvdModel)
     {
-        parent::__construct($bookModel);
-        $this->bookModel = $bookModel;
+        parent::__construct($dvdModel);
+        $this->dvdModel = $dvdModel;
     }
     public function lastId(): int
     {
         return parent::lastId();
     }
     /**
-     * This method receives a BookDTO with the data necessary to create a new book
+     * This method receives a DvdDTO with the data necessary to create a new dvd
      * and creates a new record in the database. It returns true if the creation
      * was successful and false otherwise.
      *
@@ -56,14 +56,14 @@ class BookDAO extends ProductDAO
      */
     public function create(DTOInterface $data): ?int
     {
-        if (!$data instanceof BookDTO) {
-            throw new InvalidArgumentException('Expected BookDTO instance.');
+        if (!$data instanceof DvdDTO) {
+            throw new InvalidArgumentException('Expected DvdDTO instance.');
         }
         try {
-            // Convert BookDTO to array
+            // Convert DvdDTO to array
             $fields = $data->toArray();
-            // Remove the 'weight' field
-            unset($fields['weight']);
+            // Remove the 'size' field
+            unset($fields['size']);
             
             $args = [
                 'table' => $this->dao->getSchema(),
@@ -86,8 +86,8 @@ class BookDAO extends ProductDAO
         return 0; // Return 0 if the insert fails
     }
     /**
-     * This method receives a BookDTO with the data necessary to update a book
-     * and an ID representing the book to be updated. It updates the book record
+     * This method receives a DvdDTO with the data necessary to update a dvd
+     * and an ID representing the dvd to be updated. It updates the dvd record
      * in the database and returns true if the update was successful and false
      * otherwise.
      *
@@ -100,17 +100,17 @@ class BookDAO extends ProductDAO
      */
     public function update(DTOInterface $data, string $primaryKey): bool
     {
-        if (!$data instanceof BookDTO) {
-            throw new InvalidArgumentException('Expected BookDTO instance.');
+        if (!$data instanceof DvdDTO) {
+            throw new InvalidArgumentException('Expected DvdDTO instance.');
         }
     
-        // Convert BookDTO to array
+        // Convert DvdDTO to array
         $fields = $data->toArray();
     
-        // Merge specific attributes of Book with the Product attributes
+        // Merge specific attributes of Dvd with the Product attributes
         $mergedFields = array_merge(
             $fields, 
-            $this->bookModel->specificAttributes($data)
+            $this->dvdModel->specificAttributes($data)
         );
         try {
             $args = [

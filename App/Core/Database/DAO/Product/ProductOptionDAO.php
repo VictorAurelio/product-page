@@ -57,9 +57,6 @@ class ProductOptionDAO implements DAOInterface
                 ->getQueryBuilder()
                 ->buildQuery($args)
                 ->insertQuery();
-                echo '<br><br>';
-                var_dump($query);
-                echo '<br><br>';
             $this->_dao
                 ->getDataMapper()
                 ->persist(

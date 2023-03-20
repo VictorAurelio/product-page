@@ -63,8 +63,6 @@ class Core
             if (count($url) > 0) {
                 $parameters = $url;
             }
-
-            var_dump($currentController);
         } else {
             $currentController = $this->_homeController;
             $currentAction = DEFAULT_ACTION;
