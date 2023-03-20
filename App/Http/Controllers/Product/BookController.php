@@ -14,10 +14,12 @@ namespace App\Http\Controllers\Product;
 
 use App\Http\Controllers\Product\ProductSpecificControllerInterface;
 use App\Http\Controllers\Product\ProductController;
+use App\Models\ProductOption\ProductOption;
 use App\Database\DAO\Product\BookDAO;
+use App\DTO\ProductOptionDTO;
 use App\Models\Product\Book;
-use App\DTO\BookDTO;
 use App\DTO\DTOInterface;
+use App\DTO\BookDTO;
 
 class BookController implements ProductSpecificControllerInterface
 {
@@ -33,7 +35,7 @@ class BookController implements ProductSpecificControllerInterface
     public function insertProduct(array $data): array
     {
         $data = $this->productController->getSanitizer()->clean($data);
-
+    
         $this->productController->getValidator()->validate($data, [
             'name' => ['required'],
             'sku' => ['required', 'unique'],
@@ -42,16 +44,27 @@ class BookController implements ProductSpecificControllerInterface
             'weight' => ['required']
         ]);
     
-        $bookDTO = $this->createDTO($data);
+        // Get the ID of the corresponding option for the product type
+        $optionId = $this->productController->getOptionIdByType('Book');
+    
+        $bookDTO = $this->createDTO($data, $data['weight']);
         $book = $this->bookDAO->create($bookDTO);
     
+        if($book instanceof Book) {
+            $productOptionDTO = new ProductOptionDTO();
+            $productOptionDTO->setProductId($bookDTO);
+            $productOptionDTO->setOptionId($optionId);
+            $productOptionDTO->setOptionValue($data['weight']);
+            $productOption = new ProductOption($this->productController->getConnection());
+            $productOption->createOption($productOptionDTO);
+        }
         $result = match (true) {
             !$book => ['message' => 'Error creating book', 'status' => 500],
             default => ['message' => 'Book created successfully', 'status' => 201],
         };
         return $result;
     }
-    public function createDTO(array $data): DTOInterface
+    public function createDTO(array $data, $optionValue): DTOInterface
     {
         $bookDTO = new BookDTO();
         $bookDTO->setId($data['id'] ?? null);
@@ -60,6 +73,7 @@ class BookController implements ProductSpecificControllerInterface
         $bookDTO->setPrice($data['price']);
         $bookDTO->setCategoryId($data['category_id']);
         $bookDTO->setWeight($data['weight']);
+        $bookDTO->setWeight($optionValue);
 
         return $bookDTO;
     }

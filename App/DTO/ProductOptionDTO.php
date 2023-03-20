@@ -17,8 +17,8 @@ class ProductOptionDTO implements DTOInterface
     public function getProductId() {
         return $this->_productId;
     }
-    public function setProductId($productId) {
-        $this->_productId = $productId;
+    public function setProductId(ProductDTO $productDTO) {
+        $this->_productId = $productDTO->getId();
     }
     public function getOptionId() {
         return $this->_optionId;
@@ -34,6 +34,10 @@ class ProductOptionDTO implements DTOInterface
     }
     public function toArray(): array
     {
-        return [];
+        return [
+            'productId' => $this->_productId,
+            'optionId' => $this->_optionId,
+            'optionValue' => $this->_optionValue,
+        ];
     }
 }

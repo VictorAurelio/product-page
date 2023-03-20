@@ -24,8 +24,10 @@ use App\Core\Validation\Rule\RequiredRule;
 use App\Core\Validation\Validator;
 use App\Database\DAO\Product\ProductDAO;
 use App\DTO\CategoryDTO;
+use App\DTO\OptionDTO;
 use App\DTO\ProductOptionDTO;
 use App\Models\Category\Category;
+use App\Models\Option\Option;
 use App\Models\Product\Book;
 use App\Models\Product\Dvd;
 use App\Models\Product\Furniture;
@@ -33,8 +35,10 @@ use App\Models\Product\Product;
 use App\Core\Database\DAO\DAO;
 use App\Core\Controller;
 use App\Core\Validation\Rule\ExistRule;
+use App\Core\Validation\Rule\RequiredIfRule;
 use App\Core\Validation\Rule\UniqueRule;
 use App\Models\ProductOption\ProductOption;
+use InvalidArgumentException;
 
 class ProductController extends Controller
 {
@@ -59,6 +63,7 @@ class ProductController extends Controller
             ->addRule('unique', new UniqueRule($this->getConnection(), Product::TABLESCHEMA, 'sku'))
             ->addRule('required', new RequiredRule())
             ->addRule('exist', new ExistRule($this->getConnection()))
+            ->addRule('required_if', new RequiredIfRule())
             ->addRule('in', new InRule());
     }
     public function index()
@@ -76,34 +81,35 @@ class ProductController extends Controller
         $data = $this->sanitizer->clean($payload);
         // var_dump($payload);
         try {
-            // Validate the 'type' field!
+            // Validate the necessary data
             $this->validator->validate($data, [
                 'product_type' => ['required', 'in:Book,Dvd,Furniture'],
                 'category_id' => ['required', 'exist:categories,id'],
-                'option_id' => ['required', 'exist:options,id'],
-                'option_value' => ['required'],
+                'weight' => ['required_if:product_type,Book'],
+                'size_in_mb' => ['required_if:product_type,Dvd'],
+                'dimensions' => ['required_if:product_type,Furniture'],
             ]);
 
-             // Store or update the category
+            // Store or update the category
             $categoryModel = new Category($this->getConnection());
             $categoryDTO = new CategoryDTO();
             $categoryDTO->setId($data['category_id']);
             $categoryModel->store($categoryDTO);
 
-            // Insert the product and associate it with the category
-            $productController = $this->getControllerInstance($data['type']);
+            // Insert the product
+            $productController = $this->getControllerInstance($data['product_type']);
             $result = $productController->insertProduct($data);
 
             $productId = $result['id'];
             $categoryId = $data['category_id'];
 
-            $productCategoryDAO = new ProductCategory($this->getConnection());
-            $productCategoryDAO->createProductCategory($productId, $categoryId);
+            // Get the ID of the corresponding option for the product type
+            $optionId = $this->getOptionIdByType($data['product_type']);
 
             // Save the selected option for this product
             $productOptionDTO = new ProductOptionDTO();
             $productOptionDTO->setProductId($productId);
-            $productOptionDTO->setOptionId($data['option_id']);
+            $productOptionDTO->setOptionId($optionId);
             $productOptionDTO->setOptionValue($data['option_value']);
 
             $productOption = new ProductOption($this->getConnection());
@@ -119,21 +125,59 @@ class ProductController extends Controller
     private function getControllerInstance(string $type): ProductSpecificControllerInterface
     {
         $productModel = match ($type) {
-            'book' => new Book($this->getConnection()),
-            'dvd' => new Dvd($this->getConnection()),
-            'furniture' => new Furniture($this->getConnection()),
+            'Book' => new Book($this->getConnection()),
+            'Dvd' => new Dvd($this->getConnection()),
+            'Furniture' => new Furniture($this->getConnection()),
             'category' => new Category($this->getConnection()),
-            default => throw new \InvalidArgumentException("Invalid product type"),
+            default => throw new InvalidArgumentException("Invalid product type"),
         };
-    
+
         $class = match ($type) {
-            'book' => BookController::class,
-            'dvd' => DvdController::class,
-            'furniture' => FurnitureController::class,
+            'Book' => BookController::class,
+            'Dvd' => DvdController::class,
+            'Furniture' => FurnitureController::class,
             'category' => CategoryController::class,
-            default => throw new \InvalidArgumentException("Invalid product type"),
-        };    
+            default => throw new InvalidArgumentException("Invalid product type"),
+        };
         return new $class($this, $productModel);
+    }
+    public function getOptionIdByType(string $type): int
+    {
+        switch ($type) {
+            case 'Book':
+                return 1; // ID da opção de peso (kg) para book
+            case 'Dvd':
+                return 2; // ID da opção de tamanho (MB) para DVDs
+            case 'Furniture':
+                return 3; // ID da opção de dimensões (HxWxL) para furniture
+            default:
+                throw new InvalidArgumentException('Invalid product type.');
+        }
+    }
+    public function insertOption(array $data): int
+    {
+        $data = $this->sanitizer->clean($data);
+
+        $this->validator->validate($data, [
+            'option_name' => ['required'],
+            'option_value' => ['required'],
+        ]);
+
+        $optionModel = new Option($this->getConnection());
+        $optionDTO = new OptionDTO($data['option_id'], $data['option_name']);
+        $optionDTO->setName($data['option_name']);
+
+        $optionId = $optionModel->store($optionDTO);
+
+        $productOptionDTO = new ProductOptionDTO();
+        $productOptionDTO->setProductId($data['product_id']);
+        $productOptionDTO->setOptionId($optionId);
+        $productOptionDTO->setOptionValue($data['option_value']);
+
+        $productOption = new ProductOption($this->getConnection());
+        $productOption->createOption($productOptionDTO);
+
+        return $optionId;
     }
     public function getConnection(): ConnectionInterface
     {

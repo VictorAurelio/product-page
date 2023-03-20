@@ -11,11 +11,11 @@ use InvalidArgumentException;
 class OptionDTO implements DTOInterface
 {
     private ?int $_id;
-    private string $_value;
-    public function __construct(?int $id = null, string $value)
+    private string $_name;
+    public function __construct(?int $id = null, string $name)
     {
         $this->_id = $id;
-        $this->_value = $value;
+        $this->_name = $name;
     }
     public function getId() {
         return $this->_id;
@@ -24,22 +24,22 @@ class OptionDTO implements DTOInterface
     public function setId($id) {
         $this->_id = $id;
     }
-    public function getValue()
+    public function getName()
     {
-        return $this->_value;
+        return $this->_name;
     }    
-    public function setValue($value)
+    public function setName($name)
     {
-        if(empty(trim($value))) {
+        if(empty(trim($name))) {
             throw new InvalidArgumentException('Option name cannot be empty.');
         }
-        $this->_value = $value;
+        $this->_name = $name;
     }  
     public function toArray(): array
     {
         return [
             'id' => $this->_id,
-            'value' => $this->_value
+            'name' => $this->_name
         ];
     }
 }

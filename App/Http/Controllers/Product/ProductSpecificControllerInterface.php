@@ -17,6 +17,6 @@ use App\DTO\DTOInterface;
 interface ProductSpecificControllerInterface
 {
     public function insertProduct(array $data): array;
-    public function createDTO(array $data): DTOInterface;
+    public function createDTO(array $data, float $optionValue): DTOInterface;
 
 }

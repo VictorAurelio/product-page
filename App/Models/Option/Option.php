@@ -32,7 +32,7 @@ class Option extends Model
         );
     }
 
-    public function createOption(OptionDTO $optionDTO): bool
+    public function store(OptionDTO $optionDTO): bool
     {
         return $this->optionDAO->create($optionDTO);
     }

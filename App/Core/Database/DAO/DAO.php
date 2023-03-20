@@ -16,45 +16,14 @@ use App\Core\Database\DatabaseService\DatabaseService;
 use App\Core\Database\QueryBuilder\QueryBuilder;
 use Throwable;
 
-/**
- * Summary of DAO
- */
 class DAO
 {
-    /**
-     * @var QueryBuilder 
-     */
     protected QueryBuilder $queryBuilder;
-
-    /**
-     * @var DatabaseService
-     */
     protected DatabaseService $dataMapper;
-
-    /**
-     * @var string 
-     */
     protected string $tableSchemaID;
-
-    /**
-     * @var string 
-     */
     protected string $tableSchema;
-
-    /**
-     * @var array 
-     */
     protected array $options;
 
-    /**
-     * Main constructor
-     *
-     * @param DatabaseService   $dataMapper
-     * @param QueryBuilder $queryBuilder
-     * @param string       $tableSchema
-     * @param string       $tableSchemaID
-     * @param array|null   $options
-     */
     public function __construct(
         DatabaseService $dataMapper,
         QueryBuilder $queryBuilder,
