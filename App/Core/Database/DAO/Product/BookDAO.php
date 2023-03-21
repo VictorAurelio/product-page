@@ -133,5 +133,8 @@ class BookDAO extends ProductDAO
     
         return false;
     }
-    
+    public function getAllProducts()
+    {
+        return $this->read();
+    }    
 }

@@ -12,39 +12,39 @@
 
 namespace App\Core\Database\DAO\Product;
 
+use App\DTO\Product\FurnitureDTO;
+use App\Models\Product\Furniture;
 use InvalidArgumentException;
-use App\DTO\Product\DvdDTO;
-use App\Models\Product\Dvd;
 use App\DTO\DTOInterface;
 use Throwable;
 
 /**
- * Summary of DvdDAO
+ * Summary of FurnitureDAO
  */
-class DvdDAO extends ProductDAO
+class FurnitureDAO extends ProductDAO
 {
     /**
-     * Summary of dvdModel
+     * Summary of furnitureModel
      *
-     * @var Dvd
+     * @var Furniture
      */
-    protected Dvd $dvdModel;
+    protected Furniture $furnitureModel;
     /**
      * Summary of __construct
      *
-     * @param Dvd $dvdModel
+     * @param Furniture $furnitureModel
      */
-    public function __construct(Dvd $dvdModel)
+    public function __construct(Furniture $furnitureModel)
     {
-        parent::__construct($dvdModel);
-        $this->dvdModel = $dvdModel;
+        parent::__construct($furnitureModel);
+        $this->furnitureModel = $furnitureModel;
     }
     public function lastId(): int
     {
         return parent::lastId();
     }
     /**
-     * This method receives a DvdDTO with the data necessary to create a new dvd
+     * This method receives a FurnitureDTO with the data necessary to create a new furniture
      * and creates a new record in the database. It returns true if the creation
      * was successful and false otherwise.
      *
@@ -56,14 +56,14 @@ class DvdDAO extends ProductDAO
      */
     public function create(DTOInterface $data): ?int
     {
-        if (!$data instanceof DvdDTO) {
-            throw new InvalidArgumentException('Expected DvdDTO instance.');
+        if (!$data instanceof FurnitureDTO) {
+            throw new InvalidArgumentException('Expected FurnitureDTO instance.');
         }
         try {
-            // Convert DvdDTO to array
+            // Convert FurnitureDTO to array
             $fields = $data->toArray();
-            // Remove the 'size' field
-            unset($fields['size']);
+            // Remove the 'dimensions' field
+            unset($fields['dimensions']);
             
             $args = [
                 'table' => $this->dao->getSchema(),
@@ -86,8 +86,8 @@ class DvdDAO extends ProductDAO
         return 0; // Return 0 if the insert fails
     }
     /**
-     * This method receives a DvdDTO with the data necessary to update a dvd
-     * and an ID representing the dvd to be updated. It updates the dvd record
+     * This method receives a FurnitureDTO with the data necessary to update a furniture
+     * and an ID representing the furniture to be updated. It updates the furniture record
      * in the database and returns true if the update was successful and false
      * otherwise.
      *
@@ -100,17 +100,17 @@ class DvdDAO extends ProductDAO
      */
     public function update(DTOInterface $data, string $primaryKey): bool
     {
-        if (!$data instanceof DvdDTO) {
-            throw new InvalidArgumentException('Expected DvdDTO instance.');
+        if (!$data instanceof FurnitureDTO) {
+            throw new InvalidArgumentException('Expected FurnitureDTO instance.');
         }
     
-        // Convert DvdDTO to array
+        // Convert FurnitureDTO to array
         $fields = $data->toArray();
     
-        // Merge specific attributes of Dvd with the Product attributes
+        // Merge specific attributes of Furniture with the Product attributes
         $mergedFields = array_merge(
             $fields, 
-            $this->dvdModel->specificAttributes($data)
+            $this->furnitureModel->specificAttributes($data)
         );
         try {
             $args = [

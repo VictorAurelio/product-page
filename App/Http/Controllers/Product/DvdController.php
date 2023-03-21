@@ -12,12 +12,12 @@
 
 namespace App\Http\Controllers\Product;
 
-use App\DTO\Product\DvdDTO;
 use App\Http\Controllers\Product\ProductSpecificControllerInterface;
 use App\Http\Controllers\Product\ProductController;
 use App\Models\ProductOption\ProductOption;
 use App\Core\Database\DAO\Product\DvdDAO;
 use App\DTO\Product\ProductOptionDTO;
+use App\DTO\Product\DvdDTO;
 use App\Models\Product\Dvd;
 use App\DTO\DTOInterface;
 
@@ -26,11 +26,11 @@ class DvdController implements ProductSpecificControllerInterface
     protected ProductController $productController;
     protected Dvd $productModel;
     protected DvdDAO $dvdDAO;
-    public function __construct(ProductController $productController, Dvd $bookModel)
+    public function __construct(ProductController $productController, Dvd $dvdModel)
     {
         $this->productController = $productController;
         $this->productModel = new Dvd($this->productController->getConnection());
-        $this->dvdDAO = new DvdDAO($bookModel);
+        $this->dvdDAO = new DvdDAO($dvdModel);
     }
     public function insertProduct(array $data): array
     {
@@ -74,5 +74,9 @@ class DvdController implements ProductSpecificControllerInterface
         $dvdDTO->setSize($optionValue);
 
         return $dvdDTO;
+    }
+    public function getDAO(): DvdDAO
+    {
+        return $this->dvdDAO;
     }
 }

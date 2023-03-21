@@ -152,6 +152,18 @@ class ProductController extends Controller
             default => throw new InvalidArgumentException('Invalid product type.'),
         };
     }
+    public function getAllProducts(): array
+    {
+        $bookController = $this->getControllerInstance('Book');
+        $dvdController = $this->getControllerInstance('Dvd');
+        $furnitureController = $this->getControllerInstance('Furniture');
+    
+        $books = $bookController->getDAO()->getAllProducts();
+        $dvds = $dvdController->getDAO()->getAllProducts();
+        $furnitures = $furnitureController->getDAO()->getAllProducts();
+    
+        return array_merge($books, $dvds, $furnitures);
+    }
     public function getConnection(): ConnectionInterface
     {
         return $this->connection;

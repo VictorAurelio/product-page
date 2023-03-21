@@ -75,4 +75,8 @@ class BookController implements ProductSpecificControllerInterface
 
         return $bookDTO;
     }
+    public function getDAO(): BookDAO
+    {
+        return $this->bookDAO;
+    }
 }
