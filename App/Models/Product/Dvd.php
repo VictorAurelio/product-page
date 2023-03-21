@@ -17,6 +17,11 @@ use App\DTO\Product\DvdDTO;
 
 class Dvd extends Product
 {
+    public function getCategoryId(): int
+    {
+        echo 'test';
+        return 2;
+    }
     public function specificAttributes(DTOInterface $productDTO): array
     {
         /** @var DvdDTO $productDTO */

@@ -157,12 +157,24 @@ class ProductController extends Controller
         $bookController = $this->getControllerInstance('Book');
         $dvdController = $this->getControllerInstance('Dvd');
         $furnitureController = $this->getControllerInstance('Furniture');
-    
-        $books = $bookController->getDAO()->getAllProducts();
-        $dvds = $dvdController->getDAO()->getAllProducts();
-        $furnitures = $furnitureController->getDAO()->getAllProducts();
-    
-        return array_merge($books, $dvds, $furnitures);
+
+        $books = $bookController->getDAO()->getAllBooks();
+        $dvds = $dvdController->getDAO()->getAllDvds();
+        $furnitures = $furnitureController->getDAO()->getAllFurnitures();
+
+        $allProducts = array_merge($books, $dvds, $furnitures);
+
+        usort($allProducts, function($a, $b) {
+            return $b['id'] - $a['id'];
+        });
+
+        return $allProducts;
+    }
+    public function showAllProducts()
+    {
+        $allProducts = $this->getAllProducts();
+
+        $this->json($allProducts, 200);
     }
     public function getConnection(): ConnectionInterface
     {

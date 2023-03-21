@@ -12,10 +12,10 @@
 
 namespace App\Core\Database\DAO\Product;
 
-use App\DTO\DTOInterface;
+use InvalidArgumentException;
 use App\DTO\Product\BookDTO;
 use App\Models\Product\Book;
-use InvalidArgumentException;
+use App\DTO\DTOInterface;
 use Throwable;
 
 /**
@@ -133,8 +133,11 @@ class BookDAO extends ProductDAO
     
         return false;
     }
-    public function getAllProducts()
-    {
-        return $this->read();
-    }    
+    public function getAllBooks(): array {
+        $conditions = ['*'];
+        $category_id = $this->bookModel->getCategoryId();
+        $parameters = ["category_id = $category_id"];
+    
+        return $this->readWithOptions($conditions, $parameters);
+    }   
 }

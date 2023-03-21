@@ -90,12 +90,53 @@ class ProductDAO extends DAO implements DAOInterface
         }
         return 0; // Return 0 if the insert fails
     }
+
+    /**
+     * Summary of readWithOptions
+     * 
+     * @param array $selectors
+     * @param array $conditions
+     * @param array $parameters
+     * @param array $optional
+     * 
+     * @return array
+     */
+    public function readWithOptions(
+        array $selectors = [],
+        array $conditions = [],
+        array $parameters = []
+    ): array {
+        $selectors = array_merge($selectors, [
+            'products.id',
+            'products.category_id',
+            'products.product_name',
+            'products.sku',
+            'products.price',
+            'product_options.option_value',
+            'options.option_name',
+        ]);    
+        $query = $this->dao->getQueryBuilder()
+            ->buildQuery([
+                'type' => 'select',
+                'table' => 'products',
+                'selectors' => $selectors,
+                'conditions' => $conditions,
+                'params' => $parameters
+            ])
+            ->innerJoin('product_options', 'products.id = product_options.product_id')
+            ->innerJoin('options', 'product_options.option_id = options.id')
+            ->selectQuery();            
+        $this->dao->getDataMapper()->persist(
+            $query,
+            $this->dao->getDataMapper()->buildQueryParameters($conditions, $parameters)
+        );
+        $results = $this->dao->getDataMapper()->results();
+
+        return $results;
+    }
     
     /**
-     * This method receives an array of selectors, an array of conditions,
-     * an array of parameters, and an array of optional parameters.
-     * It returns an array with the results of the search. If there's no data,
-     * it returns an array with the message "no data".
+     * Summary of read
      * 
      * @param array $selectors
      * @param array $conditions
@@ -119,18 +160,26 @@ class ProductDAO extends DAO implements DAOInterface
                 'params' => $parameters,
                 'extras' => $optional
             ];
-            $query = $this->dao->getQueryBuilder()->buildQuery($args)->selectQuery();
-            $this->dao->getDataMapper()->persist(
-                $query,
-                $this->dao
-                    ->getDataMapper()
-                    ->buildQueryParameters($conditions, $parameters)
-            );
+            $query = $this->dao
+				->getQueryBuilder()
+				->buildQuery($args)
+				// ->innerJoin('product_options', 'products.id = product_options.product_id')
+				// ->innerJoin('options', 'product_options.option_id = options.id')
+				->selectQuery();
+            $this->dao
+                ->getDataMapper()
+                ->persist(
+                    $query,
+                    $this->dao
+                        ->getDataMapper()
+                        ->buildQueryParameters($conditions, $parameters)
+                );
+                // var_dump($query);
             if ($this->dao->getDataMapper()->numRows() > 0) {
                 return $this->dao->getDataMapper()->results();
             }
         } catch (Throwable $e) {
-            return $e->getMessage();
+            return [$e->getMessage()];
         }
         return ['no data'];
     }
@@ -242,7 +291,7 @@ class ProductDAO extends DAO implements DAOInterface
                 $rawQuery,
                 $this->dao->getDataMapper()->buildQueryParameters($conditionArray)
             );
-            
+
             if ($this->dao->getDataMapper()->numRows() > 0) {
                 return $this->dao->getDataMapper()->results();
             }
@@ -252,5 +301,5 @@ class ProductDAO extends DAO implements DAOInterface
 
         return ['no data'];
     }
-
+ 
 }

@@ -20,6 +20,7 @@ use App\Core\Database\QueryBuilder\Exception\QueryBuilderInvalidArgumentExceptio
 abstract class QueryBuilder implements QueryBuilderInterface
 {
     protected array $key = [];
+    protected array $joins = [];
     protected string $sqlQuery = '';
     protected const SQL_DEFAULT = [
         'conditions' => [],
@@ -88,6 +89,7 @@ abstract class QueryBuilder implements QueryBuilderInterface
             $selectors = (!empty($this->key['selectors'])) ? implode(", ", $this->key['selectors']) : '*';
             $this->sqlQuery = "SELECT {$selectors} FROM {$this->key['table']}";
             $this->sqlQuery =  $this->hasConditions();
+            $this->sqlQuery .= $this->orderByQuery();
             return $this->sqlQuery;
         }
         return false;
@@ -195,26 +197,21 @@ abstract class QueryBuilder implements QueryBuilderInterface
     {
         return isset($this->key[$key]);
     }
-    private function hasConditions()
+    public function hasConditions()
     {
-        if (isset($this->key['conditions']) && $this->key['conditions'] !='') {
-            if (is_array($this->key['conditions'])) {
-                $sort = [];
-                foreach (array_keys($this->key['conditions']) as $where) {
-                    if (isset($where) && $where !='') {
-                        $sort[] = $where . " = :" . $where;
-                    }
-                }
-                if (count($this->key['conditions']) > 0) {
-                    $this->sqlQuery .= " WHERE " . implode(" AND ", $sort);
-                }
-            }
-        } else if (empty($this->key['conditions'])) {
-            $this->sqlQuery = " WHERE 1";
+        foreach ($this->joins as $join) {
+            $this->sqlQuery .= " " . $join;
         }
+    
+        if (isset($this->key['conditions']) && !empty($this->key['conditions'])) {
+            if (is_array($this->key['conditions'])) {
+                $this->sqlQuery .= " WHERE " . implode(" AND ", $this->key['conditions']);
+            }
+        }
+    
         $this->sqlQuery .= $this->orderByQuery();
         $this->sqlQuery .= $this->queryOffset();
-
+    
         return $this->sqlQuery;
     }
     protected function queryLimit()
@@ -238,6 +235,11 @@ abstract class QueryBuilder implements QueryBuilderInterface
             $this->sqlQuery .= " LIMIT :offset, :limit"; /* this is the short syntax */
         }
 
+    }
+    public function innerJoin(string $table, string $onCondition): self
+    {
+        $this->joins[] = "INNER JOIN {$table} ON {$onCondition}";
+        return $this;
     }
 
     public function rawQuery(): string

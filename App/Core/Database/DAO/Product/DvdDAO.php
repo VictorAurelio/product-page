@@ -133,9 +133,12 @@ class DvdDAO extends ProductDAO
     
         return false;
     }
-    public function getAllProducts()
-    {
-        return $this->read();
-    }
-    
+    public function getAllDvds(): array {
+        $conditions = ['*'];
+        $category_id = $this->dvdModel->getCategoryId();
+        $parameters = ["category_id = $category_id"];    
+        
+        return $this->readWithOptions($conditions, $parameters);
+    }   
+     
 }

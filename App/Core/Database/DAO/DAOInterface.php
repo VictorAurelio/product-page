@@ -44,6 +44,21 @@ interface DAOInterface
         array $optional = []
     ): array;
     /**
+     * Summary of readWithOptions
+     * 
+     * @param array $selectors
+     * @param array $conditions
+     * @param array $parameters
+     * @param array $optional
+     * 
+     * @return array
+     */
+    public function readWithOptions(
+        array $selectors = [],
+        array $conditions = [],
+        array $parameters = []
+    ): array;
+    /**
      * Summary of update
      * 
      * @param DTOInterface $data

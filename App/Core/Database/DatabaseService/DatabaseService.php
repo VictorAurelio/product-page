@@ -177,7 +177,7 @@ class DatabaseService implements DatabaseServiceInterface
     public function results(): array
     {
         if ($this->_statement)
-            return $this->_statement->fetchAll();
+            return $this->_statement->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
@@ -197,36 +197,39 @@ class DatabaseService implements DatabaseServiceInterface
             throw $throwable;
         }
     }
-
-    /**
-     * Returns the query condition merged with the query parameters
-     * 
-     * @param array $conditions
-     * @param array $parameters
-     * @return array
-     */
     public function buildQueryParameters(array $conditions = [], array $parameters = []): array
     {
-        return (!empty($parameters) || (!empty($conditions)) ? array_merge($conditions, $parameters) : $parameters);
+        $allParameters = [];
+        foreach ($conditions as $condition) {
+            if (preg_match('/:(\w+)/', $condition, $matches)) {
+                $paramName = $matches[1];
+                if (isset($parameters[':' . $paramName])) {
+                    $allParameters[':' . $paramName] = $parameters[':' . $paramName];
+                }
+            }
+        }
+    
+        return $allParameters;
     }
-
     /**
-     * Persist queries to database
-     *
+     * Summary of persist
+     * 
      * @param string $sqlQuery
      * @param array $parameters
-     * @param bool $search defaults to false
+     * @param bool $search
+     * 
+     * @throws PDOException
+     * 
      * @return void
-     * @throws DataLayerException
      */
     public function persist(string $sqlQuery, array $parameters, bool $search = false): void
     {
-       // $this->start();
+        echo '<br><br>';
+        echo "SQL Query: " . $sqlQuery . PHP_EOL;echo '<br><br>';
+        echo "Parameters: " . json_encode($parameters) . PHP_EOL;echo '<br><br>';
         try {
             $this->prepare($sqlQuery)->bindParameters($parameters, $search)->execute();
-           //$this->commit();
         } catch (PDOException $e) {
-           // $this->revert();
            throw new PDOException('Data persistent error ' . $e->getMessage());
         }
     }

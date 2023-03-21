@@ -17,6 +17,10 @@ use App\DTO\Product\BookDTO;
 
 class Book extends Product
 {
+    public function getCategoryId(): int
+    {
+        return 1;
+    }
     public function specificAttributes(DTOInterface $productDTO): array
     {
         /** @var BookDTO $productDTO */

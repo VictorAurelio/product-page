@@ -13,11 +13,19 @@
 namespace App\Models\Product;
 
 use App\DTO\DTOInterface;
+use App\DTO\Product\FurnitureDTO;
 
 class Furniture extends Product
 {
+    public function getCategoryId(): int
+    {
+        return 3;
+    }
     public function specificAttributes(DTOInterface $productDTO): array
     {
-        return [];
+        /** @var FurnitureDTO $productDTO */
+        return [
+            'dimensions' => $productDTO->getDimensions(),
+        ];
     }
 }

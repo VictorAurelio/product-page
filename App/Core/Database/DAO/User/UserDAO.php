@@ -47,9 +47,9 @@ class UserDAO implements DAOInterface
      * 
      * @throws InvalidArgumentException
      * 
-     * @return bool
+     * @return ?int
      */
-    public function create(DTOInterface $data): bool
+    public function create(DTOInterface $data): ?int
     {
         if (!$data instanceof UserDTO) {
             throw new InvalidArgumentException('Expected UserDTO instance.');
@@ -70,12 +70,12 @@ class UserDAO implements DAOInterface
             );
 
             if ($this->dao->getDataMapper()->numRows() == 1) {
-                return true;
+                return $this->dao->lastID();
             }
         } catch (Throwable $throwable) {
             throw $throwable;
         }
-        return false;
+        return 0;
     }
     /**
      * Summary of read
@@ -208,9 +208,9 @@ class UserDAO implements DAOInterface
         if (!$fields instanceof UserDTO) {
             throw new InvalidArgumentException('Expected UserDTO instance.');
         }
-    
+
         $fieldsArray = $fields->toArray();
-    
+
         $sqlQuery = $this->dao->getQueryBuilder()->buildQuery(
             [
                 'type' => 'search',
@@ -218,7 +218,7 @@ class UserDAO implements DAOInterface
                 'table' => $this->dao->getSchema()
             ]
         )->exactSearchQuery();
-    
+
         $this->dao->getDataMapper()->persist(
             $sqlQuery,
             $this->dao
@@ -227,17 +227,17 @@ class UserDAO implements DAOInterface
             false
         );
         $result = $this->dao->getDataMapper()->result();
-    
+
         if ($result === null) {
             return null;
         }
-    
+
         $userDTO = new UserDTO();
         $userDTO->setId($result->id);
         $userDTO->setName($result->name);
         $userDTO->setEmail($result->email);
         $userDTO->setPassword($result->password);
-    
+
         return $userDTO;
     }
     /**
@@ -248,7 +248,19 @@ class UserDAO implements DAOInterface
      * 
      * @return mixed
      */
-    public function rawQuery(string $rawQuery, DTOInterface $conditions):mixed
+    public function rawQuery(string $rawQuery, DTOInterface $conditions): mixed
     {
+    }
+    /**
+     * Summary of readWithOptions
+     * @return array
+     */
+    public function readWithOptions(
+        array $selectors = [],
+        array $conditions = [],
+        array $parameters = [],
+        array $optional = []
+    ): array {
+        return [];
     }
 }

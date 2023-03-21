@@ -133,9 +133,57 @@ class FurnitureDAO extends ProductDAO
     
         return false;
     }
-    public function getAllProducts()
-    {
-        return $this->read();
-    }
+    /**
+     * Find all furnitures
+     * 
+     * @param array $selectors
+     * @param array $conditions
+     * @param array $parameters
+     * @param array $optional
+     * 
+     * @return array
+     */
+    // public function findAllFurnitures(
+    //     array $selectors = [],
+    //     array $conditions = [],
+    //     array $parameters = [],
+    // ): array {
+    //     try {
+    //         $args = [
+    //             'table' => $this->dao->getSchema(),
+    //             'type' => 'select',
+    //             'selectors' => $selectors,
+    //             'conditions' => $conditions,
+    //             'parameters' => $parameters,
+    //         ];
+    //         $query = $this->dao
+	// 			->getQueryBuilder()
+	// 			->buildQuery($args)
+	// 			->innerJoin('product_options', 'products.id = product_options.product_id')
+	// 			->innerJoin('options', 'product_options.option_id = options.id')
+	// 			->selectQuery();
+    //         $this->dao
+    //             ->getDataMapper()
+    //             ->persist(
+    //                 $query,
+    //                 $this->dao
+    //                     ->getDataMapper()
+    //                     ->buildQueryParameters($conditions)
+    //             );
+    //         if ($this->dao->getDataMapper()->numRows() > 0) {
+    //             return $this->dao->getDataMapper()->results();
+    //         }
+    //     } catch (Throwable $e) {
+    //         return [$e->getMessage()];
+    //     }
+    //     return ['no data'];
+    // }
+    public function getAllFurnitures(): array {
+        $conditions = ['*'];
+        $category_id = $this->furnitureModel->getCategoryId();
+        $parameters = ["category_id = $category_id"];
+
+        return $this->readWithOptions($conditions, $parameters);
+    }   
     
 }

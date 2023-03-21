@@ -130,6 +130,7 @@ class DAO
     {
         return $this->dataMapper->getLastId();
     }
+    
 
     /**
      * Summary of Where

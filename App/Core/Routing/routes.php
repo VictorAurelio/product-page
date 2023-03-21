@@ -12,7 +12,7 @@
 
 return [
 
-    '/' => '/home/index',
+    '/' => '/product/showAllProducts',
 
     '/user/sign-in' => '/user/signIn',
 
