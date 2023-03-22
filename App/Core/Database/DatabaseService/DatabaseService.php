@@ -111,6 +111,15 @@ class DatabaseService implements DatabaseServiceInterface
             }
         }
     }
+    protected function bindMassDeleteParameters(array $parameters): PDOStatement
+    {
+        $paramIndex = 1;
+        foreach ($parameters as $value) {
+            $this->_statement->bindValue($paramIndex, $value, $this->bind($value));
+            $paramIndex++;
+        }
+        return $this->_statement;
+    }
 
     /**
      * Summary of bindValues
@@ -207,6 +216,17 @@ class DatabaseService implements DatabaseServiceInterface
             throw $throwable;
         }
     }
+    public function buildDeleteQueryParameters(array $conditions = []): array
+    {
+        $parameters = [];
+        foreach ($conditions as $condition) {
+            if (isset($condition['value'])) {
+                $parameters[] = $condition['value'];
+            }
+        }
+        return $parameters;
+    }
+
     public function buildInsertQueryParameters(array $conditions = [], array $parameters = []) : array
     {
         return (!empty($parameters) || (!empty($conditions)) ? array_merge($conditions, $parameters) : $parameters);
@@ -230,25 +250,30 @@ class DatabaseService implements DatabaseServiceInterface
     
         return $allParameters;
     }    
+
     /**
      * Summary of persist
-     * 
      * @param string $sqlQuery
      * @param array $parameters
      * @param bool $search
-     * 
+     * @param bool $isMassDelete
      * @throws PDOException
-     * 
      * @return void
      */
-    public function persist(string $sqlQuery, array $parameters, bool $search = false): void
+    public function persist(string $sqlQuery, array $parameters, bool $search = false, bool $isMassDelete = false): void
     {
-        echo '<br>PERSIST SQL QUERY<br>';
-        echo "SQL Query: " . $sqlQuery . PHP_EOL;echo '<br><br>';
         try {
-            $this->prepare($sqlQuery)->bindParameters($parameters, $search)->execute();
+            $prepared = $this->prepare($sqlQuery);
+            if ($isMassDelete) {
+                $prepared->bindMassDeleteParameters($parameters);
+            } else {
+                $prepared->bindParameters($parameters, $search);
+            }
+            $prepared->execute();
         } catch (PDOException $e) {
-           throw new PDOException('Data persistent error ' . $e->getMessage());
+            throw new PDOException('Data persistent error ' . $e->getMessage());
         }
     }
+    
+    
 }

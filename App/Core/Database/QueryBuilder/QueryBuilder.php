@@ -124,22 +124,16 @@ abstract class QueryBuilder implements QueryBuilderInterface
         }
         return false;
     }
-
     public function deleteQuery(): string
     {
         if ($this->isQueryTypeValid('delete')) {
-            $index = array_keys($this->key['conditions']);
-            $this->sqlQuery = "DELETE FROM {$this->key['table']} WHERE {$index[0]} = :{$index[0]} LIMIT 1";
-            $bulkDelete = array_values($this->key['fields']);
-            if (is_array($bulkDelete) && count($bulkDelete) > 1) {
-                for ($i = 0; $i < count($bulkDelete); $i++) {
-                    $this->sqlQuery = "DELETE FROM {$this->key['table']} WHERE {$index[0]} = :{$index[0]}";
-                }
-            }
+            $conditions = $this->key['conditions'];
+            $placeholders = implode(',', array_fill(0, count($conditions), '?'));
+            $this->sqlQuery = "DELETE FROM {$this->key['table']} WHERE {$conditions[0]['field']} IN ({$placeholders})";
             return $this->sqlQuery;
         }
         return false;
-    }
+    }    
     /**
      * Summary of searchQuery
      * @return string

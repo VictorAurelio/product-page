@@ -24,6 +24,8 @@ return [
 
     '/user/refresh/' => '/user/refreshToken',
 
-    '/add-product' => '/product/handleAddProduct'
+    '/add-product' => '/product/handleAddProduct',
+
+    '/product/massDelete' => '/product/handleMassDelete',
 
 ];

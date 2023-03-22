@@ -67,14 +67,21 @@ interface DAOInterface
      * @return bool
      */
     public function update(DTOInterface $data, string $primaryKey): bool;
+
     /**
      * Summary of delete
+     * @param array $conditions
+     * @return bool
+     */
+    public function delete(array $conditions): bool;
+    /**
+     * Summary of deleteByIds
      * 
-     * @param DTOInterface $conditions
+     * @param array $ids
      * 
      * @return bool
      */
-    public function delete(DTOInterface $conditions): bool;
+    public function deleteByIds(array $ids): bool;
     /**
      * Summary of rawQuery
      *

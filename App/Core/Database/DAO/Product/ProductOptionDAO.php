@@ -79,19 +79,16 @@ class ProductOptionDAO implements DAOInterface
         array $parameters = [],
         array $optional = []
     ): array {
-        // Implementar read() para ProductCategory
         return [];
     }
 
     public function update(DTOInterface $data, string $primaryKey): bool
     {
-        // Implementar update() para ProductCategory
         return false;
     }
 
-    public function delete(DTOInterface $conditions): bool
+    public function delete(array $conditions): bool
     {
-        // Implementar delete() para ProductCategory
         return false;
     }
 
@@ -105,7 +102,6 @@ class ProductOptionDAO implements DAOInterface
      */
     public function rawQuery(string $rawQuery, DTOInterface $conditions): mixed
     {
-        // Implementar rawQuery() para ProductCategory
     }
     public function readWithOptions(
         array $selectors = [],
@@ -113,5 +109,16 @@ class ProductOptionDAO implements DAOInterface
         array $parameters = []
     ): array {
         return [];
+    }
+    /**
+     * Summary of deleteByIds
+     * 
+     * @param array $ids
+     * 
+     * @return bool
+     */
+    public function deleteByIds(array $ids): bool
+    {
+        return false;
     }
 }

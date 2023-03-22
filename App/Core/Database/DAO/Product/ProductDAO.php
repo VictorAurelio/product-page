@@ -225,35 +225,25 @@ class ProductDAO extends DAO implements DAOInterface
         return false;
     }
     /**
-     * This method receives a DTO with the conditions to be used to delete a record.
-     * It returns true if the deletion was successful or false otherwise.
+     * Summary of delete
      * 
-     * @param DTOInterface $conditions
-     * 
-     * @throws InvalidArgumentException
+     * @param array $conditions
      * 
      * @return bool
      */
-    public function delete(DTOInterface $conditions): bool
+    public function delete(array $conditions): bool
     {
-        if (!$conditions instanceof ProductDTO) {
-            throw new InvalidArgumentException('Expected ProductDTO instance.');
-        }
-
-        $conditionArray = $conditions->toArray();
-
         try {
             $args = [
                 'table' => $this->dao->getSchema(),
                 'type' => 'delete',
-                'conditions' => $conditionArray
+                'conditions' => $conditions
             ];
             $query = $this->dao->getQueryBuilder()->buildQuery($args)->deleteQuery();
-            $this->dao->getDataMapper()->persist(
-                $query,
-                $this->dao->getDataMapper()->buildQueryParameters($conditionArray)
-            );
-            if ($this->dao->getDataMapper()->numRows() === 1) {
+            $parameters = $this->dao->getDataMapper()->buildDeleteQueryParameters($conditions);
+            $this->dao->getDataMapper()->persist($query, $parameters, false, true);
+
+            if ($this->dao->getDataMapper()->numRows() === count($conditions)) {
                 return true;
             }
         } catch (Throwable $throwable) {
@@ -261,6 +251,20 @@ class ProductDAO extends DAO implements DAOInterface
         }
 
         return false;
+    }
+
+    
+    public function deleteByIds(array $ids): bool
+    {
+        $conditions = [];
+        foreach ($ids as $id) {
+            $conditions[] = [
+                'field' => $this->dao->getSchemaID(),
+                'operator' => '=',
+                'value' => $id
+            ];
+        }
+        return $this->delete($conditions);
     }
     /**
      * This method receives an personalized sql query as a string and a ProductDTO

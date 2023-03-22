@@ -24,10 +24,10 @@ use App\Core\Validation\Rule\RequiredRule;
 use App\Core\Validation\Rule\UniqueRule;
 use App\Core\Validation\Rule\ExistRule;
 use App\Core\Database\DatabaseFactory;
+use App\Models\Product\GenericProduct;
 use App\DTO\Product\ProductOptionDTO;
 use App\Core\Validation\Rule\InRule;
 use App\Core\Validation\Validator;
-use App\Models\Category\Category;
 use App\Models\Product\Furniture;
 use App\Models\Product\Product;
 use App\Core\Database\DAO\DAO;
@@ -35,12 +35,14 @@ use InvalidArgumentException;
 use App\Models\Product\Book;
 use App\Models\Product\Dvd;
 use App\Core\Controller;
+use Exception;
 
 class ProductController extends Controller
 {
     protected ConnectionInterface $connection;
-    protected ProductDAO $productDAO;
+    protected GenericProduct $productModel;
     protected DataSanitizer $sanitizer;
+    protected ProductDAO $productDAO;
     protected Validator $validator;
     protected DAO $dao;
     public function __construct()
@@ -60,11 +62,21 @@ class ProductController extends Controller
             ->addRule('required', new RequiredRule())
             ->addRule('exist', new ExistRule($this->getConnection()))
             ->addRule('required_if', new RequiredIfRule())
-            ->addRule('in', new InRule());
+            ->addRule('in', new InRule());            
+        $this->productModel = new GenericProduct($this->getConnection());
+        $this->productDAO = new ProductDAO($this->productModel);
     }
     public function index()
+    {}
+    public function handleMassDelete()
     {
-        echo 'product';
+        $requestData = $this->getRequestData();
+        $method = isset($requestData['_method']) && strtoupper($requestData['_method']) === 'DELETE' ? 'DELETE' : $this->getMethod();
+        if ($method === 'DELETE') {
+            $this->massDeleteProducts();
+        } else {
+            $this->json(['message' => 'Invalid method for mass delete'], 405);
+        }
     }
     public function handleAddProduct()
     {
@@ -137,6 +149,34 @@ class ProductController extends Controller
         } catch (InvalidArgumentException $e) {
             $this->json(['message' => $e->getMessage()], 400);
         }
+    }
+    public function massDeleteProducts()
+    {
+        if ($this->getMethod() !== 'POST') {
+            $this->json(['message' => 'Invalid method for mass delete'], 405);
+        }
+
+        // Read the request data
+        $payload = $this->getRequestData();
+        $productIds = $this->sanitizer->clean($payload['product_ids']);
+
+        try {
+            $deletedCount = $this->deleteProductsByIds($productIds);
+            $this->json(['status' => 201, 'message' => "{$deletedCount} products deleted successfully"], 201); // Adicione o campo 'status'
+        } catch (Exception $e) {
+            $this->json(['message' => $e->getMessage()], 400);
+        }
+    }
+    public function deleteProductsByIds(array $productIds): int
+    {
+        $deletedCount = 0;
+        $result = $this->productDAO->deleteByIds($productIds);
+    
+        if ($result) {
+            $deletedCount = count($productIds);
+        }
+    
+        return $deletedCount;
     }
     private function getControllerInstance(string $type): ProductSpecificControllerInterface
     {
