@@ -66,12 +66,24 @@ class ProductController extends Controller
     {
         echo 'product';
     }
-    public function insertProduct()
+    public function handleAddProduct()
     {
+        $method = $this->getMethod();
+        if ($method === 'GET') {
+            // Frontend will handle the form rendering when accessed through GET.
+            header('Content-Type: application/json');
+            $this->json(['message' => 'Form should be displayed on frontend'], 200);
+        } elseif ($method === 'POST') {
+            $this->insertProduct();
+        } else {
+            $this->json(['message' => 'Invalid method for adding product'], 405);
+        }
+    }
+    public function insertProduct()
+    {        
         if ($this->getMethod() !== 'POST') {
             $this->json(['message' => 'Invalid method for inserting product'], 405);
         }
-
         // Read the request data
         $payload = $this->getRequestData();
         $data = $this->sanitizer->clean($payload);

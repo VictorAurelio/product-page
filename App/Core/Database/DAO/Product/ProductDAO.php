@@ -69,7 +69,7 @@ class ProductDAO extends DAO implements DAOInterface
         try {
             // Convert ProductDTO to array
             $fields = $data->toArray();
-
+            // echo'<br><br>';var_dump($fields);echo'<br><br>';
             $args = [
                 'table' => $this->dao->getSchema(),
                 'type' => 'insert',
@@ -78,9 +78,9 @@ class ProductDAO extends DAO implements DAOInterface
             $query = $this->dao->getQueryBuilder()->buildQuery($args)->insertQuery();
             $this->dao->getDataMapper()->persist(
                 $query,
-                $this->dao->getDataMapper()->buildQueryParameters($fields)
+                $this->dao->getDataMapper()->buildInsertQueryParameters($fields)
             );
-
+            // echo'<br>CREATE PRODUCTDAO QUERY: <br>';var_dump($query);echo'<br><br>';
             if ($this->dao->getDataMapper()->numRows() == 1) {
                 // Get the last inserted ID and return it
                 return $this->dao->lastID();

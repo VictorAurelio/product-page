@@ -45,7 +45,6 @@ class DvdController implements ProductSpecificControllerInterface
         // Get the ID of the corresponding option for the product type
         $optionId = $this->productController->getOptionIdByType('Dvd');    
         $dvdDTO = $this->createDTO($data, $data['size']);
-
         // Create the dvd and get the last inserted dvd ID
         $dvd = $this->dvdDAO->create($dvdDTO);
         

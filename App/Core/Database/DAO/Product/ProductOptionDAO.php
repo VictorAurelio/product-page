@@ -61,7 +61,7 @@ class ProductOptionDAO implements DAOInterface
                 ->getDataMapper()
                 ->persist(
                     $query,
-                    $this->_dao->getDataMapper()->buildQueryParameters($fields)
+                    $this->_dao->getDataMapper()->buildInsertQueryParameters($fields)
                 );
 
             if ($this->_dao->getDataMapper()->numRows() == 1) {
@@ -107,5 +107,11 @@ class ProductOptionDAO implements DAOInterface
     {
         // Implementar rawQuery() para ProductCategory
     }
+    public function readWithOptions(
+        array $selectors = [],
+        array $conditions = [],
+        array $parameters = []
+    ): array {
+        return [];
+    }
 }
-

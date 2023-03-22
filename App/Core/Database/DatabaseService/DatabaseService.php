@@ -111,25 +111,32 @@ class DatabaseService implements DatabaseServiceInterface
             }
         }
     }
+
     /**
+     * Summary of bindValues
      * 
      * @param array $fields
+     * 
      * @return PDOStatement
-     * @throws BaseInvalidArgumentException
      */
     protected function bindValues(array $fields): PDOStatement
     {
         $this->isArray($fields); // don't need
         foreach ($fields as $key => $value) {
-            $this->_statement->bindValue(':' . $key, $value, $this->bind($value));
+            if (strpos($key, ':') !== 0) {
+                $key = ':' . $key;
+            }
+            $this->_statement->bindValue($key, $value, $this->bind($value));
         }
         return $this->_statement;
     }
+
     /**
+     * Summary of bindSearchValues
      * 
      * @param array $fields
-     * @return mixed
-     * @throws BaseInvalidArgumentException
+     * 
+     * @return PDOStatement
      */
     protected function bindSearchValues(array $fields): PDOStatement
     {
@@ -139,8 +146,10 @@ class DatabaseService implements DatabaseServiceInterface
         }
         return $this->_statement;
     }
+
     /**
      * Summary of execute
+     * 
      * @return bool
      */
     public function execute()
@@ -150,6 +159,7 @@ class DatabaseService implements DatabaseServiceInterface
     }
     /**
      * Summary of numRows
+     * 
      * @return integer
      */
     public function numRows(): int
@@ -197,20 +207,29 @@ class DatabaseService implements DatabaseServiceInterface
             throw $throwable;
         }
     }
+    public function buildInsertQueryParameters(array $conditions = [], array $parameters = []) : array
+    {
+        return (!empty($parameters) || (!empty($conditions)) ? array_merge($conditions, $parameters) : $parameters);
+    }
     public function buildQueryParameters(array $conditions = [], array $parameters = []): array
     {
+        if (empty($conditions)) {
+            return $parameters;
+        }    
+    
         $allParameters = [];
         foreach ($conditions as $condition) {
-            if (preg_match('/:(\w+)/', $condition, $matches)) {
-                $paramName = $matches[1];
-                if (isset($parameters[':' . $paramName])) {
-                    $allParameters[':' . $paramName] = $parameters[':' . $paramName];
+            if (preg_match_all('/:(\w+)/', $condition, $matches)) {
+                foreach ($matches[1] as $paramName) {
+                    if (isset($parameters[':' . $paramName])) {
+                        $allParameters[':' . $paramName] = $parameters[':' . $paramName];
+                    }
                 }
             }
         }
     
         return $allParameters;
-    }
+    }    
     /**
      * Summary of persist
      * 
@@ -224,9 +243,8 @@ class DatabaseService implements DatabaseServiceInterface
      */
     public function persist(string $sqlQuery, array $parameters, bool $search = false): void
     {
-        echo '<br><br>';
+        echo '<br>PERSIST SQL QUERY<br>';
         echo "SQL Query: " . $sqlQuery . PHP_EOL;echo '<br><br>';
-        echo "Parameters: " . json_encode($parameters) . PHP_EOL;echo '<br><br>';
         try {
             $this->prepare($sqlQuery)->bindParameters($parameters, $search)->execute();
         } catch (PDOException $e) {

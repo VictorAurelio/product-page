@@ -73,7 +73,7 @@ class BookDAO extends ProductDAO
             $query = $this->dao->getQueryBuilder()->buildQuery($args)->insertQuery();
             $this->dao->getDataMapper()->persist(
                 $query,
-                $this->dao->getDataMapper()->buildQueryParameters($fields)
+                $this->dao->getDataMapper()->buildInsertQueryParameters($fields)
             );
     
             if ($this->dao->getDataMapper()->numRows() == 1) {
