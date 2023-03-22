@@ -16,7 +16,7 @@ use App\Core\Database\DAO\DAOInterface;
 use App\Core\Database\DAO\DAO;
 use InvalidArgumentException;
 use App\DTO\DTOInterface;
-use App\DTO\UserDTO;
+use App\DTO\User\UserDTO;
 use Throwable;
 
 /**
@@ -166,12 +166,8 @@ class UserDAO implements DAOInterface
      * 
      * @return bool
      */
-    public function delete(DTOInterface $conditions): bool
+    public function delete(array $conditions): bool
     {
-        if (!$conditions instanceof UserDTO) {
-            throw new InvalidArgumentException('Expected UserDTO instance.');
-        }
-
         $conditionArray = $conditions->toArray();
 
         try {
@@ -262,5 +258,13 @@ class UserDAO implements DAOInterface
         array $optional = []
     ): array {
         return [];
+    }
+    /**
+     * Summary of deleteByIds
+     * @param array $ids
+     * @return bool
+     */
+    public function deleteByIds(array $ids): bool{
+        return false;
     }
 }

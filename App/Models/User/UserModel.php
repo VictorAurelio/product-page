@@ -14,11 +14,11 @@ namespace App\Models\User;
 
 use App\Core\Database\Connection\ConnectionInterface;
 use App\Core\Database\DAO\User\UserDAO;
-use App\DTO\UserDTO;
-use App\Auth\Jwt;
-use App\Core\Model;
-use App\DTO\DTOInterface;
 use InvalidArgumentException;
+use App\DTO\DTOInterface;
+use App\DTO\User\UserDTO;
+use App\Core\Model;
+use App\Auth\Jwt;
 
 /**
  * Summary of UserModel

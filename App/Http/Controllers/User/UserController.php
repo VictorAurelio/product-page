@@ -16,21 +16,21 @@ use App\Core\Database\DatabaseService\DatabaseService;
 use App\Core\Validation\Exception\ValidationException;
 use App\Core\Database\QueryBuilder\MysqlQueryBuilder;
 use App\Core\Database\Connection\ConnectionInterface;
-use App\Core\Validation\Rule\EmailRule;
-use App\DTO\UserDTO;
 use App\Http\Controllers\User\LogoutUserController;
 use App\Core\Validation\Rule\Data\DataSanitizer;
 use App\Core\Validation\Rule\RequiredRule;
 use App\Core\Validation\Rule\UniqueRule;
+use App\Core\Database\DAO\User\UserDAO;
 use App\Core\Validation\Rule\MatchRule;
+use App\Core\Validation\Rule\EmailRule;
 use App\Core\Database\DatabaseFactory;
 use App\Core\Validation\Rule\MinRule;
 use App\Core\Validation\Validator;
 use App\Core\Database\DAO\DAO;
-use App\Auth\Authentication;
 use App\Models\User\UserModel;
+use App\Auth\Authentication;
+use App\DTO\User\UserDTO;
 use App\Core\Controller;
-use App\Core\Database\DAO\User\UserDAO;
 
 class UserController extends Controller
 {

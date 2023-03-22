@@ -10,7 +10,7 @@
  * @link      https://github.com/VictorAurelio/product-page
  */
 
-namespace App\DTO;
+namespace App\DTO\User;
 
 use App\DTO\DTOInterface;
 
