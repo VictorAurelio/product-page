@@ -9,14 +9,14 @@ const ProductList = () => {
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
-        fetch('product/showAllProducts')
+        fetch(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_SHOW_ALL_PRODUCTS}`)
         .then((response) => response.json())
         .then((data) => setProducts(data))
         .catch((error) => console.error('Error fetching products:', error));
     }, []);
 
     const handleAddProduct = () => {
-        navigate('/add-product');
+        navigate(`${process.env.REACT_APP_ADD_PRODUCT}`);
     };
 
     const handleMassDelete = () => {
@@ -24,7 +24,7 @@ const ProductList = () => {
         const productIds = checkedProducts.map((product) => product.id);
 
         if (productIds.length > 0) {
-        fetch('product/massDelete', {
+        fetch(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_MASS_DELETE}`, {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
