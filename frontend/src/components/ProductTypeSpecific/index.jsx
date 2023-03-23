@@ -11,6 +11,7 @@ const ProductTypeSpecific = ({ productType }) => {
             id="size"
             name="size"
             step="any"
+            type="number"
             pattern="^\d+(\.\d{1,2})?$"
             required
           />
