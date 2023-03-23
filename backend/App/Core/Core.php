@@ -38,6 +38,7 @@ class Core
         $this->_homeController = new HomeController();
         $parameters = [];
         $url = '/';
+        // var_dump($url);
 
         if (isset($_GET['url'])) {
             $url .= $_GET['url'];
@@ -59,6 +60,7 @@ class Core
 
             $currentAction = (isset($url[0]) && !empty($url[0])) ? $url[0]  : DEFAULT_ACTION;
             array_shift($url);
+            // var_dump($currentController);
 
             if (count($url) > 0) {
                 $parameters = $url;
@@ -76,10 +78,10 @@ class Core
             if (method_exists($controller, $currentAction)) {
                 call_user_func_array(array($controller, $currentAction), $parameters);
             } else {
-                // $this->_errorController->invalidParameters();
+                $this->_errorController->invalidParameters();
             }
         } else {
-            // $this->_errorController->pageNotFound();
+            $this->_errorController->pageNotFound();
         }
     }
 }

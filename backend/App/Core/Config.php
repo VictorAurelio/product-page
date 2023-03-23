@@ -16,7 +16,7 @@ class Config
 {
     public function constants()
     {
-        define('ROOT', dirname(dirname(__FILE__)) . '/App');
+        define('ROOT', dirname(dirname(__FILE__)) . 'backend/App');
         define('ENVIRONMENT', 'development');
         define('JWT_SECRET_KEY', '!A@mda!@$%sMAao28man8o');
         define('DEFAULT_ACTION', 'index');
@@ -25,7 +25,7 @@ class Config
     public function environmentType()
     {
         if (ENVIRONMENT === 'development') {
-            define('BASE_URL', 'http://localhost/productpage/public');
+            define('BASE_URL', 'http://localhost/productpage/backend/public');
             define('DB_NAME', 'prodpage');
             define('DB_HOST', 'localhost');
             define('DB_USER', 'root');
