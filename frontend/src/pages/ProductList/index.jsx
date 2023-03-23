@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './ProductList.css';
+import './styles.css';
+import Button from '../../components/Button';
+import Card from '../../components/Card';
 
 const ProductList = () => {
     const navigate = useNavigate();
@@ -55,44 +57,21 @@ const ProductList = () => {
   };
 
   return (
-    <div>
-      <h1>Product List</h1>
-      <button onClick={handleAddProduct}>Add</button>
-      <button id="delete-product-btn" onClick={handleMassDelete}>Mass Delete</button>
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            <th>SKU</th>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Attribute</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product) => (
-            <tr key={product.id}>
-              <td>
-                <input
-                  type="checkbox"
-                  className="delete-checkbox"
-                  value={product.id}
-                  checked={product.checked}
-                  onChange={() => toggleProductChecked(product.id)}
-                />
-              </td>
-              <td>{product.sku}</td>
-              <td>{product.product_name}</td>
-              <td>{product.price} $</td>
-              <td>
-                {product.option_name}: {product.option_value}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div id="product-list-container">
+      <div id="product-list-header">
+        <h1 id="product-list-title">Product List</h1>
+        <div id="product-list-buttons">
+          <Button id="add-product-btn" onClick={handleAddProduct} title="Add" />
+          <Button id="delete-product-btn" onClick={handleMassDelete} title="Mass Delete" />
+        </div>
+      </div>
+      <div id="product-list-items">
+        {products.map((product) => (
+          <Card key={product.id} product={product} toggleProductChecked={toggleProductChecked} />
+        ))}
+      </div>
     </div>
-  );
+  ); 
 };
 
 export default ProductList;

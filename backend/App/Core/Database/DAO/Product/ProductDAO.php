@@ -251,9 +251,7 @@ class ProductDAO extends DAO implements DAOInterface
         }
 
         return false;
-    }
-
-    
+    }    
     public function deleteByIds(array $ids): bool
     {
         $conditions = [];
