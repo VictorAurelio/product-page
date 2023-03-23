@@ -8,10 +8,14 @@ const InputField = ({ label, id, name, type, step, required, pattern }) => (
         id={id}
         name={name}
         step={step}
-        required={required}
         pattern={pattern}
-        // onInvalid={(e) => e.target.setCustomValidity('Please insert a valid value.')}
+        data-required={required || null}
         onChange={(e) => e.target.setCustomValidity('')}
+        onInvalid={(e) =>
+          e.target.setCustomValidity(
+            !e.target.validity.valid ? 'Please, provide the data of indicated type' : ''
+          )
+        }
       />
     </div>
   );

@@ -1,16 +1,31 @@
-const validateForm = (event, showNotification, handleSave) => {
+const validateForm = (event, showNotification, callback) => {
     event.preventDefault();
 
     const form = event.target;
-    if (!form.checkValidity()) {
-        for (let i = 0; i < form.length; i++) {
-            if (!form[i].checkValidity()) {
-                showNotification(form[i].validationMessage, 'error');
-                return;
-            }
+    let isValid = true;
+
+    for (let i = 0; i < form.length; i++) {
+        const field = form[i];
+        const isRequired = field.getAttribute('data-required') !== null;
+
+        // Verify if the field is required and empty
+        if (isRequired && field.value.trim() === '') {
+            showNotification('Please, submit required data');
+            isValid = false;
+            break;
+        }
+
+        // Verify the field's validity
+        if (!field.checkValidity()) {
+            showNotification('Please, provide the data of indicated type');
+            isValid = false;
+            break;
         }
     }
-    handleSave(event); // Call the handlesave function only if the form is valid
+
+    if (isValid) {
+        callback(event); // Callback function(e.g handleSave) only if the form is valid
+    }
 };
 
 export default validateForm;
