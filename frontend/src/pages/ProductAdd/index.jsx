@@ -16,7 +16,7 @@ const AddProduct = () => {
     const [productType, setProductType] = useState('');
 
     useEffect(() => {
-        fetch('add-product', {
+        fetch(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_ADD_PRODUCT}`, {
             method: 'GET',
         })
             .then((response) => {
@@ -75,7 +75,7 @@ const AddProduct = () => {
             ...productData,
         };
 
-        const response = await fetch('product/handleAddProduct', {
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_HANDLE_ADD_PRODUCT}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ const AddProduct = () => {
             const result = await response.json();
             console.log(result.message);
             // Redirect to products list
-            navigate('/');
+            navigate(`${process.env.REACT_APP_BASE_URL}`);
         } else {
             // In case of error, get the error message from the backend
             const errorResult = await response.json();
@@ -111,7 +111,7 @@ const AddProduct = () => {
     };
 
     const handleCancel = () => {
-        navigate('/');
+        navigate(`${process.env.REACT_APP_BASE_URL}`);
     };
 
     // show notification "Please, submit required data" and "Please, provide the data of indicated type"
