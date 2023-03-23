@@ -49,35 +49,18 @@ const AddProduct = () => {
         const productType = event.target.productType.value;
         let productData = {};
 
-        if (!sku || !name || !price || !productType) {
-            showNotification('Please, submit required data');
-            return;
-        }
-
         switch (productType) {
             case 'Dvd':
                 productData.size = event.target.size.value;
-                if (!productData.size) {
-                    showNotification('Please, provide the data of indicated type');
-                    return;
-                }
                 break;
             case 'Book':
                 productData.weight = event.target.weight.value;
-                if (!productData.weight) {
-                    showNotification('Please, provide the data of indicated type');
-                    return;
-                }
                 break;
             case 'Furniture':
                 const height = event.target.height.value;
                 const width = event.target.width.value;
                 const length = event.target.length.value;
-
-                if (!height || !width || !length) {
-                    showNotification('Please, provide the data of indicated type');
-                    return;
-                }
+                
                 productData.dimensions = `${height}x${width}x${length}`;
                 break;
             default:
@@ -106,7 +89,20 @@ const AddProduct = () => {
             // Redirect to products list
             navigate('/');
         } else {
+            // In case of error, get the error message from the backend
+            const errorResult = await response.json();
             console.error(response.statusText);
+
+            // Check if the backend returned that the sku already exists
+            if (errorResult.sku && errorResult.sku.length > 0) {
+                const errorMessage = JSON.parse(errorResult.sku[0]).message;
+                const capitalized = errorMessage[0].toUpperCase() + errorMessage.substr(1);
+                // Display the notification if the SKU already exists in the database
+                showNotification(`An error occurred: ${capitalized}`);
+            } else {
+                // Display a generic error notification
+                showNotification('An error occurred while adding the product');
+            }
         }
     };
 
