@@ -53,6 +53,7 @@ class RegisterUserController extends UserController
         default => [
             'message' => 'User created successfully',
             'jwt' => $this->userModel->createJwt($userId),
+            'userId' => $userId,
             'status' => 201
             ],
         };

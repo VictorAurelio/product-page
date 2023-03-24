@@ -3,31 +3,46 @@
 .container {
     padding-top: 30px;
     padding-left: 0;
-  }
-  
+}
+
+#saveButton {
+    background-color: $main-button-color;
+
+    &:hover {
+        background-color: darken($add-save-button-hover, 10%);
+    }
+}
+
+#delete-product-btn {
+    background-color: $main-button-color;
+
+    &:hover {
+        background-color: darken($delete-button-hover, 10%);
+    }
+}
+
 #product_form {
     position: absolute;
-    max-width: 400px;
-    margin: 0 auto;
+    max-width: 350px;
+    // margin: 0 auto;
     padding: 30px;
     display: flex;
-    flex-direction: column;
-    gap: 15px;
     background-color: $primary-color;
     border: 1px solid #ccc;
     border-radius: 5px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 100%;
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group label {
     text-align: left;
-    margin-bottom: 5px;
-}
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        text-align: left;
+        margin-bottom: 5px;
+    }
 
     label {
         display: block;

@@ -1,9 +1,7 @@
-import useNotifications from '../../hooks/useNotifications';
 import React, { useState, useEffect } from 'react';
+import { Toast } from '../../components/Toast';
 import { ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import 'react-toastify/dist/ReactToastify.css';
-// import Button from '../../components/Button';
 import Header from '../../components/Header';
 import Card from '../../components/Card';
 import './styles.scss';
@@ -38,18 +36,18 @@ const ProductList = () => {
             .then((response) => response.json())
             .then((data) => {
             if (data.status === 201) {
-                showNotification(data.message, 'success');
+                Toast({ message: data.message, type: 'success' });
                 // alert(data.message);
                 setProducts(products.filter((product) => !product.checked));
             } else {
-                showNotification('Error deleting products', 'error', null);
+                Toast({ message: 'An error occurred while deleting the product', type: 'error' });
             }
             })
             .catch((error) => {
             console.error('Error deleting products:', error);
             });
         } else {
-            showNotification('No products selected for deletion', 'warning', null, 1500);
+            Toast({ message: 'No products selected for deletion', type: 'warning', willClose: 1000 });
         }
 };
 
@@ -60,8 +58,6 @@ const ProductList = () => {
       )
     );
   };
-
-  const { showNotification } = useNotifications();
   
   return (
     <div>

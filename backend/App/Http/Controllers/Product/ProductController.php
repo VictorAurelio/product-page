@@ -18,6 +18,8 @@ use App\Core\Database\Connection\ConnectionInterface;
 use App\Core\Database\QueryBuilder\MysqlQueryBuilder;
 use App\Core\Validation\Rule\Data\DataSanitizer;
 use App\Core\Database\DAO\Product\ProductDAO;
+use App\Core\Validation\Rule\GreaterThanRule;
+use App\Core\Validation\Rule\NotNullOrNegativeRule;
 use App\Core\Validation\Rule\RequiredIfRule;
 use App\Models\ProductOption\ProductOption;
 use App\Core\Validation\Rule\RequiredRule;
@@ -62,12 +64,14 @@ class ProductController extends Controller
             ->addRule('required', new RequiredRule())
             ->addRule('exist', new ExistRule($this->getConnection()))
             ->addRule('required_if', new RequiredIfRule())
-            ->addRule('in', new InRule());            
+            ->addRule('not_null', new NotNullOrNegativeRule())
+            ->addRule('in', new InRule());
         $this->productModel = new GenericProduct($this->getConnection());
         $this->productDAO = new ProductDAO($this->productModel);
     }
     public function index()
-    {}
+    {
+    }
     public function handleMassDelete()
     {
         $requestData = $this->getRequestData();
@@ -92,7 +96,7 @@ class ProductController extends Controller
         }
     }
     public function insertProduct()
-    {        
+    {
         if ($this->getMethod() !== 'POST') {
             $this->json(['message' => 'Invalid method for inserting product'], 405);
         }
@@ -107,9 +111,10 @@ class ProductController extends Controller
                 'size' => ['required_if:product_type,Dvd'],
                 'dimensions' => ['required_if:product_type,Furniture'],
             ]);
+
             // Insert the product
             $productController = $this->getControllerInstance($data['product_type']);
-            
+
             $data['category_id'] = match ($data['product_type']) {
                 'Book' => 1,
                 'Dvd' => 2,
@@ -120,10 +125,10 @@ class ProductController extends Controller
 
             if (is_array($result) && isset($result['id'])) {
                 $productId = $result['id'];
-        
+
                 // Get the ID of the corresponding option for the product type
                 $optionId = $this->getOptionIdByType($data['product_type']);
-        
+
                 // Get the option value based on the product type
                 $optionValueKey = match ($data['product_type']) {
                     'Book' => 'weight',
@@ -131,16 +136,16 @@ class ProductController extends Controller
                     'Furniture' => 'dimensions',
                     default => throw new InvalidArgumentException('Invalid product type'),
                 };
-        
+
                 // Save the selected option for this product
                 $productOptionDTO = new ProductOptionDTO();
                 $productOptionDTO->setProductId($productId);
                 $productOptionDTO->setOptionId($optionId);
                 $productOptionDTO->setOptionValue($data[$optionValueKey]);
-        
+
                 $productOption = new ProductOption($this->getConnection());
                 $productOption->createOption($productOptionDTO);
-        
+
                 // $this->json($result['message'], $result['status']);
             }
             $this->json(['message' => $result['message']], $result['status']);
@@ -162,9 +167,9 @@ class ProductController extends Controller
 
         try {
             $deletedCount = $this->deleteProductsByIds($productIds);
-            if($deletedCount > 1) {
+            if ($deletedCount > 1) {
                 $this->json(['status' => 201, 'message' => "{$deletedCount} products deleted successfully"], 201);
-            }else {
+            } else {
                 $this->json(['status' => 201, 'message' => "{$deletedCount} product deleted successfully"], 201);
             }
         } catch (Exception $e) {
@@ -175,11 +180,11 @@ class ProductController extends Controller
     {
         $deletedCount = 0;
         $result = $this->productDAO->deleteByIds($productIds);
-    
+
         if ($result) {
             $deletedCount = count($productIds);
         }
-    
+
         return $deletedCount;
     }
     private function getControllerInstance(string $type): ProductSpecificControllerInterface
@@ -220,7 +225,7 @@ class ProductController extends Controller
 
         $allProducts = array_merge($books, $dvds, $furnitures);
 
-        usort($allProducts, function($a, $b) {
+        usort($allProducts, function ($a, $b) {
             return $b['id'] - $a['id'];
         });
 

@@ -1,0 +1,27 @@
+@import '../../_variables';
+
+.button {
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    background-color: #4447238f;
+    color: white;
+    border: none;
+    margin: 0.3rem;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+        background-color: darken($primary-color, 10%);
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px $primary-color;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}

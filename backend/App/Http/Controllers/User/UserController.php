@@ -103,7 +103,11 @@ class UserController extends Controller
 
         try {
             $result = $registerUserController->register($data);
-            $this->json($result['message'], $result['status']);
+            $this->json([
+                'message' => $result['message'],
+                'jwt' => $result['jwt'],
+                'userId' => $result['userId']
+            ], $result['status']);
         } catch (ValidationException $e) {
             $this->json($e->getErrors(), 400);
         }

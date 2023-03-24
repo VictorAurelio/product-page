@@ -38,13 +38,13 @@ class FurnitureController implements ProductSpecificControllerInterface
         $this->productController->getValidator()->validate($data, [
             'name' => ['required'],
             'sku' => ['required', 'unique'],
-            'price' => ['required'],
+            'price' => ['required', 'not_null'],
             'category_id' => ['required'],
-            'dimensions' => ['required']
+            'dimensions' => ['required', 'not_null']
         ]);
         // Get the ID of the corresponding option for the product type
-        $optionId = $this->productController->getOptionIdByType('Furniture');   
-        
+        $optionId = $this->productController->getOptionIdByType('Furniture');
+
         // Convert dimensions string to float using crc32
         $dimensionsFloat = crc32($data['dimensions']);
 
@@ -52,13 +52,13 @@ class FurnitureController implements ProductSpecificControllerInterface
 
         // Create the furniture and get the last inserted furniture ID
         $furniture = $this->furnitureDAO->create($furnitureDTO);
-        
+
         $productOptionDTO = new ProductOptionDTO();
         $productOptionDTO->setProductId($furniture);
         $productOptionDTO->setOptionId($optionId);
         $productOptionDTO->setOptionValue($data['dimensions']);
 
-        $productOption = new ProductOption($this->productController->getConnection());        
+        $productOption = new ProductOption($this->productController->getConnection());
         $productOption->createOption($productOptionDTO);
 
         $result = match (true) {
