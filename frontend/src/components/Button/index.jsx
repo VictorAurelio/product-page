@@ -1,5 +1,5 @@
-export default function Button({ type, id, onClick, title, color }) {
+export default function Button({ type, id, onClick, title }) {
     return (
-        <button type={type} id={id} style={{ "background": color, }} onClick={onClick}>{title}</button>
+        <button type={type} id={id} onClick={onClick}>{title}</button>
     )
 }

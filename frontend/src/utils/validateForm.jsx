@@ -1,7 +1,6 @@
-const validateForm = (event, showNotification, callback) => {
+const validateForm = (event, form, showNotification, callback) => {
     event.preventDefault();
-
-    const form = event.target;
+    
     let isValid = true;
 
     for (let i = 0; i < form.length; i++) {

@@ -5,13 +5,14 @@
     bottom: 0;
     width: 100%;
     background-color: #d6d2ae;
-    padding: 1em 0;
+    padding: 1em;
     color: white;
     font-size: $font-size-base;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1em;
+    gap: 0.05em;
+    margin: 0;
 
     .row {
         display: flex;

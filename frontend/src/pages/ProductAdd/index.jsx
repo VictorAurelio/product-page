@@ -1,18 +1,19 @@
 import ProductTypeSpecific from '../../components/ProductTypeSpecific';
-import SelectField from '../../components/SelectField';
 import useNotifications from '../../hooks/useNotifications';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useState, useEffect, useRef } from 'react';
+import SelectField from '../../components/SelectField';
 import InputField from '../../components/InputField';
-import React, { useState, useEffect } from 'react';
 import validateForm from '../../utils/validateForm';
+import { ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import Button from '../../components/Button';
+import 'react-toastify/dist/ReactToastify.css';
 import Option from '../../components/Option';
+import Header from '../../components/Header';
 import './styles.scss';
 
 const AddProduct = () => {
     const navigate = useNavigate();
+    const formRef = useRef(null);
     const [productType, setProductType] = useState('');
 
     useEffect(() => {
@@ -60,7 +61,7 @@ const AddProduct = () => {
                 const height = event.target.height.value;
                 const width = event.target.width.value;
                 const length = event.target.length.value;
-                
+
                 productData.dimensions = `${height}x${width}x${length}`;
                 break;
             default:
@@ -106,8 +107,9 @@ const AddProduct = () => {
         }
     };
 
-    const handleValidation = (event) => {
-        validateForm(event, showNotification, handleSave);
+    const handleValidation = (event, form) => {
+        const newEvent = { ...event, target: form };
+        validateForm(event, form, showNotification, handleSave.bind(null, newEvent));
     };
 
     const handleCancel = () => {
@@ -119,44 +121,50 @@ const AddProduct = () => {
     return (
         <div>
             <ToastContainer />
-            <h1>Product Form</h1>
-            <form id="product_form" onSubmit={handleValidation}>
-                <InputField
-                    label="SKU"
-                    id="sku"
-                    name="sku"
-                    type="text"
-                    required
-                    pattern="[a-zA-Z0-9]+[-_a-zA-Z0-9]*"
-                />
-                <InputField label="Name" id="name" name="name" type="text" required />
-                <InputField
-                    label="Price"
-                    id="price"
-                    name="price"
-                    type="number"
-                    step="any"
-                    required
-                />
-                <SelectField
-                    label="Product Type"
-                    id="productType"
-                    name="productType"
-                    value={productType}
-                    onChange={handleProductTypeChange}
-                    required
-                >
-                <Option value="" title="Select a product type"/>
-                <Option id="DVD" value="Dvd" title="DVD"/>
-                <Option id="Book" value="Book" title="Book"/>
-                <Option id="Furniture" value="Furniture" title="Furniture"/>
-                </SelectField>
-                <ProductTypeSpecific productType={productType} />
-                <div>
-                    <Button type="submit" id="saveButton" title="Save" />
-                    <Button type="button" id="cancelButton" title="Cancel" onClick={handleCancel} />
-                </div>
-            </form>
+            <Header
+                title="Product Add"
+                formRef={formRef}
+                handleValidation={handleValidation}
+                buttons={[
+                    { id: 'saveButton', type: 'submit', title: 'Save' },
+                    { id: 'delete-product-btn', type: 'button', onClick: handleCancel, title: 'Cancel' }
+                ]}
+            />
+            <div className="container">
+                <form id="product_form" ref={formRef} onSubmit={handleValidation}>
+                    <InputField
+                        label="SKU"
+                        id="sku"
+                        name="sku"
+                        type="text"
+                        required
+                        pattern="[a-zA-Z0-9]+[-_a-zA-Z0-9]*"
+                    />
+                    <InputField label="Name" id="name" name="name" type="text" required />
+                    <InputField
+                        label="Price"
+                        id="price"
+                        name="price"
+                        type="number"
+                        step="any"
+                        required
+                    />
+                    <SelectField
+                        label="Product Type"
+                        id="productType"
+                        name="productType"
+                        value={productType}
+                        onChange={handleProductTypeChange}
+                        required
+                    >
+                        <Option value="" title="Select a product type" />
+                        <Option id="DVD" value="Dvd" title="DVD" />
+                        <Option id="Book" value="Book" title="Book" />
+                        <Option id="Furniture" value="Furniture" title="Furniture" />
+                    </SelectField>
+                    <ProductTypeSpecific productType={productType} />
+                </form>
+            </div>
         </div>
     );
 };

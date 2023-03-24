@@ -3,8 +3,7 @@ import './styles.scss';
 
 const Footer = () => {
     return (
-        <footer>
-            <div className="footer">
+        <footer className="footer">
                 <div className="row">
                     <a href="https://github.com/VictorAurelio/product-page"><i className="fa fa-github"></i></a>
                     <a href="#"><i className="fa fa-instagram"></i></a>
@@ -20,7 +19,6 @@ const Footer = () => {
                 <div className="row">
                     Copyright © 2021 - All rights reserved || Junior Test Assignment
                 </div>
-            </div>
         </footer>
     )
 }
