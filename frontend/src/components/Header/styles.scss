@@ -1,0 +1,18 @@
+@import '../../_variables';
+
+#page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid $secondary-color;
+    margin: 0 1em;
+}
+
+#page-title {
+    font-size: 2rem;
+}
+
+#page-buttons {
+    display: flex;
+    gap: 1em;
+}

@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
-import Button from '../../components/Button';
+// import Button from '../../components/Button';
+import Header from '../../components/Header';
 import Card from '../../components/Card';
 import './styles.scss';
 
@@ -66,13 +67,13 @@ const ProductList = () => {
     <div>
     <ToastContainer />
         <div id="product-list-container">
-            <div id="product-list-header">
-                <h1 id="product-list-title">Product List</h1>
-                <div id="product-list-buttons">
-                <Button id="add-product-btn" onClick={handleAddProduct} title="Add" />
-                <Button id="delete-product-btn" onClick={handleMassDelete} title="Mass Delete" />
-                </div>
-            </div>
+            <Header 
+                title="Product List"
+                buttons={[
+                    { id: 'add-product-btn', onClick: handleAddProduct, title: 'Add'},
+                    { id: 'delete-product-btn', onClick: handleMassDelete, title: 'Mass Delete'}
+                ]}
+            />
             <div id="product-list-items">
                 {products.map((product) => (
                     <Card key={product.id} product={product} toggleProductChecked={toggleProductChecked} />
