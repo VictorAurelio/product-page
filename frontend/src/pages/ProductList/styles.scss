@@ -1,0 +1,37 @@
+@import '../../_variables';
+
+#product-list-container {
+    background-color: $background-color;
+    font-size: $font-size-base;
+}
+
+#product-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1em 0;
+    border-bottom: 2px solid $secondary-color;
+    margin: 0 1em;
+}
+
+#product-list-title {}
+
+#product-list-buttons {
+    display: flex;
+    gap: 1em;
+}
+
+#add-product-btn {
+    margin-right: 10px;
+}
+
+#delete-product-btn {}
+
+#product-list-items {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 1em;
+}

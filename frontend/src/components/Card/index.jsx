@@ -1,11 +1,12 @@
 import React from 'react';
+import './styles.scss';
 
 const Card = ({ product, toggleProductChecked }) => {
   const { id, checked, sku, product_name, price, option_name, option_value } = product;
 
   return (
     <div key={id} className="product-item">
-      <div className="product-checkbox">
+      <div className="product-item-checkbox">
         <input
           type="checkbox"
           className="delete-checkbox"

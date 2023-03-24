@@ -162,7 +162,11 @@ class ProductController extends Controller
 
         try {
             $deletedCount = $this->deleteProductsByIds($productIds);
-            $this->json(['status' => 201, 'message' => "{$deletedCount} products deleted successfully"], 201); // Adicione o campo 'status'
+            if($deletedCount > 1) {
+                $this->json(['status' => 201, 'message' => "{$deletedCount} products deleted successfully"], 201);
+            }else {
+                $this->json(['status' => 201, 'message' => "{$deletedCount} product deleted successfully"], 201);
+            }
         } catch (Exception $e) {
             $this->json(['message' => $e->getMessage()], 400);
         }

@@ -1,8 +1,11 @@
+import useNotifications from '../../hooks/useNotifications';
 import React, { useState, useEffect } from 'react';
+import { ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import './styles.css';
+import 'react-toastify/dist/ReactToastify.css';
 import Button from '../../components/Button';
 import Card from '../../components/Card';
+import './styles.scss';
 
 const ProductList = () => {
     const navigate = useNavigate();
@@ -34,17 +37,18 @@ const ProductList = () => {
             .then((response) => response.json())
             .then((data) => {
             if (data.status === 201) {
-                alert(data.message);
+                showNotification(data.message, 'success');
+                // alert(data.message);
                 setProducts(products.filter((product) => !product.checked));
             } else {
-                alert('Error deleting products.');
+                showNotification('Error deleting products', 'error', null);
             }
             })
             .catch((error) => {
             console.error('Error deleting products:', error);
             });
         } else {
-        alert('No products selected for deletion.');
+            showNotification('No products selected for deletion', 'warning', null, 1500);
         }
 };
 
@@ -56,22 +60,27 @@ const ProductList = () => {
     );
   };
 
+  const { showNotification } = useNotifications();
+  
   return (
-    <div id="product-list-container">
-      <div id="product-list-header">
-        <h1 id="product-list-title">Product List</h1>
-        <div id="product-list-buttons">
-          <Button id="add-product-btn" onClick={handleAddProduct} title="Add" />
-          <Button id="delete-product-btn" onClick={handleMassDelete} title="Mass Delete" />
+    <div>
+    <ToastContainer />
+        <div id="product-list-container">
+            <div id="product-list-header">
+                <h1 id="product-list-title">Product List</h1>
+                <div id="product-list-buttons">
+                <Button id="add-product-btn" onClick={handleAddProduct} title="Add" />
+                <Button id="delete-product-btn" onClick={handleMassDelete} title="Mass Delete" />
+                </div>
+            </div>
+            <div id="product-list-items">
+                {products.map((product) => (
+                    <Card key={product.id} product={product} toggleProductChecked={toggleProductChecked} />
+                    ))}
+            </div>
         </div>
-      </div>
-      <div id="product-list-items">
-        {products.map((product) => (
-          <Card key={product.id} product={product} toggleProductChecked={toggleProductChecked} />
-        ))}
-      </div>
     </div>
-  ); 
+  );
 };
 
 export default ProductList;

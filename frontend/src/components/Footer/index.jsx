@@ -1,28 +1,28 @@
-import "./styles.css"
+import React from 'react';
+import './styles.scss';
 
-export default  function Footer() {
-  return (
-    <footer>
-        <div class="footer">
-            <div class="row">
-                <a href="#"><i class="fa fa-facebook"></i></a>
-                <a href="#"><i class="fa fa-instagram"></i></a>
-                <a href="#"><i class="fa fa-youtube"></i></a>
-                <a href="#"><i class="fa fa-twitter"></i></a>
-            </div>            
-            <div class="row">
-                <ul>
-                    <li><a href="#">Contact us</a></li>
-                    <li><a href="#">Our Services</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Terms & Conditions</a></li>
-                    <li><a href="#">Career</a></li>
-                </ul>
-            </div>            
-            <div class="row">
-                INFERNO Copyright © 2021 Inferno - All rights reserved || Designed By: Mahesh 
+const Footer = () => {
+    return (
+        <footer>
+            <div className="footer">
+                <div className="row">
+                    <a href="https://github.com/VictorAurelio/product-page"><i className="fa fa-github"></i></a>
+                    <a href="#"><i className="fa fa-instagram"></i></a>
+                    <a href="https://www.linkedin.com/in/victor-aurelio-a8700b17a/"><i className="fa fa-linkedin"></i></a>
+                </div>
+                <div className="row">
+                    <ul>
+                        <li><a href="https://wa.me/5562983314425">Contact me</a></li>
+                        <li><a href="#">About me</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div className="row">
+                    Copyright © 2021 - All rights reserved || Junior Test Assignment
+                </div>
             </div>
-        </div>
         </footer>
-  )
+    )
 }
+
+export default Footer;
