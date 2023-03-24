@@ -1,0 +1,51 @@
+@import '../../_variables';
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #d6d2ae;
+    padding: 1em 0;
+    color: white;
+    font-size: $font-size-base;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+
+    .row {
+        display: flex;
+        justify-content: center;
+        gap: 1em;
+
+        a {
+            color: white;
+            text-decoration: none;
+
+            &:hover {
+                color: $secondary-color;
+            }
+        }
+
+        i {
+            font-size: 1.5em;
+        }
+
+        ul {
+            list-style: none;
+            display: flex;
+            gap: 1em;
+
+            li {
+                a {
+                    color: white;
+                    text-decoration: none;
+
+                    &:hover {
+                        color: $secondary-color;
+                    }
+                }
+            }
+        }
+    }
+}

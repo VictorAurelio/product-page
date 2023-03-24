@@ -2,14 +2,14 @@ import ProductTypeSpecific from '../../components/ProductTypeSpecific';
 import SelectField from '../../components/SelectField';
 import useNotifications from '../../hooks/useNotifications';
 import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import InputField from '../../components/InputField';
 import React, { useState, useEffect } from 'react';
 import validateForm from '../../utils/validateForm';
-import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
 import Option from '../../components/Option';
-import './styles.css';
+import './styles.scss';
 
 const AddProduct = () => {
     const navigate = useNavigate();
@@ -114,7 +114,6 @@ const AddProduct = () => {
         navigate(`${process.env.REACT_APP_BASE_URL}`);
     };
 
-    // show notification "Please, submit required data" and "Please, provide the data of indicated type"
     const { showNotification } = useNotifications();
 
     return (
