@@ -12,12 +12,12 @@ const InputField = ({ label, id, name, type, step, required, pattern }) => (
         data-required={required || null}
         onChange={(e) => e.target.setCustomValidity('')}
         onInvalid={(e) =>
-          e.target.setCustomValidity(
-            !e.target.validity.valid ? 'Please, provide the data of indicated type' : ''
-          )
+          required && !e.target.validity.valid
+            ? e.target.setCustomValidity('Please, provide the data of indicated type')
+            : e.target.setCustomValidity('')
         }
       />
     </div>
-  );
+);
 
 export default InputField;

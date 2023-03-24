@@ -1,12 +1,11 @@
 import ProductTypeSpecific from '../../components/ProductTypeSpecific';
-import useNotifications from '../../hooks/useNotifications';
 import React, { useState, useEffect, useRef } from 'react';
 import SelectField from '../../components/SelectField';
 import InputField from '../../components/InputField';
 import validateForm from '../../utils/validateForm';
+import { Toast } from '../../components/Toast';
 import { ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import 'react-toastify/dist/ReactToastify.css';
 import Option from '../../components/Option';
 import Header from '../../components/Header';
 import './styles.scss';
@@ -99,24 +98,23 @@ const AddProduct = () => {
                 const errorMessage = JSON.parse(errorResult.sku[0]).message;
                 const capitalized = errorMessage[0].toUpperCase() + errorMessage.substr(1);
                 // Display the notification if the SKU already exists in the database
-                showNotification(`An error occurred: ${capitalized}`);
+                Toast({ message: `An error occurred: ${capitalized}`, type: 'error' });
+
             } else {
                 // Display a generic error notification
-                showNotification('An error occurred while adding the product');
+                Toast({ message: 'An error occurred while adding the product', type: 'error' });
             }
         }
     };
 
-    const handleValidation = (event, form) => {
+    const handleValidation = (event, form) => { // try catch
         const newEvent = { ...event, target: form };
-        validateForm(event, form, showNotification, handleSave.bind(null, newEvent));
+        validateForm(event, form, handleSave.bind(null, newEvent));
     };
 
     const handleCancel = () => {
         navigate(`${process.env.REACT_APP_BASE_URL}`);
     };
-
-    const { showNotification } = useNotifications();
 
     return (
         <div>

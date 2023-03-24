@@ -1,5 +1,7 @@
-export default function Button({ type, id, onClick, title }) {
+import './styles.scss';
+
+export default function Button({ type, id, onClick, title, className = "button" }) {
     return (
-        <button type={type} id={id} onClick={onClick}>{title}</button>
+        <button className={className} type={type} id={id} onClick={onClick}>{title}</button>
     )
 }

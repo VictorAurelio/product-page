@@ -60,7 +60,6 @@ class Validator
         } else {
             $msg = json_encode(['message' => 'success']);
         }
-
         return array_intersect_key($data, $rules);
     }
 }

@@ -38,22 +38,22 @@ class DvdController implements ProductSpecificControllerInterface
         $this->productController->getValidator()->validate($data, [
             'name' => ['required'],
             'sku' => ['required', 'unique'],
-            'price' => ['required'],
+            'price' => ['required', 'not_null'],
             'category_id' => ['required'],
-            'size' => ['required']
+            'size' => ['required', 'not_null']
         ]);
         // Get the ID of the corresponding option for the product type
-        $optionId = $this->productController->getOptionIdByType('Dvd');    
+        $optionId = $this->productController->getOptionIdByType('Dvd');
         $dvdDTO = $this->createDTO($data, $data['size']);
         // Create the dvd and get the last inserted dvd ID
         $dvd = $this->dvdDAO->create($dvdDTO);
-        
+
         $productOptionDTO = new ProductOptionDTO();
         $productOptionDTO->setProductId($dvd);
         $productOptionDTO->setOptionId($optionId);
         $productOptionDTO->setOptionValue($data['size']);
 
-        $productOption = new ProductOption($this->productController->getConnection());        
+        $productOption = new ProductOption($this->productController->getConnection());
         $productOption->createOption($productOptionDTO);
 
         $result = match (true) {

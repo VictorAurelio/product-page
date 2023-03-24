@@ -16,4 +16,16 @@ use InvalidArgumentException;
 
 class AppInvalidArgumentException extends InvalidArgumentException
 {
+    private string $errorMessage;
+
+    public function __construct(string $errorMessage)
+    {
+        $this->errorMessage = $errorMessage;
+        parent::__construct($errorMessage);
+    }
+
+    public function getErrorJson(): string
+    {
+        return json_encode(['error' => $this->errorMessage]);
+    }
 }

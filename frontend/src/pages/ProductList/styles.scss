@@ -3,17 +3,59 @@
 #product-list-container {
     background-color: $background-color;
     font-size: $font-size-base;
+
+    .product-sku {
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+
+    .product-name {
+        font-size: 1em;
+        font-style: inherit;
+        text-transform: uppercase;
+        margin-top: 5px;
+        margin-bottom: 10px;
+    }
+
+    .product-price {
+        font-size: 0.9em;
+        color: $secondary-color;
+        font-weight: bold;
+    }
+
+    .product-attribute {
+        font-size: 0.85em;
+        margin-top: 5px;
+        text-align: center;
+    }
+    .product-attribute::first-letter {
+        text-transform: uppercase;
+    }
+
+    #product-list-items {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 1em;
+    }
+    
 }
 
-#add-product-btn {}
+#add-product-btn {
+    background-color: $main-button-color;
 
-#delete-product-btn {}
-
-#product-list-items {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 1em;
+    &:hover {
+        background-color: darken($add-save-button-hover, 10%);
+    }
 }
+
+#delete-product-btn {
+    background-color: $main-button-color;
+
+    &:hover {
+        background-color: darken($delete-button-hover, 10%);
+    }
+}
+

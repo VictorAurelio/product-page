@@ -41,6 +41,5 @@ class LoginUserController extends UserController
             'jwt' => $jwt,
             'status' => 200
         ];
-        // return ['message' => 'User logged in successfully', 'jwt' => $jwt, 'status' => 200];
     }
 }

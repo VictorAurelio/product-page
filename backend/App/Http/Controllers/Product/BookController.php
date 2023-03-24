@@ -38,23 +38,23 @@ class BookController implements ProductSpecificControllerInterface
         $this->productController->getValidator()->validate($data, [
             'name' => ['required'],
             'sku' => ['required', 'unique'],
-            'price' => ['required'],
+            'price' => ['required', 'not_null'],
             'category_id' => ['required'],
-            'weight' => ['required']
+            'weight' => ['required', 'not_null']
         ]);
         // Get the ID of the corresponding option for the product type
-        $optionId = $this->productController->getOptionIdByType('Book');    
+        $optionId = $this->productController->getOptionIdByType('Book');
         $bookDTO = $this->createDTO($data, $data['weight']);
 
         // Create the book and get the last inserted book ID
         $book = $this->bookDAO->create($bookDTO);
-        
+
         $productOptionDTO = new ProductOptionDTO();
         $productOptionDTO->setProductId($book);
         $productOptionDTO->setOptionId($optionId);
         $productOptionDTO->setOptionValue($data['weight']);
 
-        $productOption = new ProductOption($this->productController->getConnection());        
+        $productOption = new ProductOption($this->productController->getConnection());
         $productOption->createOption($productOptionDTO);
 
         $result = match (true) {

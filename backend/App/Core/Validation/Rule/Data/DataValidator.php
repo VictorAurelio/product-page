@@ -34,5 +34,6 @@ class DataValidator
         if($cleanData) {
             return $cleanData;
         }
+        return ['Invalid data'];
     }
 }
