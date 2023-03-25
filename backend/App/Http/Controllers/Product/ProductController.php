@@ -18,8 +18,10 @@ use App\Core\Database\Connection\ConnectionInterface;
 use App\Core\Database\QueryBuilder\MysqlQueryBuilder;
 use App\Core\Validation\Rule\Data\DataSanitizer;
 use App\Core\Database\DAO\Product\ProductDAO;
+use App\Core\Validation\Rule\DimensionsFormatRule;
 use App\Core\Validation\Rule\GreaterThanRule;
 use App\Core\Validation\Rule\NotNullOrNegativeRule;
+use App\Core\Validation\Rule\NumericRule;
 use App\Core\Validation\Rule\RequiredIfRule;
 use App\Models\ProductOption\ProductOption;
 use App\Core\Validation\Rule\RequiredRule;
@@ -64,6 +66,8 @@ class ProductController extends Controller
             ->addRule('required', new RequiredRule())
             ->addRule('exist', new ExistRule($this->getConnection()))
             ->addRule('required_if', new RequiredIfRule())
+            ->addRule('dimensions', new DimensionsFormatRule())
+            ->addRule('numeric', new NumericRule())
             ->addRule('not_null', new NotNullOrNegativeRule())
             ->addRule('in', new InRule());
         $this->productModel = new GenericProduct($this->getConnection());
@@ -107,9 +111,9 @@ class ProductController extends Controller
             // Validate the necessary data
             $this->validator->validate($data, [
                 'product_type' => ['required', 'in:Book,Dvd,Furniture'],
-                'weight' => ['required_if:product_type,Book'],
-                'size' => ['required_if:product_type,Dvd'],
-                'dimensions' => ['required_if:product_type,Furniture'],
+                'weight' => ['required_if:product_type,Book', 'numeric'],
+                'size' => ['required_if:product_type,Dvd', 'numeric'],
+                'dimensions' => ['required_if:product_type,Furniture', 'dimensions'],
             ]);
 
             // Insert the product
@@ -152,6 +156,42 @@ class ProductController extends Controller
         } catch (ValidationException $e) {
             $this->json($e->getErrors(), 400);
         } catch (InvalidArgumentException $e) {
+            $this->json(['message' => $e->getMessage()], 400);
+        }
+    }
+    public function editProduct($id)
+    {
+        if ($this->getMethod() !== 'PUT') {
+            $this->json(['message' => 'Invalid method for editing product'], 405);
+        }
+
+        // Read the request data
+        $payload = $this->getRequestData();
+        $data = $this->sanitizer->clean($payload);
+
+        try {
+            // Get the product type from the data
+            $productType = $data['product_type'];
+
+            // Validate the necessary data
+            $this->validator->validate($data, [
+                'product_type' => ['required', 'in:Book,Dvd,Furniture'],
+                'weight' => ['required_if:product_type,Book'],
+                'size' => ['required_if:product_type,Dvd'],
+                'dimensions' => ['required_if:product_type,Furniture'],
+            ]);
+
+            // Get the specific product controller instance
+            $productController = $this->getControllerInstance($productType);
+
+            // Update the product
+            $result = $productController->editProduct($id, $data);
+
+            // Return the result
+            $this->json(['message' => $result['message'], 'status' => 201], 201);
+        } catch (ValidationException $e) {
+            $this->json(['message' => $e->getMessage()], 400);
+        } catch (Exception $e) {
             $this->json(['message' => $e->getMessage()], 400);
         }
     }

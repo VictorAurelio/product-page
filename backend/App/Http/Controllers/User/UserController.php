@@ -154,7 +154,7 @@ class UserController extends Controller
     public function logoutValidate()
     {
         if($this->getMethod() !== 'POST') {
-            $this->json(['message' => 'Invalid method for logging out'], 405);
+            $this->json(['message' => 'Invalid method for logging out'], ['status' => 405]);
         }
         $authorizationHeader = $this->authentication->getAuthorizationHeader();
         $jwt = $this->authentication->getBearerToken($authorizationHeader);
@@ -163,9 +163,9 @@ class UserController extends Controller
         $isLogoutSuccessful = $logoutUserController->logout($jwt);
 
         if($isLogoutSuccessful) {
-            $this->json(['message' => 'Logout successful'], 200);
+            $this->json(['message' => 'Logout successful'], ['status' => 201]);
         }else {
-            $this->json(['message' => 'Error logging out. Please try again.'], 400);
+            $this->json(['message' => 'Error logging out. Please try again.'], ['status' => 400]);
         }
     }
     public function refreshToken()

@@ -21,7 +21,6 @@ const validateForm = (event, form, callback) => {
             isValid = false;
             break;
         }
-
     }
 
     if (isValid) {

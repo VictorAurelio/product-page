@@ -20,6 +20,7 @@ use App\DTO\Product\ProductOptionDTO;
 use App\DTO\Product\BookDTO;
 use App\Models\Product\Book;
 use App\DTO\DTOInterface;
+use Exception;
 
 class BookController implements ProductSpecificControllerInterface
 {
@@ -74,6 +75,31 @@ class BookController implements ProductSpecificControllerInterface
         $bookDTO->setWeight($optionValue);
 
         return $bookDTO;
+    }
+    public function editProduct(int $id, array $data)
+    {
+        $data = $this->productController->getSanitizer()->clean($data);
+        $this->productController->getValidator()->validate($data, [
+            'name' => ['required'],
+            'sku' => ['required', 'unique'],
+            'price' => ['required', 'not_null'],
+            'category_id' => ['required'],
+            'weight' => ['required', 'not_null']
+        ]);
+        // Get the ID of the corresponding option for the product type
+        $bookDTO = $this->createDTO($data, $data['weight']);
+
+        try {
+            // Update the product
+            $result = $this->bookDAO->update($bookDTO, $data['id']);
+            if ($result) {
+                return ['message' => 'Book updated successfully'];
+            } else {
+                throw new Exception('Failed to update the book');
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
     public function getDAO(): BookDAO
     {

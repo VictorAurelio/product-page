@@ -1,0 +1,43 @@
+.auth-button-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .auth-button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 24px;
+    outline: none;
+    padding: 0;
+  }
+  
+  .auth-button-logged-in .auth-button {
+    color: green;
+  }
+  
+  .auth-button-logged-out .auth-button {
+    color: gray;
+  }
+  
+  .auth-button:hover {
+    color: blue;
+  }
+  
+  .auth-button-tooltip {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 2px 5px;
+    background-color: rgb(201, 181, 72);
+    color: rgb(0, 0, 0);
+    font-size: 12px;
+    white-space: nowrap;
+    border-radius: 3px;
+    display: none;
+  }
+  
+  .auth-button-container:hover .auth-button-tooltip {
+    display: block;
+  }

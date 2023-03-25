@@ -58,7 +58,12 @@ const ProductList = () => {
       )
     );
   };
-  
+
+  const isLoggedIn = () => {
+    const jwt = localStorage.getItem("jwt");
+    return jwt !== null;
+  };
+
   return (
     <div>
     <ToastContainer />
@@ -72,7 +77,12 @@ const ProductList = () => {
             />
             <div id="product-list-items">
                 {products.map((product) => (
-                    <Card key={product.id} product={product} toggleProductChecked={toggleProductChecked} />
+                    <Card
+                        key={product.id}
+                        product={product}
+                        toggleProductChecked={toggleProductChecked}
+                        isLoggedIn={isLoggedIn()}
+                        />
                     ))}
             </div>
         </div>

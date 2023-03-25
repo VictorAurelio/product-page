@@ -38,9 +38,9 @@ class FurnitureController implements ProductSpecificControllerInterface
         $this->productController->getValidator()->validate($data, [
             'name' => ['required'],
             'sku' => ['required', 'unique'],
-            'price' => ['required', 'not_null'],
+            'price' => ['required', 'numeric', 'not_null'],
             'category_id' => ['required'],
-            'dimensions' => ['required', 'not_null']
+            'dimensions' => ['required', 'dimensions', 'not_null']
         ]);
         // Get the ID of the corresponding option for the product type
         $optionId = $this->productController->getOptionIdByType('Furniture');

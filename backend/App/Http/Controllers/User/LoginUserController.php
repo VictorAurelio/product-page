@@ -39,7 +39,7 @@ class LoginUserController extends UserController
             'message' => 'User logged in successfully',
             'userId' => $userId,
             'jwt' => $jwt,
-            'status' => 200
+            'status' => 201
         ];
     }
 }
