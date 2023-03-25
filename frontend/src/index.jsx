@@ -17,7 +17,7 @@ root.render(
                 <App />
                 <Routes />
             </Container>
-        <Footer />
+            <Footer />
       </Router>
     </React.StrictMode>
   );

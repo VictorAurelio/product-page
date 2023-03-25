@@ -1,6 +1,8 @@
 @import '../../_variables';
 
 .app-container {
-    height: calc(100vh - 34px - 50px - 64px);
-    // padding: 2rem;
+    // height: calc(100vh - 34px - 50px - 64px);
+    flex: 1;
+    padding: 2rem 2rem 0;
+    min-height: calc(100vh - 185px);
 }

@@ -6,6 +6,19 @@
     align-items: center;
     border-bottom: 2px solid $secondary-color;
     // margin: 0 1em;
+
+    .auth-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.5rem;
+        margin-left: 10px;
+        color: #333;
+      
+        &:hover {
+          color: #007bff;
+        }
+      }
 }
 
 #page-title {

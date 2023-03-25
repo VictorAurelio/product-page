@@ -3,6 +3,7 @@
 .container {
     padding-top: 30px;
     padding-left: 0;
+    min-height: calc(100% - 60px);
 }
 
 #saveButton {
@@ -24,7 +25,6 @@
 #product_form {
     position: absolute;
     max-width: 350px;
-    // margin: 0 auto;
     padding: 30px;
     display: flex;
     background-color: $primary-color;

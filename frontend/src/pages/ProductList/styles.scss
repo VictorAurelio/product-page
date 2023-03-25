@@ -3,31 +3,8 @@
 #product-list-container {
     background-color: $background-color;
     font-size: $font-size-base;
+    padding-bottom: 60px;
 
-    .product-sku {
-        font-size: 1.2em;
-        font-weight: bold;
-    }
-
-    .product-name {
-        font-size: 1em;
-        font-style: inherit;
-        text-transform: uppercase;
-        margin-top: 5px;
-        margin-bottom: 10px;
-    }
-
-    .product-price {
-        font-size: 0.9em;
-        color: $secondary-color;
-        font-weight: bold;
-    }
-
-    .product-attribute {
-        font-size: 0.85em;
-        margin-top: 5px;
-        text-align: center;
-    }
     .product-attribute::first-letter {
         text-transform: uppercase;
     }
@@ -58,4 +35,3 @@
         background-color: darken($delete-button-hover, 10%);
     }
 }
-

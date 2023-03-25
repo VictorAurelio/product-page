@@ -1,32 +1,36 @@
 import React from 'react';
 import Button from '../Button';
 import './styles.scss';
+import AuthButton from '../AuthButton';
 
-const Header = ({ title, buttons, formRef, handleValidation }) => {
-  return (
-    <div id="page-header">
-      <h1 id="page-title">{title}</h1>
-      <div id="page-buttons">
-        {buttons.map((button, index) => (
-          <Button
-            key={index}
-            id={button.id}
-            type={button.type}
-            onClick={
+const Header = ({ title, buttons, formRef, handleValidation, onSubmit }) => {
+    return (
+      <div id="page-header">
+        <h1 id="page-title">{title}</h1>
+        <div id="page-buttons">
+          {buttons.map((button, index) => (
+            <Button
+              key={index}
+              id={button.id}
+              type={button.type}
+              onClick={
                 button.type === 'submit'
-                ? (event) => {
-                    if (formRef.current) {
-                        handleValidation(event, formRef.current);
+                  ? (event) => {
+                      event.preventDefault();
+                      if (formRef.current) {
+                        onSubmit ? onSubmit(event) : handleValidation(event);
+                      }
                     }
-                  }
-                : button.onClick
-            }
-            title={button.title}
-          />
-        ))}
+                  : button.onClick
+              }
+              title={button.title}
+            />
+          ))}
+          <AuthButton />
+        </div>
       </div>
-    </div>
-  );
-};
-
-export default Header;
+    );
+  };
+  
+  export default Header;
+  

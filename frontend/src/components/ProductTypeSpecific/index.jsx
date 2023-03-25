@@ -22,6 +22,7 @@ const ProductTypeSpecific = ({ productType }) => {
                         type="number"
                         pattern="^\\d+(\\.\\d{1,2})?$"
                         required
+                        min="0.01"
                     />
                     <span>Please, provide size</span>
                 </div>
@@ -36,6 +37,7 @@ const ProductTypeSpecific = ({ productType }) => {
                         step="any"
                         pattern="^\\d+(\\.\\d{1,2})?$"
                         required
+                        min="0.01"
                     />
                     <span>Please, provide weight</span>
                 </div>
@@ -47,24 +49,30 @@ const ProductTypeSpecific = ({ productType }) => {
                         id="height"
                         name="height"
                         step="any"
+                        type="number"
                         pattern="^\\d+(\\.\\d{1,2})?$"
                         required
+                        min="0.01"
                     />
                     <InputField
                         label="Width (cm)"
                         id="width"
                         name="width"
                         step="any"
+                        type="number"
                         pattern="^\\d+(\\.\\d{1,2})?$"
                         required
+                        min="0.01"
                     />
                     <InputField
                         label="Length (cm)"
                         id="length"
                         name="length"
                         step="any"
+                        type="number"
                         pattern="^\\d+(\\.\\d{1,2})?$"
                         required
+                        min="0.01"
                     />
                     <span>Please, provide dimensions</span>
                 </div>
