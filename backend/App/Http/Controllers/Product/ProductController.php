@@ -39,11 +39,13 @@ use InvalidArgumentException;
 use App\Models\Product\Book;
 use App\Models\Product\Dvd;
 use App\Core\Controller;
+use App\Http\Controllers\User\UserController;
 use Exception;
 
 class ProductController extends Controller
 {
     protected ConnectionInterface $connection;
+    protected UserController $userController;
     protected GenericProduct $productModel;
     protected DataSanitizer $sanitizer;
     protected ProductDAO $productDAO;
@@ -72,6 +74,7 @@ class ProductController extends Controller
             ->addRule('in', new InRule());
         $this->productModel = new GenericProduct($this->getConnection());
         $this->productDAO = new ProductDAO($this->productModel);
+        $this->userController = new UserController();
     }
     public function index()
     {
@@ -97,6 +100,24 @@ class ProductController extends Controller
             $this->insertProduct();
         } else {
             $this->json(['message' => 'Invalid method for adding product'], 405);
+        }
+    }
+    public function handleUpdateProduct($productId)
+    {
+        // Verify if the user is authenticated
+        if(!$this->userController->verifyAuthentication()) {
+            $this->json(['message' => 'Unauthorized'], 401);
+            return;
+        }
+        $requestData = $this->getRequestData();
+        $method = isset($requestData['_method']) && strtoupper($requestData['_method']) === 'PUT' ? 'PUT' : $this->getMethod();
+
+        if ($method === 'PUT') {
+            $this->updateProduct($productId);
+        } elseif ($method === 'GET') {
+            $this->getProductById($productId);
+        } else {
+            $this->json(['message' => 'Invalid method for updating product'], 405);
         }
     }
     public function insertProduct()
@@ -159,39 +180,42 @@ class ProductController extends Controller
             $this->json(['message' => $e->getMessage()], 400);
         }
     }
-    public function editProduct($id)
+    public function updateProduct($productId)
     {
-        if ($this->getMethod() !== 'PUT') {
-            $this->json(['message' => 'Invalid method for editing product'], 405);
+        if ($this->getMethod() !== 'POST') {
+            $this->json(['message' => 'Invalid method for updating product'], 405);
         }
-
+        echo '<br><br>';
+        var_dump($this->getMethod());
+        echo '<br><br>';
         // Read the request data
         $payload = $this->getRequestData();
+        // var_dump($payload);echo'<br><br>';
         $data = $this->sanitizer->clean($payload);
-
+        // var_dump($data);
         try {
-            // Get the product type from the data
-            $productType = $data['product_type'];
-
             // Validate the necessary data
             $this->validator->validate($data, [
                 'product_type' => ['required', 'in:Book,Dvd,Furniture'],
-                'weight' => ['required_if:product_type,Book'],
-                'size' => ['required_if:product_type,Dvd'],
-                'dimensions' => ['required_if:product_type,Furniture'],
+                'weight' => ['required_if:product_type,Book', 'numeric'],
+                'size' => ['required_if:product_type,Dvd', 'numeric'],
+                'dimensions' => ['required_if:product_type,Furniture', 'dimensions'],
             ]);
-
-            // Get the specific product controller instance
-            $productController = $this->getControllerInstance($productType);
-
             // Update the product
-            $result = $productController->editProduct($id, $data);
+            $productController = $this->getControllerInstance($data['product_type']);
 
-            // Return the result
-            $this->json(['message' => $result['message'], 'status' => 201], 201);
+            $data['category_id'] = match ($data['product_type']) {
+                'Book' => 1,
+                'Dvd' => 2,
+                'Furniture' => 3,
+                default => throw new InvalidArgumentException("Invalid product type"),
+            };
+            $result = $productController->updateProduct($productId, $data);
+
+            $this->json(['message' => $result['message']], $result['status']);
         } catch (ValidationException $e) {
-            $this->json(['message' => $e->getMessage()], 400);
-        } catch (Exception $e) {
+            $this->json($e->getErrors(), 400);
+        } catch (InvalidArgumentException $e) {
             $this->json(['message' => $e->getMessage()], 400);
         }
     }
@@ -253,6 +277,25 @@ class ProductController extends Controller
             default => throw new InvalidArgumentException('Invalid product type.'),
         };
     }
+    public function getProductById($productId)
+    {
+        $allProducts = $this->getAllProducts();
+
+        $product = null;
+        foreach ($allProducts as $item) {
+            if ($item['id'] == $productId) {
+                $product = $item;
+                break;
+            }
+        }
+
+        if ($product) {
+            $this->json($product, 200);
+        } else {
+            $this->json(['message' => 'Product not found'], 404);
+        }
+    }
+
     public function getAllProducts(): array
     {
         $bookController = $this->getControllerInstance('Book');

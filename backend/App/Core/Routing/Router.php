@@ -55,7 +55,7 @@ class Router extends Core
                     $newUrl = str_replace(':' . $argKey, $argValue, $newUrl);
                 }
                 $url = $newUrl;
-                var_dump($newUrl);
+                // var_dump($newUrl);
                 break;
             }
         }

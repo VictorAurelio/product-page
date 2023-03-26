@@ -62,6 +62,25 @@ class DvdController implements ProductSpecificControllerInterface
         };
         return $result;
     }
+    public function updateProduct(int $productId, array $data): array
+    {
+        $data = $this->productController->getSanitizer()->clean($data);
+        $this->productController->getValidator()->validate($data, [
+            'name' => ['required'],
+            'sku' => ['required', 'unique'],
+            'price' => ['required', 'not_null'],
+            'category_id' => ['required'],
+            'weight' => ['required', 'not_null']
+        ]);
+
+        $bookDTO = $this->createDTO($data, $data['weight']);
+        $bookDTO->setId($productId);
+
+        $updated = $this->bookDAO->update($bookDTO, 'id');
+
+        $result = $updated ? ['message' => 'Book updated successfully', 'status' => 200] : ['message' => 'Error updating book', 'status' => 500];
+        return $result;
+    }
     public function createDTO(array $data, $optionValue): DTOInterface
     {
         $dvdDTO = new DvdDTO();

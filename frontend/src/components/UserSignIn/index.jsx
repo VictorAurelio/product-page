@@ -13,11 +13,13 @@ const UserSignIn = ({ formRef, handleValidation }) => {
                     ref={formRef}
                     onSubmit={handleValidation}
                 >
+                {/* <h2>Already signed up? Sign In...</h2> */}
                     <InputField
                         label="Email"
                         id="signInEmailField"
                         name="email"
                         type="email"
+                        placeholder={'Type your email...'}
                         required
                     />
                     <InputField
@@ -25,6 +27,7 @@ const UserSignIn = ({ formRef, handleValidation }) => {
                         id="signInPasswordField"
                         name="password"
                         type="password"
+                        placeholder={'Type your password...'}
                         required
                     />
                 </form>

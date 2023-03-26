@@ -64,6 +64,34 @@ class BookController implements ProductSpecificControllerInterface
         };
         return $result;
     }
+    public function updateProduct(int $productId, array $data): array
+    {
+        $data = $this->productController->getSanitizer()->clean($data);
+        $this->productController->getValidator()->validate($data, [
+            'name' => ['required'],
+            'sku' => ['required', 'unique'],
+            'price' => ['required', 'not_null'],
+            'category_id' => ['required'],
+            'weight' => ['required', 'not_null']
+        ]);
+    
+        // Get the ID of the corresponding option for the product type
+        $optionId = $this->productController->getOptionIdByType('Book');
+        $bookDTO = $this->createDTO($data, $data['weight']);
+
+        $productOptionDTO = new ProductOptionDTO();
+        $productOptionDTO->setProductId($data['id']);
+        $productOptionDTO->setOptionId($optionId);
+        $productOptionDTO->setOptionValue($data['weight']);
+
+        $productOption = new ProductOption($this->productController->getConnection());
+        $productOption->updateOption($productOptionDTO);
+    
+        $updatedBook = $this->bookDAO->update($bookDTO, 'id');
+    
+        $result = $updatedBook ? ['message' => 'Book updated successfully', 'status' => 200] : ['message' => 'Error updating book', 'status' => 500];
+        return $result;
+    }
     public function createDTO(array $data, $optionValue): DTOInterface
     {
         $bookDTO = new BookDTO();
@@ -75,31 +103,6 @@ class BookController implements ProductSpecificControllerInterface
         $bookDTO->setWeight($optionValue);
 
         return $bookDTO;
-    }
-    public function editProduct(int $id, array $data)
-    {
-        $data = $this->productController->getSanitizer()->clean($data);
-        $this->productController->getValidator()->validate($data, [
-            'name' => ['required'],
-            'sku' => ['required', 'unique'],
-            'price' => ['required', 'not_null'],
-            'category_id' => ['required'],
-            'weight' => ['required', 'not_null']
-        ]);
-        // Get the ID of the corresponding option for the product type
-        $bookDTO = $this->createDTO($data, $data['weight']);
-
-        try {
-            // Update the product
-            $result = $this->bookDAO->update($bookDTO, $data['id']);
-            if ($result) {
-                return ['message' => 'Book updated successfully'];
-            } else {
-                throw new Exception('Failed to update the book');
-            }
-        } catch (Exception $e) {
-            throw $e;
-        }
     }
     public function getDAO(): BookDAO
     {

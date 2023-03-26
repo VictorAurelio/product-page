@@ -10,3 +10,29 @@ $edit-button-color: #0d4b75f6;
 $edit-button-hover: #04305ffa;
 $header-height: 64px;
 $cancel-btn-color: #a10707e7;
+$label-color: $secondary-color; /* Use the secondary color for labels */
+$input-text-color: $secondary-color; /* Use the secondary color for input text */
+$input-background-color: #fff; /* Use a white background */
+$input-border-color: $secondary-color;
+$input-border-radius: 4px;
+$input-padding: 8px;
+$input-select-chevron: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+$input-select-padding-right: 30px;
+$input-select-cursor: pointer;
+$input-select-outline: none;
+$input-select-focus-border-color: $edit-button-color;
+$last-input-margin-bottom: 0;
+$form-buttons-margin-top: 20px;
+$form-buttons-button-font-size: 1rem;
+$form-buttons-button-padding: 8px 16px;
+$form-buttons-button-margin-left: 10px;
+$form-buttons-button-border-radius: 4px;
+$form-buttons-button-border: none;
+$form-buttons-button-cursor: pointer;
+$form-buttons-button-transition: background-color 0.2s;
+$form-buttons-save-button-background-color: $edit-button-color;
+$form-buttons-save-button-color: #fff;
+$form-buttons-save-button-hover-background-color: $edit-button-hover;
+$form-buttons-cancel-button-background-color: $cancel-btn-color;
+$form-buttons-cancel-button-color: #fff;
+$form-buttons-cancel-button-hover-background-color: $delete-button-hover;

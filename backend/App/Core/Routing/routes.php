@@ -26,7 +26,7 @@ return [
 
     '/add-product' => '/product/handleAddProduct',
 
-    '/edit-product/{id}' => '/product/editProduct/:id',
+    '/edit-product/{id}' => '/product/handleUpdateProduct/:id',
 
     '/product/massDelete' => '/product/handleMassDelete',
 
