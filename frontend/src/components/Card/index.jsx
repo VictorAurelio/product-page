@@ -9,6 +9,7 @@ const Card = ({ product, toggleProductChecked, isLoggedIn }) => {
 
     const handleEditProduct = (productId) => {
         // Redirect do edit product page
+        console.log(productId);
         navigate(`/edit-product/${productId}`);
     };
 
@@ -36,7 +37,7 @@ const Card = ({ product, toggleProductChecked, isLoggedIn }) => {
             {isLoggedIn && (
                 <Button
                     className="edit-product-btn"
-                    onClick={() => handleEditProduct(product.id)}
+                    onClick={() => handleEditProduct(id)}
                     title="Edit"
                 />
             )}

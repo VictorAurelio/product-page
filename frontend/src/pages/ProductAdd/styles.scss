@@ -1,88 +1,86 @@
 @import '../../_variables';
 
 .container {
-    padding-top: 30px;
-    padding-left: 0;
-    min-height: calc(100% - 60px);
+  display: flex;
+  justify-content: center;
+  padding-top: $header-height;
+  padding-left: 0;
+  min-height: calc(100% - #{$header-height * 2});
 }
 
 #saveButton {
-    background-color: $main-button-color;
+  background-color: $main-button-color;
 
-    &:hover {
-        background-color: darken($add-save-button-hover, 10%);
-    }
+  &:hover {
+    background-color: darken($add-save-button-hover, 10%);
+  }
 }
 
 #delete-product-btn {
-    background-color: $main-button-color;
+  background-color: $main-button-color;
 
-    &:hover {
-        background-color: darken($delete-button-hover, 10%);
-    }
+  &:hover {
+    background-color: darken($delete-button-hover, 10%);
+  }
 }
 
 #product_form {
-    position: absolute;
-    max-width: 350px;
-    padding: 30px;
-    display: flex;
+    width: 25%;
+    max-width: 500px;
+    margin: 30px auto;
+    padding: 20px;
     background-color: $primary-color;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    text-align: left;
-
+    border: 2px solid $secondary-color;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  
     .form-group {
-        display: flex;
-        flex-direction: column;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
     }
-
-    .form-group label {
-        text-align: left;
-        margin-bottom: 5px;
-    }
-
+  
     label {
-        display: block;
-        margin-bottom: 5px;
+      display: block;
+      font-size: $font-size-base;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      color: $label-color;
     }
-
+  
     input,
     select {
-        width: 100%;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 14px;
+      width: 100%;
+      max-width: 80%;
+      padding: $input-padding;
+      margin-bottom: 20px;
+      border-radius: $input-border-radius;
+      border: 1px solid $input-border-color;
+      background-color: $input-background-color;
+      color: $input-text-color;
+      font-size: 1.0rem;
+  
+      &:focus {
+        outline: none;
+        border-color: $edit-button-color;
+        box-shadow: 0 0 5px $edit-button-color;
+      }
     }
-
+  
     select {
-        appearance: none;
-        background-color: #fff;
-        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>');
-        background-repeat: no-repeat;
-        background-position: right 10px center;
-        padding-right: 30px;
-        cursor: pointer;
-        transition: border-color 0.3s;
-
-        &:focus {
-            outline: none;
-            border-color: #0076ff;
-        }
-
+      appearance: none;
+      background-color: #fff;
+      background-image: $input-select-chevron;
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: $input-select-padding-right;
+      cursor: $input-select-cursor;
+      transition: border-color 0.3s;
+  
+      &:focus {
+        outline: none;
+        border-color: $input-select-focus-border-color;
+      }
     }
-}
-
-.product-type-specific {
-    transition: max-height 0.3s, opacity 0.3s;
-    overflow: hidden;
-    padding-right: 30px;
-
-    &.open {
-        max-height: 500px;
-        opacity: 1;
-    }
-}
+  }
+  

@@ -112,7 +112,7 @@ class UserController extends Controller
             $this->json($e->getErrors(), 400);
         }
     }
-        /**
+    /**
      * Create a UserDTO object from sanitized data
      *
      * @param array $data
@@ -153,7 +153,7 @@ class UserController extends Controller
     }
     public function logoutValidate()
     {
-        if($this->getMethod() !== 'POST') {
+        if ($this->getMethod() !== 'POST') {
             $this->json(['message' => 'Invalid method for logging out'], ['status' => 405]);
         }
         $authorizationHeader = $this->authentication->getAuthorizationHeader();
@@ -162,9 +162,9 @@ class UserController extends Controller
         $logoutUserController = new LogoutUserController($this);
         $isLogoutSuccessful = $logoutUserController->logout($jwt);
 
-        if($isLogoutSuccessful) {
+        if ($isLogoutSuccessful) {
             $this->json(['message' => 'Logout successful'], ['status' => 201]);
-        }else {
+        } else {
             $this->json(['message' => 'Error logging out. Please try again.'], ['status' => 400]);
         }
     }
@@ -174,19 +174,29 @@ class UserController extends Controller
         if ($this->getMethod() !== 'POST') {
             $this->json(['message' => 'Invalid method for refreshing token'], 405);
         }
-    
+
         // Verify if the current JWT is valid
         $authorizationHeader = $this->authentication->getAuthorizationHeader();
         $currentJwt = $this->authentication->getBearerToken($authorizationHeader);
         $userIdFromJwt = $this->userModel->getUserIdFromJwt($currentJwt);
-    
+
         if ($userIdFromJwt === false) {
             $this->json(['message' => 'Invalid token'], 401);
         }
-    
+
         // Create a new JWT and return it
         $newJwt = $this->userModel->createJwt($userIdFromJwt);
-        
+
         $this->json(['jwt' => $newJwt], 200);
+    }
+
+    public function verifyAuthentication()
+    {
+        // Verify if the current JWT is valid
+        $authorizationHeader = $this->authentication->getAuthorizationHeader();
+        $currentJwt = $this->authentication->getBearerToken($authorizationHeader);
+        $userIdFromJwt = $this->userModel->getUserIdFromJwt($currentJwt);
+
+        return $userIdFromJwt !== false;
     }
 }

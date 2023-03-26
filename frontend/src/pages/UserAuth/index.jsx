@@ -6,6 +6,7 @@ import UserSignUp from '../../components/UserSignUp';
 import Header from '../../components/Header';
 import { Toast } from '../../components/Toast';
 import validateForm from '../../utils/validateForm';
+import Button from '../../components/Button';
 import './styles.scss';
 
 const UserAuth = () => {
@@ -95,54 +96,45 @@ const UserAuth = () => {
         handleValidation(event, signUpFormRef.current, handleSignUp);
     };
 
-    const handleCancel = () => {
+    const goHome = () => {
         navigate(`${process.env.REACT_APP_BASE_URL}`);
     };
 
     return (
         <div className="user-auth-container">
-            <div className="sign-in-container">
-                <Header
-                    title="User Sign In"
-                    onSubmit={handleSignIn}
-                    formRef={signInFormRef}
-                    handleValidation={handleSignInValidation}
+            <div className="header-container">
+            <Header
+                    title="Product Page"
                     buttons={[
                         {
-                            id: 'signInButton',
-                            type: 'submit',
-                            title: 'Sign In',
-                        },
-                        {
-                            id: 'cancel-edit-btn',
+                            id: 'home-btn',
                             type: 'button',
-                            onClick: handleCancel,
-                            title: 'Cancel',
+                            onClick: goHome,
+                            title: 'Home',
                         },
                     ]}
                 />
+            </div>
+            <div className="sign-in-container">
                 <UserSignIn formRef={signInFormRef} handleValidation={handleSignInValidation} />
+                <Button
+                    id='signInButton'
+                    type='submit'
+                    title='Sign In'
+                    handleValidation={handleSignInValidation}
+                    formRef={signInFormRef}
+                    onSubmit={handleSignIn}
+                />
             </div>
             <div className="sign-up-container">
                 <UserSignUp formRef={signUpFormRef} handleValidation={handleSignUpValidation} />
-                <Header
-                    title="User Sign Up"
-                    onSubmit={handleSignUp}
-                    formRef={signUpFormRef}
+                <Button
+                    id='signUpButton'
+                    type='submit'
+                    title='Sign Up'
                     handleValidation={handleSignUpValidation}
-                    buttons={[
-                        {
-                            id: 'signUpButton',
-                            type: 'submit',
-                            title: 'Sign Up',
-                        },
-                        {
-                            id: 'cancel-edit-btn',
-                            type: 'button',
-                            onClick: handleCancel,
-                            title: 'Cancel',
-                        },
-                    ]}
+                    formRef={signInFormRef}
+                    onSubmit={handleSignUp}
                 />
             </div>
         </div>

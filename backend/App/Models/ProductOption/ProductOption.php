@@ -36,4 +36,8 @@ class ProductOption extends Model
     {
         return $this->productOptionDAO->create($productOptionDAO);
     }
+    public function updateOption(ProductOptionDTO $productOptionDAO): bool
+    {
+        return $this->productOptionDAO->update($productOptionDAO, self::TABLESCHEMAID);
+    }
 }

@@ -1,61 +1,16 @@
 @import '../../_variables';
 
 .user-auth-container {
-    position: relative;
+    // position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 2rem;
-    padding: 5rem;
-
-    .auth-container {
-        position: relative;
-        background-color: $primary-color;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        width: 100%;
-        text-align: left;
-        font-style: oblique;
-        font-size: 18px;
-        padding: 30px;
-        margin-top: 1rem;
-        transition: transform 0.3s ease-out;
-
-        &:hover {
-            background-color: darken($primary-color, 10%);
-        }
-    }
-
-    .sign-in-container {
-        flex-basis: calc(50% - 1rem);
-        display: block;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 13rem;
-
-        .auth-container {
-            margin-top: 0;
-        }
-    }
-
-    .sign-up-container {
-        flex-basis: calc(50% - 1rem);
-        display: block;
-        flex-direction: column-reverse;
-        align-items: center;
-        justify-content: center;
-        margin-top: 6rem;
-
-    }
+    padding: 2rem;
 
     .header-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding-bottom: 1rem;
+        width: 100%;
+        // margin-bottom: 2rem;
 
         h1 {
             margin: 0;
@@ -66,6 +21,24 @@
             display: flex;
             gap: 1rem;
         }
+    }
+
+    .sign-in-container {
+        flex-basis: calc(50% - 1rem);
+        display: block;
+        // flex-direction: column;
+        align-items: left;
+        justify-content: left;
+
+    }
+
+    .sign-up-container {
+        flex-basis: calc(50% - 1rem);
+        display: block;
+        // flex-direction: column-reverse;
+        align-items: right;
+        justify-content: right;
+        margin-top: 0;
     }
 
     .form-group {
@@ -100,15 +73,15 @@
         background-color: $add-save-button-hover;
 
         &:hover {
-            background-color: darken($button-hover, 10%);
+            background-color: darken($edit-button-hover, 10%);
         }
     }
 
-    #cancel-edit-btn {
-        background-color: $cancel-btn-color;
+    #home-btn {
+        background-color: $main-button-color;
 
         &:hover {
-            background-color: darken($delete-button-hover, 10%);
+            background-color: darken($button-hover, 10%);
         }
     }
 }

@@ -1,45 +1,57 @@
 @import '../../variables';
 
 .container {
-    padding-top: 30px;
+    display: flex;
+    justify-content: center;
+    padding-top: $header-height;
     padding-left: 0;
+    min-height: calc(100% - #{$header-height * 2});
 
     #userSignInForm {
-        position: relative;
-        max-width: 350px;
-        padding: 30px;
+        width: 40%;
+        max-width: 500px;
+        margin: 30px auto;
+        padding: 20px;
         background-color: $primary-color;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        width: 100%;
-        text-align: left;
-        font-style: oblique;
-        font-size: 18px;
+        border: 2px solid $secondary-color;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+          }
 
         .form-group {
             display: flex;
             flex-direction: column;
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
-            margin: 5px;
-            padding: 2px;
+            font-size: $font-size-base;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: $label-color;
         }
 
         input,
         select {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
+            max-width: 80%;
+            padding: $input-padding;
+            margin-bottom: 20px;
+            border-radius: $input-border-radius;
+            border: 1px solid $input-border-color;
+            background-color: $input-background-color;
+            color: $input-text-color;
+            font-size: 1.0rem;
 
             &:hover,
             &:focus {
                 outline: none;
-                border-color: #0076ff;
+                border-color: $edit-button-color;
+                box-shadow: 0 0 5px $edit-button-color;
             }
         }
     }

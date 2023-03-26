@@ -18,6 +18,7 @@ const UserSignUp = ({ formRef, handleValidation }) => {
                         id="signUpNameField"
                         name="name"
                         type="text"
+                        placeholder={'Type your name...'}
                         required
                     />
                     <InputField
@@ -25,6 +26,7 @@ const UserSignUp = ({ formRef, handleValidation }) => {
                         id="signUpEmailField"
                         name="email"
                         type="email"
+                        placeholder={'Type your email...'}
                         required
                     />
                     <InputField
@@ -32,6 +34,7 @@ const UserSignUp = ({ formRef, handleValidation }) => {
                         id="signUpPasswordField"
                         name="password"
                         type="password"
+                        placeholder={'Type your password...'}
                         required
                     />
                     <InputField
@@ -39,6 +42,7 @@ const UserSignUp = ({ formRef, handleValidation }) => {
                         id="signUpPasswordConfirmationField"
                         name="passwordConfirmation"
                         type="password"
+                        placeholder={'Confirm your password...'}
                         required
                     />
                 </form>
