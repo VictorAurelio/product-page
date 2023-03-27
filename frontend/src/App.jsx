@@ -3,6 +3,7 @@ import ProductList from './pages/ProductList';
 import ProductAdd from './pages/ProductAdd';
 import ProductEdit from './pages/ProductEdit';
 import UserAuth from './pages/UserAuth';
+import NotFound from './components/NotFound';
 import './App.scss';
 
 function App() {
@@ -18,8 +19,9 @@ function App() {
         <Routes>
           <Route path="/" element={<ProductList apiUrl={showAllProductsUrl} />} />
           <Route path="/add-product" element={<ProductAdd apiUrl={handleAddProductUrl} />} />
-          <Route path="/edit-product/:id" element={<ProductEdit />} />
+          <Route path="/edit-product/:id" element={<ProductEdit apiUrl={editProductUrl} />} />
           <Route path="/user" element={<UserAuth />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
     </div>
 

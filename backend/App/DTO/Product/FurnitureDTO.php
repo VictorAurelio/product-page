@@ -21,7 +21,7 @@ class FurnitureDTO extends ProductDTO
 {
     private string $_dimensions;
       
-    public function getDimensions(): float
+    public function getDimensions(): string
     {
         return $this->_dimensions;
     }

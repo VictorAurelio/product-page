@@ -121,4 +121,35 @@ class ProductOptionDAO implements DAOInterface
     {
         return false;
     }
+    public function findByOptionId(int $optionId, int $productId): ?ProductOptionDTO
+    {
+        $sqlQuery = $this->_dao->getQueryBuilder()->buildQuery(
+            [
+                'type' => 'search',
+                'selectors' => ['option_id' => $optionId, 'product_id' => $productId],
+                'table' => $this->_dao->getSchema()
+            ]
+        )->exactSearchQuery();
+
+        $this->_dao->getDataMapper()->persist(
+            $sqlQuery,
+            $this->_dao
+                ->getDataMapper()
+                ->buildQueryParameters([], ['option_id' => $optionId, 'product_id' => $productId]),
+            false
+        );
+        $result = $this->_dao->getDataMapper()->result();
+
+        if ($result === null) {
+            return null;
+        }
+
+        $productOptionDTO = new ProductOptionDTO();
+        $productOptionDTO->setId($result->id);
+        $productOptionDTO->setProductId($result->product_id);
+        $productOptionDTO->setOptionId($result->option_id);
+        $productOptionDTO->setOptionValue($result->option_value);
+
+        return $productOptionDTO;
+    }
 }

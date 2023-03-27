@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import InputField from '../InputField';
 
-const ProductTypeSpecific = ({ productType }) => {
+const ProductTypeSpecific = ({ productType, height, width, length  }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
@@ -53,6 +53,7 @@ const ProductTypeSpecific = ({ productType }) => {
                         pattern="^\\d+(\\.\\d{1,2})?$"
                         required
                         min="0.01"
+                        defaultValue={height}
                     />
                     <InputField
                         label="Width (cm)"
@@ -63,6 +64,7 @@ const ProductTypeSpecific = ({ productType }) => {
                         pattern="^\\d+(\\.\\d{1,2})?$"
                         required
                         min="0.01"
+                        defaultValue={width}
                     />
                     <InputField
                         label="Length (cm)"
@@ -73,6 +75,7 @@ const ProductTypeSpecific = ({ productType }) => {
                         pattern="^\\d+(\\.\\d{1,2})?$"
                         required
                         min="0.01"
+                        defaultValue={length}
                     />
                     <span>Please, provide dimensions</span>
                 </div>

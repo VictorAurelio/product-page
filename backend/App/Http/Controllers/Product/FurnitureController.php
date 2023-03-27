@@ -71,20 +71,32 @@ class FurnitureController implements ProductSpecificControllerInterface
     {
         $data = $this->productController->getSanitizer()->clean($data);
         $this->productController->getValidator()->validate($data, [
-            'name' => ['required'],
-            'sku' => ['required', 'unique'],
-            'price' => ['required', 'not_null'],
+            'sku' => ['unique', 'not_null'],
+            'price' => ['not_null', 'numeric'],
             'category_id' => ['required'],
-            'weight' => ['required', 'not_null']
+            'dimensions' => ['dimensions']
         ]);
 
-        $bookDTO = $this->createDTO($data, $data['weight']);
-        $bookDTO->setId($productId);
+        // Get the ID of the corresponding option for the product type
+        $optionId = $this->productController->getOptionIdByType('Furniture');
 
-        $updated = $this->bookDAO->update($bookDTO, 'id');
+        // Convert dimensions string to float using crc32
+        $dimensionsFloat = crc32($data['dimensions']);
 
-        $result = $updated ? ['message' => 'Book updated successfully', 'status' => 200] : ['message' => 'Error updating book', 'status' => 500];
-        return $result;
+        $furnitureDTO = $this->createDTO($data, $dimensionsFloat);
+
+        $productOption = new ProductOption($this->productController->getConnection());
+        $productOptionDTO = $productOption->findByOptionId($optionId, $productId);
+
+        if ($productOptionDTO) {
+            $productOptionDTO->setOptionValue($data['dimensions']);
+            $productOption->updateOption($productOptionDTO);
+        }
+
+        $updatedFurniture = $this->furnitureDAO->update($furnitureDTO, $productId);
+
+        $result = $updatedFurniture ? ['message' => 'Furniture updated successfully', 'status' => 200] : ['message' => 'Error updating furniture', 'status' => 500];
+        return $result;    
     }
     public function createDTO(array $data, float $dimensionsFloat): DTOInterface
     {

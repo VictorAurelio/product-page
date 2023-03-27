@@ -105,7 +105,7 @@ class ProductController extends Controller
     public function handleUpdateProduct($productId)
     {
         // Verify if the user is authenticated
-        if(!$this->userController->verifyAuthentication()) {
+        if (!$this->userController->verifyAuthentication()) {
             $this->json(['message' => 'Unauthorized'], 401);
             return;
         }
@@ -137,7 +137,7 @@ class ProductController extends Controller
                 'dimensions' => ['required_if:product_type,Furniture', 'dimensions'],
             ]);
 
-            // Insert the product
+            // Call the correct controller according to the product type
             $productController = $this->getControllerInstance($data['product_type']);
 
             $data['category_id'] = match ($data['product_type']) {
@@ -185,31 +185,21 @@ class ProductController extends Controller
         if ($this->getMethod() !== 'POST') {
             $this->json(['message' => 'Invalid method for updating product'], 405);
         }
-        echo '<br><br>';
-        var_dump($this->getMethod());
-        echo '<br><br>';
         // Read the request data
         $payload = $this->getRequestData();
-        // var_dump($payload);echo'<br><br>';
         $data = $this->sanitizer->clean($payload);
-        // var_dump($data);
+
         try {
             // Validate the necessary data
             $this->validator->validate($data, [
                 'product_type' => ['required', 'in:Book,Dvd,Furniture'],
-                'weight' => ['required_if:product_type,Book', 'numeric'],
-                'size' => ['required_if:product_type,Dvd', 'numeric'],
-                'dimensions' => ['required_if:product_type,Furniture', 'dimensions'],
+                'price' => ['numeric', 'not_null'],
+                'weight' => ['numeric'],
+                'size' => ['numeric'],
+                'dimensions' => ['dimensions'],
             ]);
             // Update the product
             $productController = $this->getControllerInstance($data['product_type']);
-
-            $data['category_id'] = match ($data['product_type']) {
-                'Book' => 1,
-                'Dvd' => 2,
-                'Furniture' => 3,
-                default => throw new InvalidArgumentException("Invalid product type"),
-            };
             $result = $productController->updateProduct($productId, $data);
 
             $this->json(['message' => $result['message']], $result['status']);
