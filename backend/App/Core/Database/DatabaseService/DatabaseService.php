@@ -94,7 +94,7 @@ class DatabaseService implements DatabaseServiceInterface
             throw $exception;
         }
     }
-   /**
+    /**
      * @inheritDoc
      *
      * @param array $fields
@@ -189,7 +189,7 @@ class DatabaseService implements DatabaseServiceInterface
         }
     }
 
-   /**
+    /**
      * @inheritDoc
      * @return array
      */
@@ -226,8 +226,19 @@ class DatabaseService implements DatabaseServiceInterface
         }
         return $parameters;
     }
-
-    public function buildInsertQueryParameters(array $conditions = [], array $parameters = []) : array
+    public function buildUpdateQueryParameters(array $fields = []): array
+    {
+        $parameters = [];
+        foreach ($fields as $key => $value) {
+            if (strpos($key, '_') === 0) {
+                $key = substr($key, 1);
+            }
+            $parameters[":$key"] = $value;
+        }
+        $parameters[':id'] = $fields['id'];
+        return $parameters;
+    }
+    public function buildInsertQueryParameters(array $conditions = [], array $parameters = []): array
     {
         return (!empty($parameters) || (!empty($conditions)) ? array_merge($conditions, $parameters) : $parameters);
     }
@@ -235,8 +246,8 @@ class DatabaseService implements DatabaseServiceInterface
     {
         if (empty($conditions)) {
             return $parameters;
-        }    
-    
+        }
+
         $allParameters = [];
         foreach ($conditions as $condition) {
             if (preg_match_all('/:(\w+)/', $condition, $matches)) {
@@ -247,9 +258,9 @@ class DatabaseService implements DatabaseServiceInterface
                 }
             }
         }
-    
+
         return $allParameters;
-    }    
+    }
 
     /**
      * Summary of persist
@@ -274,6 +285,4 @@ class DatabaseService implements DatabaseServiceInterface
             throw new PDOException('Data persistent error ' . $e->getMessage());
         }
     }
-    
-    
 }

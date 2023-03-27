@@ -16,6 +16,7 @@ use App\DTO\Product\FurnitureDTO;
 use App\Models\Product\Furniture;
 use InvalidArgumentException;
 use App\DTO\DTOInterface;
+use App\DTO\Product\ProductOptionDTO;
 use Throwable;
 
 /**
@@ -64,7 +65,7 @@ class FurnitureDAO extends ProductDAO
             $fields = $data->toArray();
             // Remove the 'dimensions' field
             unset($fields['dimensions']);
-            
+
             $args = [
                 'table' => $this->dao->getSchema(),
                 'type' => 'insert',
@@ -75,7 +76,7 @@ class FurnitureDAO extends ProductDAO
                 $query,
                 $this->dao->getDataMapper()->buildInsertQueryParameters($fields)
             );
-    
+
             if ($this->dao->getDataMapper()->numRows() == 1) {
                 // Get the last inserted ID and return it
                 return $this->dao->lastID();
@@ -103,26 +104,39 @@ class FurnitureDAO extends ProductDAO
         if (!$data instanceof FurnitureDTO) {
             throw new InvalidArgumentException('Expected FurnitureDTO instance.');
         }
-    
+
         // Convert FurnitureDTO to array
         $fields = $data->toArray();
-    
-        // Merge specific attributes of Furniture with the Product attributes
-        $mergedFields = array_merge(
-            $fields, 
-            $this->furnitureModel->specificAttributes($data)
-        );
+
+        echo '<br>fields update: <br>';
+        var_dump($fields);
+        echo '<br><br>';
+        $fieldsWithKeys = [
+            'id' => $fields['id'],
+            'sku' => $fields['sku'],
+            'product_name' => $fields['product_name'],
+            'price' => $fields['price'],
+            'category_id' => $fields['category_id'],
+        ];
+
+        // Remove the 'dimensions' field
+        unset($fields['dimensions']);
+
         try {
             $args = [
                 'table' => $this->dao->getSchema(),
                 'type' => 'update',
-                'fields' => $mergedFields,
+                'fields' => $fieldsWithKeys,
                 'primary_key' => $primaryKey
             ];
             $query = $this->dao->getQueryBuilder()->buildQuery($args)->updateQuery();
+            echo '<br><br>';
+            var_dump($query);
+            echo '<br><br>';
+            echo '<br><br>';
             $this->dao->getDataMapper()->persist(
                 $query,
-                $this->dao->getDataMapper()->buildQueryParameters($mergedFields)
+                $this->dao->getDataMapper()->buildUpdateQueryParameters($fieldsWithKeys)
             );
             if ($this->dao->getDataMapper()->numRows() === 1) {
                 return true;
@@ -130,9 +144,40 @@ class FurnitureDAO extends ProductDAO
         } catch (Throwable $throwable) {
             throw $throwable;
         }
-    
+
         return false;
     }
+    public function updateProductOption(ProductOptionDTO $productOptionDTO, int $productId): bool
+    {
+        try {
+            $fields = [
+                'option_id' => $productOptionDTO->getOptionId(),
+                'product_id' => $productId,
+                'option_value' => $productOptionDTO->getOptionValue()
+            ];
+
+            $args = [
+                'table' => 'product_options',
+                'type' => 'update',
+                'fields' => $fields,
+                'primary_key' => 'product_id'
+            ];
+
+            $query = $this->dao->getQueryBuilder()->buildQuery($args)->updateQuery();
+            $this->dao->getDataMapper()->persist(
+                $query,
+                $this->dao->getDataMapper()->buildUpdateQueryParameters($fields)
+            );
+
+            if ($this->dao->getDataMapper()->numRows() === 1) {
+                return true;
+            }
+        } catch (Throwable $throwable) {
+            throw $throwable;
+        }
+        return false;
+    }
+
     /**
      * Find all furnitures
      * 
@@ -157,11 +202,11 @@ class FurnitureDAO extends ProductDAO
     //             'parameters' => $parameters,
     //         ];
     //         $query = $this->dao
-	// 			->getQueryBuilder()
-	// 			->buildQuery($args)
-	// 			->innerJoin('product_options', 'products.id = product_options.product_id')
-	// 			->innerJoin('options', 'product_options.option_id = options.id')
-	// 			->selectQuery();
+    // 			->getQueryBuilder()
+    // 			->buildQuery($args)
+    // 			->innerJoin('product_options', 'products.id = product_options.product_id')
+    // 			->innerJoin('options', 'product_options.option_id = options.id')
+    // 			->selectQuery();
     //         $this->dao
     //             ->getDataMapper()
     //             ->persist(
@@ -178,12 +223,12 @@ class FurnitureDAO extends ProductDAO
     //     }
     //     return ['no data'];
     // }
-    public function getAllFurnitures(): array {
+    public function getAllFurnitures(): array
+    {
         $conditions = ['*'];
         $category_id = $this->furnitureModel->getCategoryId();
         $parameters = ["category_id = $category_id"];
 
         return $this->readWithOptions($conditions, $parameters);
-    }   
-    
+    }
 }

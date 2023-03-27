@@ -100,11 +100,9 @@ abstract class QueryBuilder implements QueryBuilderInterface
         $values = '';
         if ($this->isQueryTypeValid('update')) {
             if (is_array($this->key['fields']) && count($this->key['fields']) > 0) {
-                // 
-                foreach ($this->key['fields'] as $field) {
+                foreach ($this->key['fields'] as $field => $value) {
                     if ($field !== $this->key['primary_key']) {
                         $values .= $field . " = :" . $field . ", ";
-                        // name = :name
                     }
                 }
 
@@ -112,13 +110,13 @@ abstract class QueryBuilder implements QueryBuilderInterface
 
                 if (count($this->key['fields']) > 0) {
                     $this->sqlQuery = "UPDATE {$this->key['table']} SET {$values} 
-                        WHERE {$this->key['primary_key']} = :{$this->key['primary_key']} LIMIT 1";
-
+                        WHERE id = :id LIMIT 1";
                     if (isset($this->key['primary_key']) && $this->key['primary_key'] === '0') {
                         unset($this->key['primary_key']);
                         $this->sqlQuery = "UPDATE {$this->key['table']} SET {$values}";
                     }
                 }
+                // echo'<br><br>';var_dump($this->sqlQuery);echo'<br><br>';
                 return $this->sqlQuery;
             }
         }
@@ -133,7 +131,7 @@ abstract class QueryBuilder implements QueryBuilderInterface
             return $this->sqlQuery;
         }
         return false;
-    }    
+    }
     /**
      * Summary of searchQuery
      * @return string
@@ -196,16 +194,16 @@ abstract class QueryBuilder implements QueryBuilderInterface
         foreach ($this->joins as $join) {
             $this->sqlQuery .= " " . $join;
         }
-    
+
         if (isset($this->key['conditions']) && !empty($this->key['conditions'])) {
             if (is_array($this->key['conditions'])) {
                 $this->sqlQuery .= " WHERE " . implode(" AND ", $this->key['conditions']);
             }
         }
-    
+
         $this->sqlQuery .= $this->orderByQuery();
         $this->sqlQuery .= $this->queryOffset();
-    
+
         return $this->sqlQuery;
     }
     protected function queryLimit()
@@ -228,7 +226,6 @@ abstract class QueryBuilder implements QueryBuilderInterface
         if (isset($this->key["params"]["limit"]) && $this->key["params"]["offset"] != -1) {
             $this->sqlQuery .= " LIMIT :offset, :limit"; /* this is the short syntax */
         }
-
     }
     public function innerJoin(string $table, string $onCondition): self
     {

@@ -68,11 +68,10 @@ class BookController implements ProductSpecificControllerInterface
     {
         $data = $this->productController->getSanitizer()->clean($data);
         $this->productController->getValidator()->validate($data, [
-            'name' => ['required'],
-            'sku' => ['required', 'unique'],
-            'price' => ['required', 'not_null'],
+            'sku' => ['unique'],
+            'price' => ['not_null', 'numeric'],
             'category_id' => ['required'],
-            'weight' => ['required', 'not_null']
+            'weight' => ['not_null', 'numeric']
         ]);
     
         // Get the ID of the corresponding option for the product type
@@ -87,7 +86,7 @@ class BookController implements ProductSpecificControllerInterface
         $productOption = new ProductOption($this->productController->getConnection());
         $productOption->updateOption($productOptionDTO);
     
-        $updatedBook = $this->bookDAO->update($bookDTO, 'id');
+        $updatedBook = $this->bookDAO->update($bookDTO, $data['id']); // 'id'
     
         $result = $updatedBook ? ['message' => 'Book updated successfully', 'status' => 200] : ['message' => 'Error updating book', 'status' => 500];
         return $result;

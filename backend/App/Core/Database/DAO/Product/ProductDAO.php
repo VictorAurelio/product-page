@@ -114,7 +114,7 @@ class ProductDAO extends DAO implements DAOInterface
             'products.price',
             'product_options.option_value',
             'options.option_name',
-        ]);    
+        ]);
         $query = $this->dao->getQueryBuilder()
             ->buildQuery([
                 'type' => 'select',
@@ -125,7 +125,7 @@ class ProductDAO extends DAO implements DAOInterface
             ])
             ->innerJoin('product_options', 'products.id = product_options.product_id')
             ->innerJoin('options', 'product_options.option_id = options.id')
-            ->selectQuery();            
+            ->selectQuery();
         $this->dao->getDataMapper()->persist(
             $query,
             $this->dao->getDataMapper()->buildQueryParameters($conditions, $parameters)
@@ -134,7 +134,7 @@ class ProductDAO extends DAO implements DAOInterface
 
         return $results;
     }
-    
+
     /**
      * Summary of read
      * 
@@ -161,11 +161,11 @@ class ProductDAO extends DAO implements DAOInterface
                 'extras' => $optional
             ];
             $query = $this->dao
-				->getQueryBuilder()
-				->buildQuery($args)
-				// ->innerJoin('product_options', 'products.id = product_options.product_id')
-				// ->innerJoin('options', 'product_options.option_id = options.id')
-				->selectQuery();
+                ->getQueryBuilder()
+                ->buildQuery($args)
+                // ->innerJoin('product_options', 'products.id = product_options.product_id')
+                // ->innerJoin('options', 'product_options.option_id = options.id')
+                ->selectQuery();
             $this->dao
                 ->getDataMapper()
                 ->persist(
@@ -174,7 +174,7 @@ class ProductDAO extends DAO implements DAOInterface
                         ->getDataMapper()
                         ->buildQueryParameters($conditions, $parameters)
                 );
-                // var_dump($query);
+            // var_dump($query);
             if ($this->dao->getDataMapper()->numRows() > 0) {
                 return $this->dao->getDataMapper()->results();
             }
@@ -203,17 +203,24 @@ class ProductDAO extends DAO implements DAOInterface
 
         $fields = $data->toArray();
 
+        $fieldsWithKeys = [
+            'sku' => $fields['_sku'],
+            'title' => $fields['_name'],
+            'price' => $fields['_price'],
+            'category_id' => $fields['_categoryId'],
+        ];
+
         try {
             $args = [
                 'table' => $this->dao->getSchema(),
                 'type' => 'update',
-                'fields' => $fields,
+                'fields' => $fieldsWithKeys,
                 'primary_key' => $primaryKey
             ];
             $query = $this->dao->getQueryBuilder()->buildQuery($args)->updateQuery();
             $this->dao->getDataMapper()->persist(
                 $query,
-                $this->dao->getDataMapper()->buildQueryParameters($fields)
+                $this->dao->getDataMapper()->buildUpdateQueryParameters($fieldsWithKeys)
             );
             if ($this->dao->getDataMapper()->numRows() === 1) {
                 return true;
@@ -251,7 +258,7 @@ class ProductDAO extends DAO implements DAOInterface
         }
 
         return false;
-    }    
+    }
     public function deleteByIds(array $ids): bool
     {
         $conditions = [];
@@ -303,5 +310,4 @@ class ProductDAO extends DAO implements DAOInterface
 
         return ['no data'];
     }
- 
 }

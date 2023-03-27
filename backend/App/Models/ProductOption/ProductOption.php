@@ -40,4 +40,14 @@ class ProductOption extends Model
     {
         return $this->productOptionDAO->update($productOptionDAO, self::TABLESCHEMAID);
     }
+    public function setOptionValue(ProductOptionDTO $productOptionDTO, string $value): bool
+    {
+        $productOptionDTO->setOptionValue($value);
+        return $this->updateOption($productOptionDTO);
+    }
+
+    public function findByOptionId(int $optionId, int $productId): ?ProductOptionDTO
+    {
+        return $this->productOptionDAO->findByOptionId($optionId, $productId);
+    }
 }
