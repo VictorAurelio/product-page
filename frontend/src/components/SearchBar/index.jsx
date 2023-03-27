@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import debounce from 'lodash.debounce';
+import './styles.scss';
 
 const SearchBar = ({ onSearch }) => {
   const [searchTerm, setSearchTerm] = useState('');

@@ -62,7 +62,9 @@ class DvdDAO extends ProductDAO
         try {
             // Convert DvdDTO to array
             $fields = $data->toArray();
-            echo'<br>DVDDAO CREATE FIELDS<br>';var_dump($fields);echo'<br><br>';
+            echo '<br>DVDDAO CREATE FIELDS<br>';
+            var_dump($fields);
+            echo '<br><br>';
             // Remove the 'size' field
             unset($fields['size']);
             unset($fields['id']);
@@ -72,14 +74,20 @@ class DvdDAO extends ProductDAO
                 'type' => 'insert',
                 'fields' => $fields
             ];
-            echo'<br>DVDDAO CREATE ARGS<br>';var_dump($args);echo'<br><br>';
+            echo '<br>DVDDAO CREATE ARGS<br>';
+            var_dump($args);
+            echo '<br><br>';
             $query = $this->dao->getQueryBuilder()->buildQuery($args)->insertQuery();
-            echo'<br>CREATE DVDDAO QUERY: <br>';var_dump($query);echo'<br><br>';
+            echo '<br>CREATE DVDDAO QUERY: <br>';
+            var_dump($query);
+            echo '<br><br>';
             $this->dao->getDataMapper()->persist(
                 $query,
                 $this->dao->getDataMapper()->buildInsertQueryParameters($fields)
             );
-            echo'<br>CREATE DVDDAO QUERY: <br>';var_dump($query);echo'<br><br>';    
+            echo '<br>CREATE DVDDAO QUERY: <br>';
+            var_dump($query);
+            echo '<br><br>';
             if ($this->dao->getDataMapper()->numRows() == 1) {
                 // Get the last inserted ID and return it
                 return $this->dao->lastID();
@@ -105,28 +113,27 @@ class DvdDAO extends ProductDAO
     public function update(DTOInterface $data, string $primaryKey): bool
     {
         if (!$data instanceof DvdDTO) {
-            throw new InvalidArgumentException('Expected DvdDTO instance.');
+            throw new InvalidArgumentException('Expected FurnitureDTO instance.');
         }
-    
+
         // Convert DvdDTO to array
         $fields = $data->toArray();
-    
-        // Merge specific attributes of Dvd with the Product attributes
-        $mergedFields = array_merge(
-            $fields, 
-            $this->dvdModel->specificAttributes($data)
-        );
+
+        // Remove the 'size' field
+        unset($fields['size']);
+
         try {
             $args = [
                 'table' => $this->dao->getSchema(),
                 'type' => 'update',
-                'fields' => $mergedFields,
+                'fields' => $fields,
                 'primary_key' => $primaryKey
             ];
             $query = $this->dao->getQueryBuilder()->buildQuery($args)->updateQuery();
+
             $this->dao->getDataMapper()->persist(
                 $query,
-                $this->dao->getDataMapper()->buildInsertQueryParameters($mergedFields)
+                $this->dao->getDataMapper()->buildUpdateQueryParameters($fields)
             );
             if ($this->dao->getDataMapper()->numRows() === 1) {
                 return true;
@@ -134,15 +141,14 @@ class DvdDAO extends ProductDAO
         } catch (Throwable $throwable) {
             throw $throwable;
         }
-    
         return false;
     }
-    public function getAllDvds(): array {
+    public function getAllDvds(): array
+    {
         $conditions = ['*'];
         $category_id = $this->dvdModel->getCategoryId();
-        $parameters = ["category_id = $category_id"];    
-        
+        $parameters = ["category_id = $category_id"];
+
         return $this->readWithOptions($conditions, $parameters);
-    }   
-     
+    }
 }
