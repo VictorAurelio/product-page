@@ -67,28 +67,47 @@ class BookController implements ProductSpecificControllerInterface
     public function updateProduct(int $productId, array $data): array
     {
         $data = $this->productController->getSanitizer()->clean($data);
+
+        $allProducts = $this->productController->getAllProducts();
+        $currentSku = null;
+        foreach ($allProducts as $product) {
+            if ($product['id'] == $productId) {
+                $currentSku = $product['sku'];
+                break;
+            }
+        }
+
         $this->productController->getValidator()->validate($data, [
-            'sku' => ['unique'],
-            'price' => ['not_null', 'numeric'],
+            'sku' => ['required', "exist:products,sku,$currentSku"],
+            'price' => ['numeric', 'not_null'],
             'category_id' => ['required'],
-            'weight' => ['not_null', 'numeric']
+            'weight' => ['numeric', 'not_null']
         ]);
-    
+
         // Get the ID of the corresponding option for the product type
         $optionId = $this->productController->getOptionIdByType('Book');
+
         $bookDTO = $this->createDTO($data, $data['weight']);
 
+        $updatedBook = $this->bookDAO->update($bookDTO, $productId);
+
+        $productOption = new ProductOption($this->productController->getConnection());
+        $productOptionId = $productOption->findByOptionId($optionId, $productId)->getId();
+
         $productOptionDTO = new ProductOptionDTO();
-        $productOptionDTO->setProductId($data['id']);
+        $productOptionDTO->setId($productOptionId);
+        $productOptionDTO->setProductId($productId);
         $productOptionDTO->setOptionId($optionId);
         $productOptionDTO->setOptionValue($data['weight']);
 
-        $productOption = new ProductOption($this->productController->getConnection());
         $productOption->updateOption($productOptionDTO);
-    
-        $updatedBook = $this->bookDAO->update($bookDTO, $data['id']); // 'id'
-    
-        $result = $updatedBook ? ['message' => 'Book updated successfully', 'status' => 200] : ['message' => 'Error updating book', 'status' => 500];
+
+        if ($updatedBook || $productOption) {
+            $result = ['message' => 'Book updated successfully', 'status' => 201];
+        } else {
+            $result = ['message' => 'Error updating book', 'status' => 500];
+        }
+
         return $result;
     }
     public function createDTO(array $data, $optionValue): DTOInterface

@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import InputField from '../../components/InputField';
 import Header from '../../components/Header';
-import validateForm from '../../utils/validateForm';
-import { Toast } from '../../components/Toast';
+import validateUpdateForm from '../../utils/validateUpdateForm';
+import { Toast, clearToasts } from '../../components/Toast';
 import { ToastContainer } from 'react-toastify';
 import ProductTypeSpecific from '../../components/ProductTypeSpecific';
 import './styles.scss';
@@ -14,6 +14,8 @@ const EditProduct = () => {
     const formRef = useRef(null);
     const [product, setProduct] = useState({});
     const [categoryId, setCategoryId] = useState('');
+    const [weight, setWeight] = useState('');
+    const [size, setSize] = useState('');
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -30,7 +32,6 @@ const EditProduct = () => {
                     setProduct(data);
                     setCategoryId(data.category_id);
                     const optionName = data.option_name.charAt(0).toUpperCase() + data.option_name.slice(1);
-                    // Update the product state to include the capitalized option name
                     setProduct(prevState => {
                         const updatedProduct = {
                             ...prevState,
@@ -40,15 +41,21 @@ const EditProduct = () => {
                         };
                         if (data.category_id === 3) { // Compare with the value corresponding to 'Furniture'
                             extractDimensions(data.option_value);
+                        } else if (data.category_id === 1) {
+                            setWeight(data.option_value);
+
+                        } else if (data.category_id === 2) {
+                            setSize(data.option_value);
                         }
                         return updatedProduct;
                     });
-                    console.log(data.category_id);
                 } else if (response.status === 401) {
                     // Redirect the user to sign-in/sign-up page if it's token isn't authenticated
+                    clearToasts();
                     navigate('/user');
                 } else if (response.status === 404) {
-                    // Redirect the user to 404
+                    // Redirect the user to 404 if trying to access/edit a product that doesn't exist
+                    clearToasts();
                     navigate('*');
                 }
                 else {
@@ -58,7 +65,6 @@ const EditProduct = () => {
                 console.error(error);
             }
         };
-
         fetchProduct();
     }, [productId]);
 
@@ -67,36 +73,36 @@ const EditProduct = () => {
 
         const updatedProduct = {
             id: productId,
-            sku: formRef.current.sku.value,
-            name: formRef.current.product_name.value,
-            price: formRef.current.price.value,
+            sku: formRef.current.sku.value !== "" ? formRef.current.sku.value : product.sku,
+            name: formRef.current.product_name.value !== "" ? formRef.current.product_name.value : product.product_name,
+            price: formRef.current.price.value !== "" ? formRef.current.price.value : product.price,
             category_id: categoryId,
             product_type: product.productType,
         };
 
         if (product.productType === 'Dvd') {
-            updatedProduct.size = formRef.current.size.value;
+            const newSize = formRef.current.size.value;
+            updatedProduct.size = newSize !== "" ? newSize : size;
         } else if (product.productType === 'Book') {
-            updatedProduct.weight = formRef.current.weight.value;
+            const newWeight = formRef.current.weight.value;
+            updatedProduct.weight = newWeight !== "" ? newWeight : weight;
         } else if (product.productType === 'Furniture') {
-            const height = formRef.current.height.value;
-            const width = formRef.current.width.value;
-            const length = formRef.current.length.value;
+            const height = formRef.current.height.value !== "" ? formRef.current.height.value : product.height;
+            const width = formRef.current.width.value !== "" ? formRef.current.width.value : product.width;
+            const length = formRef.current.length.value !== "" ? formRef.current.length.value : product.length;
 
             if (isNumeric(height) && isNumeric(width) && isNumeric(length)) {
                 if (isValidDimensionsFormat(height, width, length)) {
-                    updatedProduct.option_value = `${parseFloat(height)}x${parseFloat(width)}x${parseFloat(length)}`;
+                    updatedProduct.dimensions = `${parseFloat(height)}x${parseFloat(width)}x${parseFloat(length)}`;
                 } else {
                     Toast({ message: 'Dimensions format is incorrect.', type: 'error' });
-                    return; // Prevent the form submission
+                    return;
                 }
             } else {
                 Toast({ message: 'Dimensions must be numeric.', type: 'error' });
-                return; // Prevent the form submission
+                return;
             }
         }
-        
-        updatedProduct.dimensions = updatedProduct.option_value;
 
         const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_EDIT_PRODUCT}${productId}`, {
             method: 'POST',
@@ -110,9 +116,11 @@ const EditProduct = () => {
         if (response.status === 201) {
             const result = await response.json();
             console.log(result.message);
+            // Clear existing toasts before redirecting
+            clearToasts();
             navigate(`${process.env.REACT_APP_BASE_URL}`);
         } else {
-            //   const errorResult = await response.json();
+            // const errorResult = await response.json();
             console.error(response.statusText);
             Toast({ message: 'An error occurred while updating the product', type: 'error' });
         }
@@ -132,6 +140,11 @@ const EditProduct = () => {
         return !isNaN(parseFloat(value)) && isFinite(value);
     };
 
+    const hasOnlyNumbers = (value) => {
+        const regex = /^\d+(\.\d{1,2})?$/;
+        return regex.test(value);
+    };
+    
     const isValidDimensionsFormat = (height, width, length) => {
         const regex = /^\d+(\.\d+)?x\d+(\.\d+)?x\d+(\.\d+)?$/;
         const dimensionsString = `${height}x${width}x${length}`;
@@ -140,7 +153,7 @@ const EditProduct = () => {
 
     const handleValidation = (event) => {
         try {
-            validateForm(event, formRef.current, handleSave);
+            validateUpdateForm(event, formRef.current, handleSave);
         } catch (error) {
             // Handle any error that might be thrown in the validateForm function
             console.error(error);
@@ -171,6 +184,7 @@ const EditProduct = () => {
                         id="sku"
                         name="sku"
                         type="text"
+                        defaultValue={product.sku}
                         placeholder={product.sku}
                     />
                     <InputField
@@ -178,6 +192,7 @@ const EditProduct = () => {
                         id="product_name"
                         name="product_name"
                         type="text"
+                        defaultValue={product.product_name}
                         placeholder={product.product_name}
                     />
                     <InputField
@@ -187,26 +202,16 @@ const EditProduct = () => {
                         type="number"
                         step="any"
                         pattern="^\d+(\.\d{1,2})?$"
+                        defaultValue={product.price}
                         placeholder={product.price}
                     />
-                    {/* {
-                        product.productType !== 'Furniture' && (
-                            <>
-                                <InputField
-                                    label="Option Value"
-                                    id="option_value"
-                                    name="option_value"
-                                    type="text"
-                                    placeholder={product.option_value}
-                                />
-                            </>
-                        )
-                    } */}
                     <ProductTypeSpecific
                         productType={product.productType}
                         height={product.height}
                         width={product.width}
                         length={product.length}
+                        weight={weight}
+                        size={size}
                     />
                 </form>
             </div>

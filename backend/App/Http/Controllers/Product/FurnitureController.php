@@ -12,6 +12,7 @@
 
 namespace App\Http\Controllers\Product;
 
+use App\Core\Database\DAO\Product\ProductOptionDAO;
 use App\Http\Controllers\Product\ProductSpecificControllerInterface;
 use App\Http\Controllers\Product\ProductController;
 use App\Core\Database\DAO\Product\FurnitureDAO;
@@ -70,11 +71,21 @@ class FurnitureController implements ProductSpecificControllerInterface
     public function updateProduct(int $productId, array $data): array
     {
         $data = $this->productController->getSanitizer()->clean($data);
+
+        $allProducts = $this->productController->getAllProducts();
+        $currentSku = null;
+        foreach ($allProducts as $product) {
+            if ($product['id'] == $productId) {
+                $currentSku = $product['sku'];
+                break;
+            }
+        }
+
         $this->productController->getValidator()->validate($data, [
-            'sku' => ['unique', 'not_null'],
-            'price' => ['not_null', 'numeric'],
+            'sku' => ['required', "exist:products,sku,$currentSku"],
+            'price' => ['required', 'numeric', 'not_null'],
             'category_id' => ['required'],
-            'dimensions' => ['dimensions']
+            'dimensions' => ['required', 'dimensions']
         ]);
 
         // Get the ID of the corresponding option for the product type
@@ -85,18 +96,26 @@ class FurnitureController implements ProductSpecificControllerInterface
 
         $furnitureDTO = $this->createDTO($data, $dimensionsFloat);
 
-        $productOption = new ProductOption($this->productController->getConnection());
-        $productOptionDTO = $productOption->findByOptionId($optionId, $productId);
-
-        if ($productOptionDTO) {
-            $productOptionDTO->setOptionValue($data['dimensions']);
-            $productOption->updateOption($productOptionDTO);
-        }
-
         $updatedFurniture = $this->furnitureDAO->update($furnitureDTO, $productId);
 
-        $result = $updatedFurniture ? ['message' => 'Furniture updated successfully', 'status' => 200] : ['message' => 'Error updating furniture', 'status' => 500];
-        return $result;    
+        $productOption = new ProductOption($this->productController->getConnection());
+
+        $productOptionId = $productOption->findByOptionId($optionId, $productId)->getId();
+
+        $productOptionDTO = new ProductOptionDTO();
+        $productOptionDTO->setId($productOptionId);
+        $productOptionDTO->setProductId($productId);
+        $productOptionDTO->setOptionId($optionId);
+        $productOptionDTO->setOptionValue($data['dimensions']);
+
+        $productOption->updateOption($productOptionDTO);
+
+        if ($updatedFurniture || $productOption) {
+            $result = ['message' => 'Furniture updated successfully', 'status' => 201];
+        } else {
+            $result = ['message' => 'Error updating furniture', 'status' => 500];
+        }
+        return $result;
     }
     public function createDTO(array $data, float $dimensionsFloat): DTOInterface
     {

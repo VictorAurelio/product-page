@@ -47,6 +47,7 @@ class ProductOptionDTO implements DTOInterface
     public function toArray(): array
     {
         return [
+            'id' => $this->_id,
             'product_id' => $this->_productId,
             'option_id' => $this->_optionId,
             'option_value' => $this->_optionValue,

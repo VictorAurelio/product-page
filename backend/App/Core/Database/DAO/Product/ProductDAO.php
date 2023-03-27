@@ -80,7 +80,6 @@ class ProductDAO extends DAO implements DAOInterface
                 $query,
                 $this->dao->getDataMapper()->buildInsertQueryParameters($fields)
             );
-            // echo'<br>CREATE PRODUCTDAO QUERY: <br>';var_dump($query);echo'<br><br>';
             if ($this->dao->getDataMapper()->numRows() == 1) {
                 // Get the last inserted ID and return it
                 return $this->dao->lastID();
@@ -134,7 +133,6 @@ class ProductDAO extends DAO implements DAOInterface
 
         return $results;
     }
-
     /**
      * Summary of read
      * 

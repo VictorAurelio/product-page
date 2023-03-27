@@ -20,8 +20,9 @@ class ExistRule implements Rule
         $value = $data[$field] ?? null;
         $this->table = $params[0] ?? '';
         $this->column = $params[1] ?? '';
+        $exceptValue = isset($params[2]) ? $params[2] : null;
 
-        if (!$value) {
+        if (!$value || ($exceptValue !== null && $value === $exceptValue)) {
             return true;
         }
 

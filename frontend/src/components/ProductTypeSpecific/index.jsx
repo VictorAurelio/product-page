@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import InputField from '../InputField';
 
-const ProductTypeSpecific = ({ productType, height, width, length  }) => {
+const ProductTypeSpecific = ({ productType, height, width, length, weight, size  }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
@@ -21,7 +21,8 @@ const ProductTypeSpecific = ({ productType, height, width, length  }) => {
                         step="any"
                         type="number"
                         pattern="^\\d+(\\.\\d{1,2})?$"
-                        required
+                        placeholder={size}
+                        defaultValue={size}
                         min="0.01"
                     />
                     <span>Please, provide size</span>
@@ -36,7 +37,8 @@ const ProductTypeSpecific = ({ productType, height, width, length  }) => {
                         type="number"
                         step="any"
                         pattern="^\\d+(\\.\\d{1,2})?$"
-                        required
+                        placeholder={weight}
+                        defaultValue={weight}
                         min="0.01"
                     />
                     <span>Please, provide weight</span>
@@ -51,8 +53,8 @@ const ProductTypeSpecific = ({ productType, height, width, length  }) => {
                         step="any"
                         type="number"
                         pattern="^\\d+(\\.\\d{1,2})?$"
-                        required
                         min="0.01"
+                        placeholder={height}
                         defaultValue={height}
                     />
                     <InputField
@@ -62,8 +64,8 @@ const ProductTypeSpecific = ({ productType, height, width, length  }) => {
                         step="any"
                         type="number"
                         pattern="^\\d+(\\.\\d{1,2})?$"
-                        required
                         min="0.01"
+                        placeholder={width}
                         defaultValue={width}
                     />
                     <InputField
@@ -73,8 +75,8 @@ const ProductTypeSpecific = ({ productType, height, width, length  }) => {
                         step="any"
                         type="number"
                         pattern="^\\d+(\\.\\d{1,2})?$"
-                        required
                         min="0.01"
+                        placeholder={length}
                         defaultValue={length}
                     />
                     <span>Please, provide dimensions</span>

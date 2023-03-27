@@ -101,28 +101,27 @@ class BookDAO extends ProductDAO
     public function update(DTOInterface $data, string $primaryKey): bool
     {
         if (!$data instanceof BookDTO) {
-            throw new InvalidArgumentException('Expected BookDTO instance.');
+            throw new InvalidArgumentException('Expected FurnitureDTO instance.');
         }
-    
+
         // Convert BookDTO to array
         $fields = $data->toArray();
-    
-        // Merge specific attributes of Book with the Product attributes
-        $mergedFields = array_merge(
-            $fields, 
-            $this->bookModel->specificAttributes($data)
-        );
+
+        // Remove the 'weight' field
+        unset($fields['weight']);
+
         try {
             $args = [
                 'table' => $this->dao->getSchema(),
                 'type' => 'update',
-                'fields' => $mergedFields,
+                'fields' => $fields,
                 'primary_key' => $primaryKey
             ];
             $query = $this->dao->getQueryBuilder()->buildQuery($args)->updateQuery();
+            
             $this->dao->getDataMapper()->persist(
                 $query,
-                $this->dao->getDataMapper()->buildQueryParameters($mergedFields)
+                $this->dao->getDataMapper()->buildUpdateQueryParameters($fields)
             );
             if ($this->dao->getDataMapper()->numRows() === 1) {
                 return true;
@@ -130,7 +129,7 @@ class BookDAO extends ProductDAO
         } catch (Throwable $throwable) {
             throw $throwable;
         }
-    
+
         return false;
     }
     public function getAllBooks(): array {

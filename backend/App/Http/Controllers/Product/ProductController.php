@@ -77,8 +77,7 @@ class ProductController extends Controller
         $this->userController = new UserController();
     }
     public function index()
-    {
-    }
+    {}
     public function handleMassDelete()
     {
         $requestData = $this->getRequestData();
@@ -128,12 +127,13 @@ class ProductController extends Controller
         // Read the request data
         $payload = $this->getRequestData();
         $data = $this->sanitizer->clean($payload);
+
         try {
             // Validate the necessary data
             $this->validator->validate($data, [
                 'product_type' => ['required', 'in:Book,Dvd,Furniture'],
-                'weight' => ['required_if:product_type,Book', 'numeric'],
-                'size' => ['required_if:product_type,Dvd', 'numeric'],
+                'weight' => ['required_if:product_type,Book'],
+                'size' => ['required_if:product_type,Dvd'],
                 'dimensions' => ['required_if:product_type,Furniture', 'dimensions'],
             ]);
 
@@ -173,11 +173,11 @@ class ProductController extends Controller
 
                 // $this->json($result['message'], $result['status']);
             }
-            $this->json(['message' => $result['message']], $result['status']);
+            // $this->json(['message' => $result['message']], $result['status']);
         } catch (ValidationException $e) {
-            $this->json($e->getErrors(), 400);
+            // $this->json($e->getErrors(), 400);
         } catch (InvalidArgumentException $e) {
-            $this->json(['message' => $e->getMessage()], 400);
+            // $this->json(['message' => $e->getMessage()], 400);
         }
     }
     public function updateProduct($productId)
@@ -285,7 +285,6 @@ class ProductController extends Controller
             $this->json(['message' => 'Product not found'], 404);
         }
     }
-
     public function getAllProducts(): array
     {
         $bookController = $this->getControllerInstance('Book');

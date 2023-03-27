@@ -65,20 +65,47 @@ class DvdController implements ProductSpecificControllerInterface
     public function updateProduct(int $productId, array $data): array
     {
         $data = $this->productController->getSanitizer()->clean($data);
+
+        $allProducts = $this->productController->getAllProducts();
+        $currentSku = null;
+        foreach ($allProducts as $product) {
+            if ($product['id'] == $productId) {
+                $currentSku = $product['sku'];
+                break;
+            }
+        }
+
         $this->productController->getValidator()->validate($data, [
-            'name' => ['required'],
-            'sku' => ['required', 'unique'],
-            'price' => ['required', 'not_null'],
+            'sku' => ['required', "exist:products,sku,$currentSku"],
+            'price' => ['numeric', 'not_null'],
             'category_id' => ['required'],
-            'weight' => ['required', 'not_null']
+            'size' => ['numeric', 'not_null']
         ]);
 
-        $bookDTO = $this->createDTO($data, $data['weight']);
-        $bookDTO->setId($productId);
+        // Get the ID of the corresponding option for the product type
+        $optionId = $this->productController->getOptionIdByType('Dvd');
 
-        $updated = $this->bookDAO->update($bookDTO, 'id');
+        $dvdDTO = $this->createDTO($data, $data['size']);
 
-        $result = $updated ? ['message' => 'Book updated successfully', 'status' => 200] : ['message' => 'Error updating book', 'status' => 500];
+        $updatedDVD = $this->dvdDAO->update($dvdDTO, $productId);
+
+        $productOption = new ProductOption($this->productController->getConnection());
+        $productOptionId = $productOption->findByOptionId($optionId, $productId)->getId();
+
+        $productOptionDTO = new ProductOptionDTO();
+        $productOptionDTO->setId($productOptionId);
+        $productOptionDTO->setProductId($productId);
+        $productOptionDTO->setOptionId($optionId);
+        $productOptionDTO->setOptionValue($data['size']);
+
+        $productOption->updateOption($productOptionDTO);
+
+        if ($updatedDVD || $productOption) {
+            $result = ['message' => 'Dvd updated successfully', 'status' => 201];
+        } else {
+            $result = ['message' => 'Error updating dvd', 'status' => 500];
+        }
+
         return $result;
     }
     public function createDTO(array $data, $optionValue): DTOInterface

@@ -108,17 +108,6 @@ class FurnitureDAO extends ProductDAO
         // Convert FurnitureDTO to array
         $fields = $data->toArray();
 
-        echo '<br>fields update: <br>';
-        var_dump($fields);
-        echo '<br><br>';
-        $fieldsWithKeys = [
-            'id' => $fields['id'],
-            'sku' => $fields['sku'],
-            'product_name' => $fields['product_name'],
-            'price' => $fields['price'],
-            'category_id' => $fields['category_id'],
-        ];
-
         // Remove the 'dimensions' field
         unset($fields['dimensions']);
 
@@ -126,49 +115,15 @@ class FurnitureDAO extends ProductDAO
             $args = [
                 'table' => $this->dao->getSchema(),
                 'type' => 'update',
-                'fields' => $fieldsWithKeys,
+                'fields' => $fields,
                 'primary_key' => $primaryKey
             ];
             $query = $this->dao->getQueryBuilder()->buildQuery($args)->updateQuery();
-            echo '<br><br>';
-            var_dump($query);
-            echo '<br><br>';
-            echo '<br><br>';
-            $this->dao->getDataMapper()->persist(
-                $query,
-                $this->dao->getDataMapper()->buildUpdateQueryParameters($fieldsWithKeys)
-            );
-            if ($this->dao->getDataMapper()->numRows() === 1) {
-                return true;
-            }
-        } catch (Throwable $throwable) {
-            throw $throwable;
-        }
-
-        return false;
-    }
-    public function updateProductOption(ProductOptionDTO $productOptionDTO, int $productId): bool
-    {
-        try {
-            $fields = [
-                'option_id' => $productOptionDTO->getOptionId(),
-                'product_id' => $productId,
-                'option_value' => $productOptionDTO->getOptionValue()
-            ];
-
-            $args = [
-                'table' => 'product_options',
-                'type' => 'update',
-                'fields' => $fields,
-                'primary_key' => 'product_id'
-            ];
-
-            $query = $this->dao->getQueryBuilder()->buildQuery($args)->updateQuery();
+            
             $this->dao->getDataMapper()->persist(
                 $query,
                 $this->dao->getDataMapper()->buildUpdateQueryParameters($fields)
             );
-
             if ($this->dao->getDataMapper()->numRows() === 1) {
                 return true;
             }
@@ -177,7 +132,6 @@ class FurnitureDAO extends ProductDAO
         }
         return false;
     }
-
     /**
      * Find all furnitures
      * 

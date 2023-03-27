@@ -9,6 +9,7 @@ import './styles.scss';
 const ProductList = () => {
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
+    const [filteredProducts, setFilteredProducts] = useState([]);
 
     useEffect(() => {
         fetch(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_SHOW_ALL_PRODUCTS}`)
@@ -50,8 +51,7 @@ const ProductList = () => {
                 });
         } else {
             Toast({ message: 'No products selected for deletion', type: 'warning', willClose: 1000 });
-        }
-        clearToasts();
+        }        
     };
 
     const toggleProductChecked = (productId) => {
@@ -60,6 +60,13 @@ const ProductList = () => {
                 product.id === productId ? { ...product, checked: !product.checked } : product
             )
         );
+    };
+
+    const handleSearch = (searchTerm) => {
+        const filtered = products.filter((product) =>
+            product.product_name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setFilteredProducts(filtered);
     };
 
     const isLoggedIn = () => {
@@ -77,16 +84,29 @@ const ProductList = () => {
                         { id: 'add-product-btn', onClick: handleAddProduct, title: 'Add' },
                         { id: 'delete-product-btn', onClick: handleMassDelete, title: 'Mass Delete' }
                     ]}
+                    showSearchBar={true}
+                    onSearch={handleSearch}
                 />
                 <div id="product-list-items">
-                    {products.map((product) => (
-                        <Card
-                            key={product.id}
-                            product={product}
-                            toggleProductChecked={toggleProductChecked}
-                            isLoggedIn={isLoggedIn()}
-                        />
-                    ))}
+                    {filteredProducts.length > 0 ? (
+                        filteredProducts.map((product) => (
+                            <Card
+                                key={product.id}
+                                product={product}
+                                toggleProductChecked={toggleProductChecked}
+                                isLoggedIn={isLoggedIn()}
+                            />
+                        ))
+                    ) : (
+                        products.map((product) => (
+                            <Card
+                                key={product.id}
+                                product={product}
+                                toggleProductChecked={toggleProductChecked}
+                                isLoggedIn={isLoggedIn()}
+                            />
+                        ))
+                    )}
                 </div>
             </div>
         </div>

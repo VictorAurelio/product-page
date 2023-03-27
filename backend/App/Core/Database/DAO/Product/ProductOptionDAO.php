@@ -17,6 +17,7 @@ use App\Core\Database\DAO\DAOInterface;
 use App\Core\Database\DAO\DAO;
 use App\DTO\Product\ProductOptionDTO;
 use App\DTO\DTOInterface;
+use InvalidArgumentException;
 use Throwable;
 
 /**
@@ -30,7 +31,6 @@ class ProductOptionDAO implements DAOInterface
     {
         $this->_dao = $productOptionModel->getDao();
     }
-
     /**
      * Summary of create
      * @param DTOInterface $data
@@ -82,7 +82,7 @@ class ProductOptionDAO implements DAOInterface
         return [];
     }
 
-    public function update(DTOInterface $data, string $primaryKey): bool
+    public function updateda(DTOInterface $data, string $primaryKey): bool
     {
         return false;
     }
@@ -151,5 +151,35 @@ class ProductOptionDAO implements DAOInterface
         $productOptionDTO->setOptionValue($result->option_value);
 
         return $productOptionDTO;
+    }
+    public function update(DTOInterface $data, string $primaryKey): bool
+    {
+        if (!$data instanceof ProductOptionDTO) {
+            throw new InvalidArgumentException('Expected ProductOptionDTO instance.');
+        }
+        $fields = $data->toArray();
+
+        try {            // var_dump($fields);
+            $args = [
+                'table' => $this->_dao->getSchema(),
+                'type' => 'update',
+                'fields' => $fields,
+                'primary_key' => $primaryKey
+            ];
+
+            $query = $this->_dao->getQueryBuilder()->buildQuery($args)->updateQuery();
+            
+            $this->_dao->getDataMapper()->persist(
+                $query,
+                $this->_dao->getDataMapper()->buildUpdateQueryParameters($fields)
+            );
+
+            if ($this->_dao->getDataMapper()->numRows() === 1) {
+                return true;
+            }
+        } catch (Throwable $throwable) {
+            throw $throwable;
+        }
+        return false;
     }
 }
