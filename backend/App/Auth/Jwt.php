@@ -37,8 +37,8 @@ class Jwt
         $header = json_encode($array);
         $payload = json_encode($data);
 
-        $hBase = $this->base64url_encode($header);
-        $pBase = $this->base64url_encode($payload);
+        $hBase = $this->_base64UrlEncode($header);
+        $pBase = $this->_base64UrlEncode($payload);
 
         $signature = hash_hmac(
             'sha256',
@@ -46,7 +46,7 @@ class Jwt
             JWT_SECRET_KEY,
             true
         );
-        $bSig = $this->base64url_encode($signature);
+        $bSig = $this->_base64UrlEncode($signature);
 
         $jwt = $hBase . '.' . $pBase . '.' . $bSig;
 
@@ -75,14 +75,14 @@ class Jwt
             JWT_SECRET_KEY,
             true
         );
-        $bSig = $this->base64url_encode($signature);
+        $bSig = $this->_base64UrlEncode($signature);
 
         if ($bSig !== $jwtSplits[2]) {
             return $array;
         }
 
         $decodedPayload = json_decode(
-            $this->base64url_decode($jwtSplits[1])
+            $this->_base64UrlDecode($jwtSplits[1])
         );
 
         if (!isset($decodedPayload->exp) || time() >= $decodedPayload->exp) {
@@ -101,7 +101,7 @@ class Jwt
      * 
      * @return string
      */
-    private function base64url_encode($data)
+    private function _base64UrlEncode($data)
     {
         return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
@@ -116,7 +116,7 @@ class Jwt
      * 
      * @return bool|string
      */
-    private function base64url_decode($data)
+    private function _base64UrlDecode($data)
     {
         return base64_decode(
             str_pad(

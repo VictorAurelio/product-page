@@ -19,23 +19,24 @@ use App\DTO\DTOInterface;
 use Throwable;
 
 /**
- * The FurnitureDAO class is a data access object that extends the ProductDAO class.
+ * The FurnitureDAO class is a data access object that extends the ProductDAO class
  * It provides methods for creating, updating, and retrieving furniture from a
  * database.
  */
 class FurnitureDAO extends ProductDAO
 {
     /**
-     * It is likely used for accessing and manipulating furniture data in a database.
+     * It is used for accessing and manipulating furniture data in a database.
      *
      * @var Furniture
      */
     protected Furniture $furnitureModel;
     /**
      * The construct method is the constructor of the FurnitureDAO class.
-     * It accepts a furniture object as a parameter, calls the parent constructor with
-     * this object, and assigns the FurnitureModel property to this object. This likely
-     * sets up the FurnitureDAO object for interacting with furniture data in a database.
+     * It accepts a furniture object as a parameter, calls the parent
+     * constructor with this object, and assigns the FurnitureModel property
+     * to this object. This likely sets up the FurnitureDAO object for
+     * interacting with furniture data in a database.
      *
      * @param Furniture $furnitureModel
      */
@@ -55,9 +56,9 @@ class FurnitureDAO extends ProductDAO
         return parent::lastId();
     }
     /**
-     * This method receives a FurnitureDTO with the data necessary to create a new furniture
-     * and creates a new record in the database. It returns true if the creation
-     * was successful and false otherwise.
+     * This method receives a FurnitureDTO with the data necessary to create
+     * a new furniture and creates a new record in the database. It returns
+     * true if the creation was successful and false otherwise.
      *
      * @param DTOInterface $data
      *
@@ -106,10 +107,10 @@ class FurnitureDAO extends ProductDAO
         return 0; // Return 0 if the insert fails
     }
     /**
-     * This method receives a FurnitureDTO with the data necessary to update a furniture
-     * and an ID representing the furniture to be updated. It updates the furniture record
-     * in the database and returns true if the update was successful and false
-     * otherwise.
+     * This method receives a FurnitureDTO with the data necessary to update
+     * a furniture and an ID representing the furniture to be updated. It updates
+     * the furniture record in the database and returns true if the update was
+     * successful and false otherwise.
      *
      * @param DTOInterface $data
      * @param string       $primaryKey
@@ -146,7 +147,6 @@ class FurnitureDAO extends ProductDAO
                 ->getDataMapper()
                 ->persist(
                     $query,
-
                     $this->dao
                         ->getDataMapper()
                         ->buildUpdateQueryParameters($fields)

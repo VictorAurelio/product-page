@@ -42,7 +42,8 @@ class UserDAO implements DAOInterface
         $this->dao = $dao;
     }
     /**
-     * Creates a new record in the database table and returns the last inserted row ID.
+     * Creates a new record in the database table and returns the last
+     * inserted row ID.
      * 
      * @param DTOInterface $data
      * 
@@ -93,10 +94,11 @@ class UserDAO implements DAOInterface
      * uses the DAO object's schema, query builder, and data mapper to construct
      * and execute the query
      *
-     * @param  array $selectors
-     * @param  array $conditions
-     * @param  array $parameters
-     * @param  array $optional
+     * @param array $selectors
+     * @param array $conditions
+     * @param array $parameters
+     * @param array $optional
+     * 
      * @return array
      */
     public function read(
@@ -341,18 +343,22 @@ class UserDAO implements DAOInterface
         array $conditions = [],
         array $parameters = []
     ): array {
-        $selectors = array_merge($selectors, [
+        $selectors = array_merge(
+            $selectors, [
             ''
-        ]);
+            ]
+        );
         $query = $this->dao
             ->getQueryBuilder()
-            ->buildQuery([
+            ->buildQuery(
+                [
                 'type' => 'select',
                 'table' => '',
                 'selectors' => $selectors,
                 'conditions' => $conditions,
                 'params' => $parameters
-            ])
+                ]
+            )
             ->innerJoin(
                 '',
                 ''
@@ -378,9 +384,9 @@ class UserDAO implements DAOInterface
     }
     /**
      * This method receives an array of user IDs and creates a set of conditions
-     * to delete the corresponding user records in the database by calling the delete()
-     * method. It returns a boolean value indicating whether the deletion was
-     * successful or not.
+     * to delete the corresponding user records in the database by calling the
+     * delete method. It returns a boolean value indicating whether the deletion
+     * was successful or not.
      *
      * @param array $ids
      *

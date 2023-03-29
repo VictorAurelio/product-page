@@ -13,5 +13,7 @@
 namespace App\Core\Database\DatabaseService\Exception;
 
 use Exception;
-class DatabaseServiceException extends Exception 
-{ }
+class DatabaseServiceException extends Exception
+{
+
+}

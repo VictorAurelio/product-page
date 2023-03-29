@@ -129,10 +129,7 @@ class ProductOptionDAO implements DAOInterface
                 ->getDataMapper()
                 ->persist($query, $parameters, false, true);
 
-            if (
-                $this->_dao
-                ->getDataMapper()
-                ->numRows() === count($conditions)
+            if ($this->_dao->getDataMapper()->numRows() === count($conditions)
             ) {
                 return true;
             }
@@ -147,7 +144,7 @@ class ProductOptionDAO implements DAOInterface
      * and returns the results. It throws an exception if the conditions
      * are not of the expected type.
      * 
-     * @param string $rawQuery
+     * @param string       $rawQuery
      * @param DTOInterface $conditions
      * 
      * @throws InvalidArgumentException
@@ -173,10 +170,7 @@ class ProductOptionDAO implements DAOInterface
                         ->getDataMapper()
                         ->buildQueryParameters($conditionArray)
                 );
-            if (
-                $this->_dao
-                ->getDataMapper()
-                ->numRows() > 0
+            if ($this->_dao->getDataMapper()->numRows() > 0
             ) {
                 return $this->_dao
                     ->getDataMapper()
@@ -188,7 +182,8 @@ class ProductOptionDAO implements DAOInterface
         return ['no data'];
     }
     /**
-     * Returns an array of product options with selected columns and specified conditions.
+     * Returns an array of product options with selected columns
+     * and specified conditions.
      *
      * @param array $selectors
      * @param array $conditions
@@ -201,22 +196,26 @@ class ProductOptionDAO implements DAOInterface
         array $conditions = [],
         array $parameters = []
     ): array {
-        $selectors = array_merge($selectors, [
+        $selectors = array_merge(
+            $selectors, [
             'id',
             'product_id',
             'option_id',
             'option_value'
-        ]);
+            ]
+        );
 
         $query = $this->_dao
             ->getQueryBuilder()
-            ->buildQuery([
+            ->buildQuery(
+                [
                 'type' => 'select',
                 'table' => $this->_dao->getSchema(),
                 'selectors' => $selectors,
                 'conditions' => $conditions,
                 'params' => $parameters
-            ])
+                ]
+            )
             ->selectQuery();
 
         $this->_dao
@@ -234,7 +233,7 @@ class ProductOptionDAO implements DAOInterface
      *
      * @param array $ids An array of IDs to be used as a condition for deletion
      * 
-     * @return bool Returns a boolean indicating whether the deletion was successful or not.
+     * @return bool Returns a bool indicating whether it was successful or not.
      */
     public function deleteByIds(array $ids): bool
     {
@@ -314,7 +313,7 @@ class ProductOptionDAO implements DAOInterface
      * returns a boolean indicating if the update was successful.
      * 
      * @param DTOInterface $data
-     * @param string $primaryKey
+     * @param string       $primaryKey
      * 
      * @throws InvalidArgumentException
      * 
@@ -351,10 +350,7 @@ class ProductOptionDAO implements DAOInterface
                         ->buildUpdateQueryParameters($fields)
                 );
 
-            if (
-                $this->_dao
-                ->getDataMapper()
-                ->numRows() === 1
+            if ($this->_dao->getDataMapper()->numRows() === 1
             ) {
                 return true;
             }

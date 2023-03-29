@@ -53,7 +53,7 @@ class DatabaseService implements DatabaseServiceInterface
      * as argument is empty.
      * 
      * @param string|null $errorMessage
-     * @param mixed $value
+     * @param mixed       $value
      * 
      * @throws DatabaseServiceException
      * 
@@ -128,7 +128,7 @@ class DatabaseService implements DatabaseServiceInterface
      * 
      * @inheritDoc
      *
-     * @param array $fields
+     * @param array   $fields
      * @param boolean $isSearch
      * 
      * @return self
@@ -228,8 +228,9 @@ class DatabaseService implements DatabaseServiceInterface
      */
     public function execute()
     {
-        if ($this->_statement)
+        if ($this->_statement) {
             return $this->_statement->execute();
+        }
     }
     /**
      * Method that returns the number of rows affected by
@@ -239,8 +240,9 @@ class DatabaseService implements DatabaseServiceInterface
      */
     public function numRows(): int
     {
-        if ($this->_statement)
+        if ($this->_statement) {
             return $this->_statement->rowCount();
+        }
     }
 
     /**
@@ -265,13 +267,13 @@ class DatabaseService implements DatabaseServiceInterface
      */
     public function results(): array
     {
-        if ($this->_statement)
+        if ($this->_statement) {
             return $this->_statement->fetchAll(PDO::FETCH_ASSOC);
+        }
     }
 
 
     /**
-     * 
      * Method that returns the last inserted ID.
      * 
      * @return int
@@ -379,9 +381,9 @@ class DatabaseService implements DatabaseServiceInterface
      * a PDOException if there is an error.
      * 
      * @param string $sqlQuery
-     * @param array $parameters
-     * @param bool $search
-     * @param bool $isMassDelete
+     * @param array  $parameters
+     * @param bool   $search
+     * @param bool   $isMassDelete
      * 
      * @throws PDOException
      * 

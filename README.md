@@ -15,5 +15,5 @@
     <li>Error messaging and validation for user inputs</li>
     <li>Styling with SASS</li>
 </ul>
-<p>If you would like to try out the project, visit the deployed version at <a href="https://productpage-victoraurelio.netlify.app/">https://productpage-victoraurelio.netlify.app/</a>.</p>
+<p>If you would like to try out the project, visit the deployed version at <a href="https://productpage-victoraurelio.netlify.app/" target="_blank">https://productpage-victoraurelio.netlify.app/</a>.</p>
 <p>If you would like to contribute to the project or suggest improvements, please feel free to contact me.</p>

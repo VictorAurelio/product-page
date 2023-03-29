@@ -198,7 +198,7 @@ class DAO
     }
     /**
      * This function takes a string as input and checks if it matches with any
-     * of the allowed query types. If it does, it returns the corresponding query.     * 
+     * of the allowed query types. If it does, it returns the corresponding query.
      * Note: The function does not have any side-effects and only returns a value
      * based on the input.
      * 

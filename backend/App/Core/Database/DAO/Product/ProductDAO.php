@@ -100,10 +100,7 @@ class ProductDAO extends DAO implements DAOInterface
                         ->getDataMapper()
                         ->buildInsertQueryParameters($fields)
                 );
-            if (
-                $this->dao
-                ->getDataMapper()
-                ->numRows() == 1
+            if ($this->dao->getDataMapper()->numRows() == 1
             ) {
                 // Get the last inserted ID and return it
                 return $this->dao->lastID();
@@ -131,7 +128,8 @@ class ProductDAO extends DAO implements DAOInterface
         array $conditions = [],
         array $parameters = []
     ): array {
-        $selectors = array_merge($selectors, [
+        $selectors = array_merge(
+            $selectors, [
             'products.id',
             'products.category_id',
             'products.product_name',
@@ -139,16 +137,19 @@ class ProductDAO extends DAO implements DAOInterface
             'products.price',
             'product_options.option_value',
             'options.option_name',
-        ]);
+            ]
+        );
         $query = $this->dao
             ->getQueryBuilder()
-            ->buildQuery([
+            ->buildQuery(
+                [
                 'type' => 'select',
                 'table' => 'products',
                 'selectors' => $selectors,
                 'conditions' => $conditions,
                 'params' => $parameters
-            ])
+                ]
+            )
             ->innerJoin(
                 'product_options',
                 'products.id = product_options.product_id'
@@ -201,7 +202,8 @@ class ProductDAO extends DAO implements DAOInterface
             $query = $this->dao
                 ->getQueryBuilder()
                 ->buildQuery($args)
-                // ->innerJoin('product_options', 'products.id = product_options.product_id')
+                // ->innerJoin('product_options',
+                //              'products.id = product_options.product_id')
                 // ->innerJoin('options', 'product_options.option_id = options.id')
                 ->selectQuery();
             $this->dao->getDataMapper()
@@ -305,10 +307,7 @@ class ProductDAO extends DAO implements DAOInterface
                 ->getDataMapper()
                 ->persist($query, $parameters, false, true);
 
-            if (
-                $this->dao
-                ->getDataMapper()
-                ->numRows() === count($conditions)
+            if ($this->dao->getDataMapper()->numRows() === count($conditions)
             ) {
                 return true;
             }
@@ -374,10 +373,7 @@ class ProductDAO extends DAO implements DAOInterface
                         ->getDataMapper()
                         ->buildQueryParameters($conditionArray)
                 );
-            if (
-                $this->dao
-                ->getDataMapper()
-                ->numRows() > 0
+            if ($this->dao->getDataMapper()->numRows() > 0
             ) {
                 return $this->dao
                     ->getDataMapper()
