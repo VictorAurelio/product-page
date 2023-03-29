@@ -156,9 +156,8 @@ abstract class QueryBuilder implements QueryBuilderInterface
         if (count($this->key['fields']) > 0) {
             $this->sqlQuery = "UPDATE {$this->key['table']} SET {$values} 
                 WHERE id = :id LIMIT 1";
-            if (
-                isset($this->key['primary_key']) &&
-                $this->key['primary_key'] === '0'
+            if (isset($this->key['primary_key']) 
+                && $this->key['primary_key'] === '0'
             ) {
                 unset($this->key['primary_key']);
                 $this->sqlQuery = "UPDATE {$this->key['table']} SET {$values}";

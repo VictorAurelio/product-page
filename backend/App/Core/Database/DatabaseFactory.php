@@ -36,9 +36,9 @@ class DatabaseFactory
      * The properties of the class are initialized with these parameters.
      * 
      * @param ConnectionInterface $connection
-     * @param string $tableSchema
-     * @param string $tableSchemaId
-     * @param array|null $options
+     * @param string              $tableSchema
+     * @param string              $tableSchemaId
+     * @param array|null          $options
      */
     public function __construct(ConnectionInterface $connection, string $tableSchema, string $tableSchemaId, ?array $options = [])
     {

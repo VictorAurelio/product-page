@@ -39,7 +39,7 @@ interface DatabaseServiceInterface
      * binds the parameters to the query string.
      * 
      * @param array $fields
-     * @param bool $isSearch
+     * @param bool  $isSearch
      * 
      * @return mixed
      */

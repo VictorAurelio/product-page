@@ -26,7 +26,6 @@ class MysqlQueryBuilder extends QueryBuilder
      * an instance of MysqlConnection.
      * 
      * @var MysqlConnection
-     * 
      */
     protected MysqlConnection $connection;
 
@@ -34,6 +33,7 @@ class MysqlQueryBuilder extends QueryBuilder
      * The constructor of MysqlQueryBuilder takes an instance of
      * MysqlConnection as an argument and sets it to the $connection property
      * .
+     *
      * @param MysqlConnection $connection
      */
     public function __construct(MysqlConnection $connection)

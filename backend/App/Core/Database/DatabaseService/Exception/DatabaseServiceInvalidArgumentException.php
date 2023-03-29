@@ -15,4 +15,6 @@ namespace App\Core\Database\DatabaseService\Exception;
 use InvalidArgumentException;
 
 class DatabaseServiceInvalidArgumentException extends InvalidArgumentException
-{ }
+{
+ 
+}
