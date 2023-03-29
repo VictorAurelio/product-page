@@ -1,11 +1,12 @@
 import { toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import './styles.scss';
 
 export function Toast({ message, type, willClose }) {
     toast[type](message, {
         position: "top-right",
-        autoClose: willClose ? willClose : 1500,
-        hideProgressBar: false,
+        autoClose: willClose ? willClose : 1000,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
@@ -14,7 +15,6 @@ export function Toast({ message, type, willClose }) {
         transition: Bounce,
     });
 }
-
 export const clearToasts = () => {
     toast.dismiss();
 };

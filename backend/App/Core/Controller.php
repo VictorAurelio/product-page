@@ -14,24 +14,28 @@ namespace App\Core;
 
 use App\Core\Exceptions\AppInvalidRequestException;
 
+/**
+ * Main controller class which contains useful methods for those who inherit it.
+ */
 class Controller
 {
-    // public function view($view, $data = []) {
-    //     extract($data);
-    //     require '../App/views/'.$view.'.view.php';
-    // }
-    // public function render($view, $data = []) {        
-    //     require '../App/views/layouts/template.view.php';
-    // }
-    // public function renderView($view, $data = []) {   
-    //     extract($data);     
-    //     require '../App/views/'.$view.'.view.php';
-    // }
-    
+    /**
+     * retrieves the HTTP method used in the current request.
+     * 
+     * @return mixed
+     */
     public function getMethod()
     {
         return $_SERVER['REQUEST_METHOD'];
     }
+    /**
+     * retrieves the request data from $_GET, $_POST, or the request body
+     * (for PUT and DELETE requests) and returns it as an array.
+     * 
+     * @throws AppInvalidRequestException
+     * 
+     * @return array
+     */
     public function getRequestData()
     {
         $method = $this->getMethod();
@@ -44,10 +48,13 @@ class Controller
         if (!is_array($data)) {
             throw new AppInvalidRequestException('Invalid request data');
         }
-        // header('Content-Type: application/json');
         return $data;
     }
-
+    /**
+     * retrieves JSON data from the request body and decodes it into an array.
+     * 
+     * @return mixed
+     */
     private function getJsonData()
     {
         $data = file_get_contents('php://input');
@@ -60,28 +67,52 @@ class Controller
         }
         return $json;
     }
+    /**
+     * sends a JSON response with the given data and HTTP status code.
+     * 
+     * @param mixed $data
+     * @param mixed $status
+     * 
+     * @return void
+     */
     public function json($data, $status = 200)
     {
         ob_clean(); // Clear the output buffer
         http_response_code($status);
         header("Content-Type: application/json");
         echo json_encode($data);
-        exit;
     }
+    /**
+     * retrieves the base URL of the application.
+     * 
+     * @return string
+     */
     private function getBaseUrl()
     {
-        $base = (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') ? 'https://' : 'http://';
+        $base = (isset(
+                $_SERVER['HTTPS']
+            ) && strtolower(
+                $_SERVER['HTTPS']
+            ) == 'on'
+        ) ? 'https://' : 'http://';
+
         $base .= $_SERVER['SERVER_NAME'];
         if ($_SERVER['SERVER_PORT'] != '80') {
             $base .= ':' . $_SERVER['SERVER_PORT'];
         }
-        $base .= '/productpage/public';
+        $base .= '/public';
 
         return $base;
     }
+    /**
+     * redirects the user to the given URL.
+     * 
+     * @param mixed $url
+     * 
+     * @return void
+     */
     protected function redirect($url)
     {
         header("Location: " . $this->getBaseUrl() . $url);
-        exit;
     }
 }

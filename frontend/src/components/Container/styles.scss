@@ -5,4 +5,14 @@
     flex: 1;
     padding: 2rem 2rem 0;
     min-height: calc(100vh - 185px);
+
+    @media only screen and (max-width: 1080px) {
+        max-width: 768px;
+        padding: 1rem;
+    }
+
+    @media only screen and (max-width: 768px) {
+        max-width: 480px;
+        padding: 1rem;
+    }
 }

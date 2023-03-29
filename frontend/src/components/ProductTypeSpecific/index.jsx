@@ -79,7 +79,7 @@ const ProductTypeSpecific = ({ productType, height, width, length, weight, size 
                         placeholder={length}
                         defaultValue={length}
                     />
-                    <span>Please, provide dimensions</span>
+                    <span>Please, provide dimensions in HxWxL format</span>
                 </div>
             )}
         </div>

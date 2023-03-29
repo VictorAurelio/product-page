@@ -19,18 +19,23 @@ use App\DTO\DTOInterface;
 use Throwable;
 
 /**
- * Summary of DvdDAO
+ * The DvdDAO class is a data access object that extends the ProductDAO class.
+ * It provides methods for creating, updating, and retrieving dvds from a
+ * database.
  */
 class DvdDAO extends ProductDAO
 {
     /**
-     * Summary of dvdModel
+     * It is likely used for accessing and manipulating dvd data in a database.
      *
      * @var Dvd
      */
     protected Dvd $dvdModel;
     /**
-     * Summary of __construct
+     * The construct method is the constructor of the DvdDAO class.
+     * It accepts a Dvd object as a parameter, calls the parent constructor with
+     * this object, and assigns the dvdModel property to this object. This likely
+     * sets up the dvdDAO object for interacting with dvd data in a database.
      *
      * @param Dvd $dvdModel
      */
@@ -39,6 +44,12 @@ class DvdDAO extends ProductDAO
         parent::__construct($dvdModel);
         $this->dvdModel = $dvdModel;
     }
+    /**
+     * The lastId method returns the last inserted ID from the database by calling
+     * the lastId() method of its parent class.
+     * 
+     * @return int
+     */
     public function lastId(): int
     {
         return parent::lastId();
@@ -57,37 +68,32 @@ class DvdDAO extends ProductDAO
     public function create(DTOInterface $data): ?int
     {
         if (!$data instanceof DvdDTO) {
-            throw new InvalidArgumentException('Expected DvdDTO instance.');
+            throw new InvalidArgumentException(
+                'Expected DvdDTO instance.'
+            );
         }
         try {
             // Convert DvdDTO to array
             $fields = $data->toArray();
-            echo '<br>DVDDAO CREATE FIELDS<br>';
-            var_dump($fields);
-            echo '<br><br>';
             // Remove the 'size' field
             unset($fields['size']);
-            unset($fields['id']);
-            // echo'<br><br>';var_dump($fields);echo'<br><br>';
             $args = [
                 'table' => $this->dao->getSchema(),
                 'type' => 'insert',
                 'fields' => $fields
             ];
-            echo '<br>DVDDAO CREATE ARGS<br>';
-            var_dump($args);
-            echo '<br><br>';
-            $query = $this->dao->getQueryBuilder()->buildQuery($args)->insertQuery();
-            echo '<br>CREATE DVDDAO QUERY: <br>';
-            var_dump($query);
-            echo '<br><br>';
-            $this->dao->getDataMapper()->persist(
-                $query,
-                $this->dao->getDataMapper()->buildInsertQueryParameters($fields)
-            );
-            echo '<br>CREATE DVDDAO QUERY: <br>';
-            var_dump($query);
-            echo '<br><br>';
+            $query = $this->dao
+                ->getQueryBuilder()
+                ->buildQuery($args)
+                ->insertQuery();
+            $this->dao
+                ->getDataMapper()
+                ->persist(
+                    $query,
+                    $this->dao
+                        ->getDataMapper()
+                        ->buildInsertQueryParameters($fields)
+                );
             if ($this->dao->getDataMapper()->numRows() == 1) {
                 // Get the last inserted ID and return it
                 return $this->dao->lastID();
@@ -113,7 +119,9 @@ class DvdDAO extends ProductDAO
     public function update(DTOInterface $data, string $primaryKey): bool
     {
         if (!$data instanceof DvdDTO) {
-            throw new InvalidArgumentException('Expected FurnitureDTO instance.');
+            throw new InvalidArgumentException(
+                'Expected FurnitureDTO instance.'
+            );
         }
 
         // Convert DvdDTO to array
@@ -129,12 +137,19 @@ class DvdDAO extends ProductDAO
                 'fields' => $fields,
                 'primary_key' => $primaryKey
             ];
-            $query = $this->dao->getQueryBuilder()->buildQuery($args)->updateQuery();
+            $query = $this->dao
+                ->getQueryBuilder()
+                ->buildQuery($args)
+                ->updateQuery();
 
-            $this->dao->getDataMapper()->persist(
-                $query,
-                $this->dao->getDataMapper()->buildUpdateQueryParameters($fields)
-            );
+            $this->dao
+                ->getDataMapper()
+                ->persist(
+                    $query,
+                    $this->dao
+                        ->getDataMapper()
+                        ->buildUpdateQueryParameters($fields)
+                );
             if ($this->dao->getDataMapper()->numRows() === 1) {
                 return true;
             }
@@ -143,6 +158,13 @@ class DvdDAO extends ProductDAO
         }
         return false;
     }
+    /**
+     * The method returns an array of all dvds that belong to the category ID
+     * stored in the dvdModel object, by calling the readWithOptions()
+     * method with specific options.
+     * 
+     * @return array
+     */
     public function getAllDvds(): array
     {
         $conditions = ['*'];

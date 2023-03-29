@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import UserSignIn from '../../components/UserSignIn';
 import UserSignUp from '../../components/UserSignUp';
 import Header from '../../components/Header';
-import { Toast } from '../../components/Toast';
+import { Toast, clearToasts } from '../../components/Toast';
 import validateForm from '../../utils/validateForm';
 import Button from '../../components/Button';
 import './styles.scss';
@@ -28,7 +28,7 @@ const UserAuth = () => {
                 password,
             }),
         });
-        console.log(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_HANDLE_USER_SIGN_IN}`);
+
         if (response.status === 201) {
             const data = await response.json();
             console.log(data.message);
@@ -36,14 +36,32 @@ const UserAuth = () => {
             localStorage.setItem("jwt", data.jwt);
             localStorage.setItem("userId", data.userId);
 
+            // Clear existing toasts before redirecting
+            clearToasts();
             // Redirect the user to home if the sign-in was successful
             navigate(`${process.env.REACT_APP_BASE_URL}`);
+        } else if(response.status === 401) {
+            // Display the error notification
+            Toast({ message: "Invalid email or password", type: 'error' });
         } else {
             const errorResult = await response.json();
             console.error(response.statusText);
+            console.log(errorResult);
 
-            // Display a generic error notification
-            Toast({ message: `An error occurred while signing in`, type: 'error' });
+            let errorMessage = '';
+            const keys = Object.keys(errorResult);
+
+            for (let i = 0; i < keys.length; i++) {
+                const key = keys[i];
+                const errors = JSON.parse(errorResult[key][0]);
+                if (errors && errors.message) {
+                    errorMessage = errors.message;
+                    break;
+                }
+            }
+            console.log(errorMessage);
+            // Display the error notification
+            Toast({ message: errorMessage, type: 'error' });
         }
     };
 
@@ -73,14 +91,30 @@ const UserAuth = () => {
             localStorage.setItem("jwt", data.jwt);
             localStorage.setItem("userId", data.userId);
 
+            // Clear existing toasts before redirecting
+            clearToasts();
             // Redirect the user to home if the sign-up was successful
             navigate(`${process.env.REACT_APP_BASE_URL}`);
+
         } else {
             const errorResult = await response.json();
             console.error(response.statusText);
+            console.log(errorResult);
 
-            // Display a generic error notification
-            Toast({ message: `An error occurred while signing up`, type: 'error' });
+            let errorMessage = '';
+            const keys = Object.keys(errorResult);
+
+            for (let i = 0; i < keys.length; i++) {
+                const key = keys[i];
+                const errors = JSON.parse(errorResult[key][0]);
+                if (errors && errors.message) {
+                    errorMessage = errors.message;
+                    break;
+                }
+            }
+            console.log(errorMessage);
+            // Display the error notification
+            Toast({ message: errorMessage, type: 'error' });
         }
     };
 
@@ -99,12 +133,12 @@ const UserAuth = () => {
     const goHome = () => {
         navigate(`${process.env.REACT_APP_BASE_URL}`);
     };
-
+    
     return (
         <div className="user-auth-container">
             <div className="header-container">
-            <Header
-                    title="Product Page"
+                <Header
+                    title="User Registration"
                     buttons={[
                         {
                             id: 'home-btn',

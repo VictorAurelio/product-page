@@ -27,10 +27,10 @@ const Card = ({ product, toggleProductChecked, isLoggedIn }) => {
                 <label htmlFor={`product-${id}`} className="checkbox-label" />
             </div>
             <div className="product-item-info">
-                <div className="product-sku">{sku}</div>
-                <div className="product-name">{product_name}</div>
-                <div className="product-price">{price} $</div>
-                <div className="product-attribute">
+                <div className="sku">{sku}</div>
+                <div className="name">{product_name}</div>
+                <div className="price">{price} $</div>
+                <div className="attribute">
                     {option_name}: {option_value}
                 </div>
             </div>

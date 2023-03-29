@@ -1,8 +1,20 @@
 RewriteEngine On
+
+# Force HTTPS
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# URL Rewrite and existing configurations
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-l
-RewriteRule ^(.*)$ /productpage/backend/public/index.php?url=$1 [QSA,L]
-Header set Access-Control-Allow-Origin "*"
-Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE"
-Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+RewriteRule ^(.*)$ /public/index.php?url=$1 [QSA,L]
+
+Options +FollowSymLinks
+Options +Indexes
+
+
+# If having CORS issues while using XAMPP, try uncommenting the following lines:
+# Header set Access-Control-Allow-Origin "*"
+# Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE"
+# Header set Access-Control-Allow-Headers "Content-Type, Authorization"
