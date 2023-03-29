@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Toast, clearToasts } from '../../components/Toast';
 import { ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
@@ -11,12 +11,19 @@ const ProductList = () => {
     const [products, setProducts] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
 
-    useEffect(() => {
-        fetch(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_SHOW_ALL_PRODUCTS}`)
-            .then((response) => response.json())
-            .then((data) => setProducts(data))
-            .catch((error) => console.error('Error fetching products:', error));
+    const fetchProducts = useCallback(async () => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_SHOW_ALL_PRODUCTS}`);
+            const data = await response.json();
+            setProducts(data);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        }
     }, []);
+
+    useEffect(() => {
+        fetchProducts();
+    }, [fetchProducts]);
 
     const handleAddProduct = () => {
         // Clear existing toasts before redirecting
@@ -24,34 +31,34 @@ const ProductList = () => {
         navigate(`${process.env.REACT_APP_ADD_PRODUCT}`);
     };
 
-    const handleMassDelete = () => {
+    const handleMassDelete = async () => {
         const checkedProducts = products.filter((product) => product.checked);
         const productIds = checkedProducts.map((product) => product.id);
 
         if (productIds.length > 0) {
-            fetch(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_MASS_DELETE}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ _method: 'DELETE', product_ids: productIds }),
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.status === 201) {
-                        Toast({ message: data.message, type: 'success' });
-                        // alert(data.message);
-                        setProducts(products.filter((product) => !product.checked));
-                    } else {
-                        Toast({ message: 'An error occurred while deleting the product', type: 'error' });
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error deleting products:', error);
+            try {
+                const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_MASS_DELETE}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ _method: 'DELETE', product_ids: productIds }),
                 });
+
+                const data = await response.json();
+
+                if (data.status === 201) {
+                    Toast({ message: data.message, type: 'success' });
+                    setProducts(products.filter((product) => !product.checked));
+                } else {
+                    Toast({ message: 'An error occurred while deleting the product', type: 'error' });
+                }
+            } catch (error) {
+                console.error('Error deleting products:', error);
+            }
         } else {
             Toast({ message: 'No products selected for deletion', type: 'warning', willClose: 1000 });
-        }        
+        }
     };
 
     const toggleProductChecked = (productId) => {
@@ -81,8 +88,8 @@ const ProductList = () => {
                 <Header
                     title="Product List"
                     buttons={[
-                        { id: 'add-product-btn', onClick: handleAddProduct, title: 'Add' },
-                        { id: 'delete-product-btn', onClick: handleMassDelete, title: 'Mass Delete' }
+                        { id: 'add-product-btn', onClick: handleAddProduct, title: 'ADD' },
+                        { id: 'delete-product-btn', onClick: handleMassDelete, title: 'MASS DELETE' }
                     ]}
                     showSearchBar={true}
                     onSearch={handleSearch}

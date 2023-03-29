@@ -150,6 +150,7 @@ const AddProduct = () => {
     };
 
     const handleCancel = () => {
+        clearToasts();
         navigate(`${process.env.REACT_APP_BASE_URL}`);
     };
 

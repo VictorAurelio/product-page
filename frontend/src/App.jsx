@@ -11,9 +11,7 @@ function App() {
     const handleAddProductUrl = `${apiUrl}/${process.env.REACT_APP_HANDLE_ADD_PRODUCT}`;
     const showAllProductsUrl = `${apiUrl}/${process.env.REACT_APP_SHOW_ALL_PRODUCTS}`;
     const editProductUrl = `${apiUrl}${process.env.REACT_APP_EDIT_PRODUCT}`;
-
-    // const handleUserSignUpUrl = `${apiUrl}/${process.env.REACT_APP_HANDLE_USER_SIGN_UP}`;
-
+    
   return (
     <div className="App">
         <Routes>

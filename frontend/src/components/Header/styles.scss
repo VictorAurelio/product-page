@@ -19,17 +19,14 @@
           color: #007bff;
         }
       }
+
+      #toast-container {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+      }
 }
 
 #page-title {
     font-size: 2rem;
 }
-
-// #page-buttons {
-//     display: flex;
-//     gap: 1em;
-
-//     .button {
-//         width: 100px;
-//     }
-// }

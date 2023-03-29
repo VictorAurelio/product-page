@@ -120,9 +120,24 @@ const EditProduct = () => {
             clearToasts();
             navigate(`${process.env.REACT_APP_BASE_URL}`);
         } else {
-            // const errorResult = await response.json();
+            const errorResult = await response.json();
             console.error(response.statusText);
-            Toast({ message: 'An error occurred while updating the product', type: 'error' });
+            console.log(errorResult);
+
+            let errorMessage = '';
+            const keys = Object.keys(errorResult);
+
+            for (let i = 0; i < keys.length; i++) {
+                const key = keys[i];
+                const errors = JSON.parse(errorResult[key][0]);
+                if (errors && errors.message) {
+                    errorMessage = errors.message;
+                    break;
+                }
+            }
+            console.log(errorMessage);
+            // Display the error notification
+            Toast({ message: errorMessage, type: 'error' });
         }
     };
 
