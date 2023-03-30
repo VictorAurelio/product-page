@@ -38,17 +38,17 @@ class Config
     public function environmentType()
     {
         if (ENVIRONMENT === 'development') {
-            define('BASE_URL', 'http://localhost/productpage/backend/public');
-            define('DB_NAME', 'prodpage');
-            define('DB_HOST', 'localhost');
-            define('DB_USER', 'root');
+            define('BASE_URL', '');
+            define('DB_NAME', '');
+            define('DB_HOST', '');
+            define('DB_USER', '');
             define('DB_PASS', '');
         } else {
-            define('BASE_URL', 'http://product-page-backend.herokuapp.com/public');
-            define('DB_NAME', 'heroku_c83b35d5a5b112f');
-            define('DB_HOST', 'us-cdbr-east-06.cleardb.net');
-            define('DB_USER', 'be0933e9a21856');
-            define('DB_PASS', '916bbf23');
+            define('BASE_URL', '');
+            define('DB_NAME', '');
+            define('DB_HOST', '');
+            define('DB_USER', '');
+            define('DB_PASS', '');
         }
     }
     /**
